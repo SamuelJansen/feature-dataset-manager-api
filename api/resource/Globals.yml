@@ -1,0 +1,9 @@
+Globals:
+    print-status: True
+    api:
+        name: SkillManager
+        extension: yml
+        dependency:
+            update: False
+            list:
+                web: [globals,python_helper,Popen,Path,numpy,pywin32,sqlalchemy]
