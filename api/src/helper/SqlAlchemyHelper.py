@@ -39,7 +39,7 @@ KW_REPOSITORY_HOST = 'host'
 KW_REPOSITORY_PORT = 'port'
 KW_REPOSITORY_DATABASE = 'database'
 
-MANY_TO_MANY = '''ManyToMany'''
+MANY_TO_MANY = '''And'''
 ID = '''Id'''
 SEQ = '''Seq'''
 LIST = '''List'''
@@ -53,10 +53,43 @@ def attributeIt(modelName) :
     return f'{modelName[0].lower()}{modelName[1:]}'
 
 @Method
-def getManyToMany(son, father, refferenceModel) :
-    return Table(f'{son}{MANY_TO_MANY}{father}', refferenceModel.metadata,
-        Column(f'{attributeIt(son)}{ID}', Integer, ForeignKey(f'{son}.{ID.lower()}')),
-        Column(f'{attributeIt(father)}{ID}', Integer, ForeignKey(f'{father}.{ID.lower()}')))
+def getManyToMany(sisters, brothers, refferenceModel) :
+    # skillList = relationship(SKILL, secondary=skillToOwnerAssociation, back_populates=attributeIt(f'{__tablename__}{LIST}'))
+    # ownerList = relationship(OWNER, secondary=skillToOwnerAssociation, back_populates=attributeIt(f'{__tablename__}{LIST}'))
+    manySonToManyFather = Table(f'{sisters}{MANY_TO_MANY}{brothers}', refferenceModel.metadata,
+        Column(f'{attributeIt(sisters)}{ID}', Integer, ForeignKey(f'{sisters}.{ID.lower()}')),
+        Column(f'{attributeIt(brothers)}{ID}', Integer, ForeignKey(f'{brothers}.{ID.lower()}')))
+    brotherList = relationship(brothers, secondary=manySonToManyFather, back_populates=attributeIt(f'{sisters}{LIST}'))
+    sisterList = relationship(sisters, secondary=manySonToManyFather, back_populates=attributeIt(f'{brothers}{LIST}'))
+    ### sisters recieves the brotherList
+    ### brothers recieves the sisterList
+    return fatherList, manySonToManyFather, sonList
+
+@Method
+def getOneToMany(owner, pet, refferenceModel) :
+    return relationship(pet, back_populates=attributeIt(f'{owner}'))
+
+@Method
+def getManyToOne(pet, owner, refferenceModel) :
+    ownerId = Column(Integer(), ForeignKey(f'{owner}.{ID.lower()}'))
+    owner = relationship(owner, back_populates=attributeIt(f'{pet}{LIST}'))
+    return owner, ownerId
+
+@Method
+def getOneToOne(owner, pet, refferenceModel) :
+    return relationship(pet, back_populates=attributeIt(owner))
+
+@Method
+def getOneToOne(woman, man, refferenceModel) :
+    manId = Column(Integer(), ForeignKey(f'{man}.{ID.lower()}'))
+    manList = relationship(man, back_populates=attributeIt(woman), uselist=False)
+    return manId, manList
+
+@Method
+def getOneToOne__forDebug(man, woman, refferenceModel) :
+    womanId = Column(Integer(), ForeignKey(f'{woman}.{ID.lower()}'))
+    womanList = relationship(woman, back_populates=attributeIt(man))
+    return womanId, womanList
 
 class SqlAlchemyHelper:
 

@@ -1,5 +1,5 @@
 from SqlAlchemyHelper import *
-from ModelAssociation import Model, SKILL, OWNER, skillToOwnerAssociation
+from ModelAssociation import Model, SKILL, SKILL_DATA, OWNER_DATA
 
 class Skill(Model):
     __tablename__ = SKILL
@@ -8,23 +8,23 @@ class Skill(Model):
     key = Column(String(128),unique=True)
     label = Column(String(128))
     value = Column(Float(precision=12))
-    ownerList = relationship(OWNER, secondary=skillToOwnerAssociation, back_populates=attributeIt(f'{__tablename__}{LIST}'))
+    skillDataList = getOneToMany(__tablename__, SKILL_DATA, Model)
+    ownerDataList = getOneToMany(__tablename__, OWNER_DATA, Model)
 
     def __init__(self,
-            id = None,
-            key = None,
-            label = None,
-            value = None,
-            ownerList = None
-        ):
+        id = None,
+        key = None,
+        label = None,
+        value = None,
+        skillDataList = None,
+        ownerDataList = None
+    ):
         self.id = id
         self.key = key
         self.label = label
         self.value = value
-        if ownerList :
-            self.ownerList = ownerList
-        else :
-            self.ownerList = []
+        self.skillDataList = skillDataList if skillDataList else []
+        self.ownerDataList = ownerDataList if ownerDataList else []
 
     def __repr__(self):
         return f'{SKILL}(id={self.id}, key={self.key}, label={self.label}, value={self.value})'

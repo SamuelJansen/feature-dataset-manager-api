@@ -18,6 +18,28 @@ MODEL_CLASS_ROLE = 'MODEL'
 DTO_SUFIX = 'Dto'
 LIST_SUFIX = 'List'
 
+POST_VERB = 'Post'
+PUT_VERB = 'Put'
+GET_VERB = 'GET'
+DELETE_VERB = 'Delete'
+
+CREATE_ACTION = 'Create'
+UPDATE_ACTION = 'Update'
+QUERY_ACTION = 'Query'
+DELETE_ACTION = 'Delete'
+
+MESO_SUFIX_LIST = [
+    POST_VERB,
+    PUT_VERB,
+    GET_VERB,
+    DELETE_VERB,
+    CREATE_ACTION,
+    UPDATE_ACTION,
+    QUERY_ACTION,
+    DELETE_ACTION
+]
+
+
 @Method
 def importResource(resourceName, resourceFileName = None) :
     if not resourceName in IGNORE_REOURCE_LIST :
@@ -35,25 +57,6 @@ def importResource(resourceName, resourceFileName = None) :
         return resource
 
 @Method
-def importResourceList(resourceName) :
-    import FlaskHelper
-    def getControllerNameList(controllerName) :
-        controllerNameList = [controllerName]
-        controllerNameList.append(f'{controllerName[:-len(FlaskHelper.KW_CONTROLLER_RESOURCE)]}s{FlaskHelper.KW_CONTROLLER_RESOURCE}')
-        return controllerNameList
-    if FlaskHelper.KW_CONTROLLER_RESOURCE == resourceName[-len(FlaskHelper.KW_CONTROLLER_RESOURCE):] :
-        controllerNameList = getControllerNameList(resourceName)
-        importedResourceList = []
-        for controllerName in controllerNameList :
-            resource = importResource(controllerName, resourceFileName = resourceName)
-            if resource :
-                importedResourceList.append(resource)
-        return importedResourceList
-    resource = importResource(resourceName)
-    if resource :
-        return [resource]
-
-@Method
 def isSerializable(attributeValue) :
     return (isinstance(attributeValue.__class__, DeclarativeMeta) or
         (isinstance(attributeValue, list) and len(attributeValue) > 0 and isinstance(attributeValue[0].__class__, DeclarativeMeta)))
@@ -66,7 +69,7 @@ def getAttributeSet(object, fieldsToExpand, classTree, verifiedClassList) :
         classTree[presentClass] = [object]
     elif classTree[presentClass].count(object) < 2 :
         classTree[presentClass].append(object)
-    for attributeName in [name for name in dir(object) if not name.startswith('_') and not name == 'metadata']:
+    for attributeName in [name for name in dir(object) if not name.startswith(Constant.UNDERSCORE) and not name == 'metadata']:
         attributeValue = object.__getattribute__(attributeName)
         if classTree[presentClass].count(object) > 1 :
             attributeSet[attributeName] = None
@@ -108,24 +111,26 @@ def jsonifyIt(object, fieldsToExpand = [EXPAND_ALL_FIELDS]) :
     return jsonCompleted.replace('}, null]','}]').replace('[null]','[]')
 
 @Method
-def instanciateIt(objectClass) :
+def instanciateItWithNoArgsConstructor(objectClass) :
     args = []
+    objectInstance = None
     for ammountOfVariables in range(60) :
         try :
             objectInstance = objectClass(*args)
             break
-        except Exception as exception :
+        except :
             args.append(None)
-        raise Exception(f'Not possible to instanciate {objectClass} class. Cause: {str(exception)}')
+    if not objectInstance :
+        raise Exception(f'Not possible to instanciate {objectClass} class in instanciateItWithNoArgsConstructor() method')
     return objectInstance
 
 @Method
 def getAttributeNameList(objectClass) :
-    object = instanciateIt(objectClass)
+    object = instanciateItWithNoArgsConstructor(objectClass)
     return [
         objectAttributeName
         for objectAttributeName in dir(object)
-        if (not objectAttributeName.startswith('__') and not objectAttributeName.startswith('_'))
+        if (not objectAttributeName.startswith(f'{2 * Constant.UNDERSCORE}') and not objectAttributeName.startswith(Constant.UNDERSCORE))
     ]
 
 def isDictionary(thing) :
@@ -137,16 +142,22 @@ def isList(thing) :
 
 @Method
 def getClassRole(objectClass) :
-    if DTO_SUFIX == objectClass.__name__[-3:] :
+    if DTO_SUFIX == objectClass.__name__[-len(DTO_SUFIX):] :
+        for mesoSufix in MESO_SUFIX_LIST :
+            if mesoSufix == objectClass.__name__[-len(mesoSufix):-len(DTO_SUFIX)] :
+                return f'{mesoSufix}{Constant.UNDERSCORE}{DTO_SUFIX}'
         return DTO_CLASS_ROLE
     return MODEL_CLASS_ROLE
 
 @Method
 def getResourceName(key, classRole) :
-    capitalizedKey = f'{key[0].upper()}{key[1:]}'
-    if DTO_CLASS_ROLE == classRole :
-        return f'{capitalizedKey}{DTO_SUFIX}'
-    return capitalizedKey
+    resourceName = f'{key[0].upper()}{key[1:]}'
+    if DTO_CLASS_ROLE in classRole :
+        sufixResourceNameList = classRole.lower().split(Constant.UNDERSCORE)
+        for sufix in sufixResourceNameList :
+            resourceName += f'{sufix[0].upper()}{sufix[1:]}'
+        return resourceName
+    return resourceName
 
 @Method
 def resolveValue(value, key, classRole) :
@@ -165,9 +176,11 @@ def resolveValue(value, key, classRole) :
 
 @Method
 def convertFromJsonToObject(fromJson,toObjectClass) :
-    classRole = getClassRole(toObjectClass)
-    attributeNameList = getAttributeNameList(toObjectClass)
 
+    ###- bug detected
+
+    attributeNameList = getAttributeNameList(toObjectClass)
+    classRole = getClassRole(toObjectClass)
     # print(f'        attributeNameList = {attributeNameList}')
 
     fromJsonToDictionary = {}
@@ -179,7 +192,22 @@ def convertFromJsonToObject(fromJson,toObjectClass) :
         # if jsonAttributeValue :
         #     setattr(fromObject, attributeName, jsonAttributeValue)
     # print(f'        fromJsonToDictionary = {fromJsonToDictionary}')
-    return toObjectClass(**fromJsonToDictionary)
+    args = []
+    kwargs = fromJsonToDictionary.copy()
+    # print(f'fromJsonToDictionary = {fromJsonToDictionary}')
+    for key,value in fromJsonToDictionary.items() :
+        try :
+            toObjectClass(*args,**kwargs)
+        except :
+            newValue = kwargs.copy()[key]
+            args.append(newValue)
+            del kwargs[key]
+        # print(f'args = {args}, kwargs = {kwargs}')
+    objectInstance = toObjectClass(*args,**kwargs)
+    if not objectInstance :
+        raise Exception(f'Not possible to instanciate {toObjectClass.__name__} class in convertFromJsonToObject() method')
+    return objectInstance
+    # return toObjectClass(**fromJsonToDictionary)
 
 @Method
 def convertFromObjectToObject(fromObject,toObjectClass) :

@@ -1,24 +1,29 @@
 from FlaskHelper import Controller, ControllerMethod
-import SkillDto
+import SkillDto, SkillPostDto
+import HttpStatus
 
 @Controller(url = '/skills')
 class SkillController:
 
-    @ControllerMethod(url = '/<key>/<label>')
-    def get(self, key=None, label=None):
-        return self.service.skill.findByKey(key), 200
+    @ControllerMethod(requestClass = SkillPostDto.SkillPostDto)
+    def post(self,dto):
+        return self.service.skill.create(dto), HttpStatus.CREATED
 
-    @ControllerMethod(bodyRequestClass = SkillDto.SkillDto)
-    def post(self,skillRequestDto):
-        skillResponseDto = self.service.skill.create(skillRequestDto)
-        if skillResponseDto :
-            return skillResponseDto, 201
-        else :
-            return {'description' : 'Something bad happened. Please, try again later'}, 500
+    @ControllerMethod(url = '/<key>')
+    def get(self, key=None):
+        return self.service.skill.findByKey(key), HttpStatus.OK
+
+    @ControllerMethod(url = '/<key>', requestClass = SkillDto.SkillDto)
+    def put(self,dto,key):
+        return self.service.skill.create(dto), HttpStatus.ACCEPTED
+
+    @ControllerMethod(url = '/<key>')
+    def delete(self,key):
+        return self.service.skill.create(key), HttpStatus.NO_CONTENT
 
 @Controller(url = '/skills/batch')
-class SkillsController:
+class SkillBatchController:
 
     @ControllerMethod()
     def get(self):
-        return self.service.skill.findAll(), 200
+        return self.service.skill.findAll(), HttpStatus.OK

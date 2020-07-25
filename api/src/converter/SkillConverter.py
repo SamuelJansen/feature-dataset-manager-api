@@ -4,10 +4,10 @@ import Skill, SkillDto
 @Converter()
 class SkillConverter:
 
-    @ConverterMethod(objectClass = Skill.Skill)
+    @ConverterMethod(responseClass=Skill.Skill)
     def convertFromDtoToModel(self, dto, model) :
         return model
 
-    @ConverterMethod(objectClass = SkillDto.SkillDto)
+    @ConverterMethod(responseClass=SkillDto.SkillDto)
     def convertFromModelToDto(self, model, dto) :
         return dto

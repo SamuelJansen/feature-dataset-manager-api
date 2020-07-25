@@ -4,4 +4,7 @@ Model = getNewModel()
 
 SKILL = 'Skill'
 OWNER = 'Owner'
-skillToOwnerAssociation = getManyToMany(SKILL, OWNER, Model)
+SKILL_DATA = 'SkillData'
+OWNER_DATA = 'OwnerData'
+
+HTTP_ERROR_LOG = 'ErrorLog'

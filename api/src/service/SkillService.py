@@ -1,5 +1,5 @@
-from FlaskHelper import Service
-import Skill
+from FlaskHelper import Service, ServiceMethod
+import Skill, SkillPostDto, GlobalException, HttpStatus
 
 @Service()
 class SkillService:
@@ -10,9 +10,11 @@ class SkillService:
     def findByKey(self,key):
         return self.repository.skill.findByKey(key)
 
-    def create(self,skillRequestDto):
-        if self.repository.skill.notExistsByKey(skillRequestDto.key) :
-            newSkill = self.converter.skill.convertFromDtoToModel(skillRequestDto)
+    @ServiceMethod(requestClass=[SkillPostDto.SkillPostDto])
+    def create(self,requestDto):
+        self.validator.skill.validadeSkillRequestDto(requestDto)
+        if self.repository.skill.notExistsByKey(requestDto.key) :
+            newSkill = self.mapper.skill.mapFromPostDtoToModel(requestDto)
             skill = self.repository.skill.save(newSkill)
             return self.converter.skill.convertFromModelToDto(skill)
-        self.abort(400, description='Skill already exists')
+        raise GlobalException.GlobalException(message='Skill already exists', status=HttpStatus.BAD_REQUEST)
