@@ -192,6 +192,10 @@ class SqlAlchemyHelper:
         self.model.metadata.create_all(self.engine)
 
     @Method
+    def commit(self):
+        self.session.commit()
+
+    @Method
     def saveNewAndCommit(self,*args):
         model = args[-1]
         return self.saveAndCommit(model(*args[:-1]))
@@ -247,8 +251,15 @@ class SqlAlchemyHelper:
 
     @Method
     def findAllByQueryAndCommit(self,query,model):
+        objectList = []
         if query :
             objectList = self.session.query(model).filter_by(**query).all()
-            self.session.commit()
-            return objectList
-        return []
+        self.session.commit()
+        return objectList
+
+    @Method
+    def deleteByKeyAndCommit(self,key,model):
+        if self.session.query(exists().where(model.key == key)).one()[0] :
+            object = self.session.query(model).filter(model.key == key).first()
+            self.session.delete(object)
+        self.session.commit()

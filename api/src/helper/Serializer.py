@@ -18,42 +18,52 @@ MODEL_CLASS_ROLE = 'MODEL'
 DTO_SUFIX = 'Dto'
 LIST_SUFIX = 'List'
 
-POST_VERB = 'Post'
-PUT_VERB = 'Put'
-GET_VERB = 'GET'
-DELETE_VERB = 'Delete'
+KW_BATCH = 'Batch'
 
-CREATE_ACTION = 'Create'
-UPDATE_ACTION = 'Update'
-QUERY_ACTION = 'Query'
-DELETE_ACTION = 'Delete'
+KW_REQUEST = 'Request'
+KW_RESPONSE = 'Response'
+
+KW_POST_VERB = 'Post'
+KW_PUT_VERB = 'Put'
+KW_GET_VERB = 'GET'
+KW_DELETE_VERB = 'Delete'
+
+KW_CREATE_ACTION = 'Create'
+KW_UPDATE_ACTION = 'Update'
+KW_QUERY_ACTION = 'Query'
+KW_DELETE_ACTION = 'Delete'
 
 MESO_SUFIX_LIST = [
-    POST_VERB,
-    PUT_VERB,
-    GET_VERB,
-    DELETE_VERB,
-    CREATE_ACTION,
-    UPDATE_ACTION,
-    QUERY_ACTION,
-    DELETE_ACTION
+
+    KW_POST_VERB,
+    KW_PUT_VERB,
+    KW_GET_VERB,
+    KW_DELETE_VERB,
+
+    KW_CREATE_ACTION,
+    KW_UPDATE_ACTION,
+    KW_QUERY_ACTION,
+    KW_DELETE_ACTION,
+
+    KW_REQUEST,
+    KW_RESPONSE
 ]
 
 
 @Method
-def importResource(resourceName, resourceFileName = None) :
+def importResource(resourceName, resourceModuleName=None) :
     if not resourceName in IGNORE_REOURCE_LIST :
         resource = None
-        if not resourceFileName :
-            resourceFileName = resourceName
+        if not resourceModuleName :
+            resourceModuleName = resourceName
         try :
-            module = __import__(resourceFileName)
+            module = __import__(resourceModuleName)
         except :
-            module = importlib.import_module(resourceFileName)
+            module = importlib.import_module(resourceModuleName)
         try :
             resource = getattr(module, resourceName)
         except Exception as exception :
-            log.warning(importResource, f'Not possible to import {resourceName} from {resourceFileName}. cause: {str(exception)}')
+            log.warning(importResource, f'Not possible to import {resourceName} from {resourceModuleName}. cause: {str(exception)}')
         return resource
 
 @Method
@@ -83,7 +93,7 @@ def getAttributeSet(object, fieldsToExpand, classTree, verifiedClassList) :
     return attributeSet
 
 @Method
-def getJsonifier(revisitingItself = False, fieldsToExpand = [EXPAND_ALL_FIELDS], classTree = None, verifiedClassList = None):
+def getJsonifier(revisitingItself=False, fieldsToExpand=[EXPAND_ALL_FIELDS], classTree=None, verifiedClassList=None):
     visitedObjectList = []
     class SqlAlchemyJsonifier(json.JSONEncoder):
         def default(self, object):
@@ -106,8 +116,8 @@ def getJsonifier(revisitingItself = False, fieldsToExpand = [EXPAND_ALL_FIELDS],
     return SqlAlchemyJsonifier
 
 @Method
-def jsonifyIt(object, fieldsToExpand = [EXPAND_ALL_FIELDS]) :
-    jsonCompleted = json.dumps(object, cls = getJsonifier(classTree = {}, verifiedClassList = []), check_circular = False)
+def jsonifyIt(object, fieldsToExpand=[EXPAND_ALL_FIELDS]) :
+    jsonCompleted = json.dumps(object, cls=getJsonifier(classTree={}, verifiedClassList=[]), check_circular = False)
     return jsonCompleted.replace('}, null]','}]').replace('[null]','[]')
 
 @Method
@@ -149,22 +159,36 @@ def getClassRole(objectClass) :
         return DTO_CLASS_ROLE
     return MODEL_CLASS_ROLE
 
+def getListRemovedFromKey(key) :
+    return key.replace(LIST_SUFIX, Constant.NOTHING)
+
 @Method
 def getResourceName(key, classRole) :
+    key = getListRemovedFromKey(key)
     resourceName = f'{key[0].upper()}{key[1:]}'
     if DTO_CLASS_ROLE in classRole :
         sufixResourceNameList = classRole.lower().split(Constant.UNDERSCORE)
         for sufix in sufixResourceNameList :
-            resourceName += f'{sufix[0].upper()}{sufix[1:]}'
-        return resourceName
+            if sufix :
+                resourceName += f'{sufix[0].upper()}{sufix[1:]}'
     return resourceName
+
+@Method
+def getResourceModuleName(key, classRole) :
+    key = getListRemovedFromKey(key)
+    resourceModuleName = f'{key[0].upper()}{key[1:]}'
+    if DTO_CLASS_ROLE in classRole :
+        resourceModuleName += DTO_SUFIX
+    return resourceModuleName
 
 @Method
 def resolveValue(value, key, classRole) :
     # print(f'        isList({value}) = {isList(value)}')
     if isList(value) :
         if LIST_SUFIX == key[-4:] :
-            keyClass = importResource(getResourceName(key[:-4], classRole))
+            resourceName = getResourceName(key, classRole)
+            resourceModuleName = getResourceModuleName(key, classRole)
+            keyClass = importResource(resourceName, resourceModuleName=resourceModuleName)
             # print(f'                keyClass = {keyClass.__name__}')
             convertedValue = []
             for jsonItem in value :
@@ -175,7 +199,7 @@ def resolveValue(value, key, classRole) :
     return value
 
 @Method
-def convertFromJsonToObject(fromJson,toObjectClass) :
+def convertFromJsonToObject(fromJson, toObjectClass) :
 
     ###- bug detected
 
@@ -210,7 +234,7 @@ def convertFromJsonToObject(fromJson,toObjectClass) :
     # return toObjectClass(**fromJsonToDictionary)
 
 @Method
-def convertFromObjectToObject(fromObject,toObjectClass) :
+def convertFromObjectToObject(fromObject, toObjectClass) :
     fromJson = json.loads(jsonifyIt(fromObject))
     # print(f'        fromJson = {fromJson}')
     return convertFromJsonToObject(fromJson,toObjectClass)

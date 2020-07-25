@@ -292,12 +292,13 @@ def ControllerMethod(url=None, requestClass=None, contentType=DEFAULT_CONTENT_TY
         def innerResourceInstanceMethod(*args,**kwargs) :
             self = args[0]
             try :
-                if resourceInstanceMethod.__name__ == KW_POST and requestClass :
+                if resourceInstanceMethod.__name__ == KW_POST or resourceInstanceMethod.__name__ == KW_PUT and requestClass :
                     bodyJson = request.get_json()
                     dto = None if not bodyJson else Serializer.convertFromJsonToObject(bodyJson,requestClass)
                     args = appendedItInArgsAndReturnArgs(dto, args)
                 completeResponse = resourceInstanceMethod(self,*args[1:],**kwargs)
             except Exception as exception :
+                log.error(self.__class__, f'Failed to excecute {resourceInstanceMethod.__name__} method', exception)
 
                 # request.method:              GET
                 # request.url:                 http://127.0.0.1:5000/alert/dingding/test?x=y
@@ -314,16 +315,16 @@ def ControllerMethod(url=None, requestClass=None, contentType=DEFAULT_CONTENT_TY
                 # request.args:                ImmutableMultiDict([('x', 'y')])
                 # request.args.get('x'):       y
 
-                log.error(self.__class__, f'Failed to excecute {resourceInstanceMethod.__name__} method', exception)
 
                 if not GlobalException.GlobalException.__name__ == exception.__class__.__name__ :
                     exception = GlobalException.GlobalException()
                 try :
                     httpErrorLog = ErrorLog.ErrorLog()
                     httpErrorLog.override(exception)
-                    getApi().repository.saveAndCommit(httpErrorLog)
-                except Exception as httpErrorLogException :
-                    log.error(self.__class__, f'Failed to persist {ErrorLog.ErrorLog.__name__}', httpErrorLogException)
+                    api = getApi()
+                    api.repository.saveAndCommit(httpErrorLog)
+                except Exception as errorLogException :
+                    log.error(self.__class__, f'Failed to persist {ErrorLog.ErrorLog.__name__}', errorLogException)
                 completeResponse = [{'message':exception.message, 'url':exception.url},exception.status]
                 log.error(self.__class__, f'Error processing {resourceInstanceMethod.__name__} request', exception)
             controllerResponse = completeResponse[0]
@@ -333,6 +334,22 @@ def ControllerMethod(url=None, requestClass=None, contentType=DEFAULT_CONTENT_TY
         innerResourceInstanceMethod.url = controllerMethodUrl
         return innerResourceInstanceMethod
     return innerMethodWrapper
+
+@Method
+def validateArgs(args,requestClass,method) :
+    if requestClass :
+        self = args[0]
+        if type(requestClass).__name__ == Constant.LIST :
+            for index in range(len(requestClass)) :
+                expecteObjectClass = requestClass[index]
+                objectRequest = args[index + 1]
+                if not expecteObjectClass.__name__ == objectRequest.__class__.__name__ :
+                    raise GlobalException.GlobalException(logMessage = f'Invalid args. {self.__class__.__name__}.{method.__name__} call got an unnexpected object request: {objectRequest}. It should be {expecteObjectClass.__name__}')
+        else :
+            expecteObjectClass = requestClass
+            objectRequest = args[1]
+            if not requestClass.__name__ == objectRequest.__class__.__name__ :
+                raise GlobalException.GlobalException(logMessage = f'Invalid args. {self.__class__.__name__}.{method.__name__} call got an unnexpected object request: {objectRequest}. It should be {expecteObjectClass.__name__}')
 
 @Method
 def Service() :
@@ -359,19 +376,7 @@ def ServiceMethod(requestClass=None):
         noException = None
         log.wraper(ServiceMethod,f'''{resourceInstanceMethod.__name__}''',noException)
         def innerResourceInstanceMethod(*args,**kwargs) :
-            self = args[0]
-            if requestClass :
-                if type(requestClass).__name__ == Constant.LIST :
-                    for index in range(len(requestClass)) :
-                        expecteObjectClass = requestClass[index]
-                        objectRequest = args[index + 1]
-                        if not requestClass[index].__name__ == objectRequest.__class__.__name__ :
-                            raise GlobalException.GlobalException(logMessage = f'Invalid service args. {self.__class__.__name__}.{innerResourceInstanceMethod.__name__} call got an unnexpected object request: {objectRequest}. It should be {expecteObjectClass.__name__}')
-                else :
-                    expecteObjectClass = requestClass
-                    objectRequest = args[1]
-                    if not requestClass.__name__ == objectRequest.__class__.__name__ :
-                        raise GlobalException.GlobalException(logMessage = f'Invalid service args. {self.__class__.__name__}.{innerResourceInstanceMethod.__name__} call got an unnexpected object request: {objectRequest}. It should be {expecteObjectClass.__name__}')
+            validateArgs(args,requestClass,innerResourceInstanceMethod)
             return resourceInstanceMethod(*args,**kwargs)
         overrideSignatures(innerResourceInstanceMethod, resourceInstanceMethod)
         return innerResourceInstanceMethod
@@ -414,15 +419,27 @@ def ValidatorMethod(requestClass=None, message=None, logMessage=None, responseCl
         noException = None
         log.wraper(ValidatorMethod,f'''{resourceInstanceMethod.__name__}''',noException)
         def innerResourceInstanceMethod(*args,**kwargs) :
-            self = args[0]
-            if requestClass :
-                objectRequest = args[1]
-                if not requestClass.__name__ == objectRequest.__class__.__name__ :
-                    raise GlobalException.GlobalException(
-                        message = message if message else None,
-                        logMessage = logMessage if logMessage else f"Validator error. {self.__class__.__name__}.{innerResourceInstanceMethod.__name__} call got an unnexpected object request: {objectRequest}",
-                        status = HttpStatus.BAD_REQUEST if message else None)
-                return resourceInstanceMethod(self,objectRequest,*args[2:],**kwargs)
+            validateArgs(args,requestClass,innerResourceInstanceMethod)
+            # self = args[0]
+            # if requestClass :
+            #     objectRequest = args[1]
+            #     if type(requestClass).__name__ == Constant.LIST :
+            #         for index in range(len(requestClass)) :
+            #             expecteObjectClass = requestClass[index]
+            #             objectRequest = args[index + 1]
+            #             if not requestClass[index].__name__ == objectRequest.__class__.__name__ :
+            #                 raise GlobalException.GlobalException(logMessage = f'Invalid args. {self.__class__.__name__}.{innerResourceInstanceMethod.__name__} call got an unnexpected object request: {objectRequest}. It should be {expecteObjectClass.__name__}')
+            #     else :
+            #         expecteObjectClass = requestClass
+            #         objectRequest = args[1]
+            #         if not requestClass.__name__ == objectRequest.__class__.__name__ :
+            #             raise GlobalException.GlobalException(logMessage = f'Invalid args. {self.__class__.__name__}.{innerResourceInstanceMethod.__name__} call got an unnexpected object request: {objectRequest}. It should be {expecteObjectClass.__name__}')
+            #     # if not requestClass.__name__ == objectRequest.__class__.__name__ :
+            #     #     raise GlobalException.GlobalException(
+            #     #         message = message if message else None,
+            #     #         logMessage = logMessage if logMessage else f"Validator error. {self.__class__.__name__}.{innerResourceInstanceMethod.__name__} call got an unnexpected object request: {objectRequest}",
+            #     #         status = HttpStatus.BAD_REQUEST if message else None)
+                # return resourceInstanceMethod(self,objectRequest,*args[2:],**kwargs)
             return resourceInstanceMethod(*args,**kwargs)
         overrideSignatures(innerResourceInstanceMethod, resourceInstanceMethod)
         return innerResourceInstanceMethod
@@ -453,29 +470,15 @@ def MapperMethod(requestClass=None, responseClass=None) :
         noException = None
         log.wraper(MapperMethod,f'''{resourceInstanceMethod.__name__}''',noException)
         def innerResourceInstanceMethod(*args,**kwargs) :
-            self = args[0]
-            if requestClass :
-                if type(requestClass).__name__ == Constant.LIST :
-                    for index in range(len(requestClass)) :
-                        expecteObjectClass = requestClass[index]
-                        objectRequest = args[index + 1]
-                        if not requestClass[index].__name__ == objectRequest.__class__.__name__ :
-                            raise GlobalException.GlobalException(logMessage = f'Invalid service args. {self.__class__.__name__}.{innerResourceInstanceMethod.__name__} call got an unnexpected object request: {objectRequest}. It should be {expecteObjectClass.__name__}')
-                else :
-                    expecteObjectClass = requestClass
-                    objectRequest = args[1]
-                    if not requestClass.__name__ == objectRequest.__class__.__name__ :
-                        raise GlobalException.GlobalException(logMessage = f'Invalid service args. {self.__class__.__name__}.{innerResourceInstanceMethod.__name__} call got an unnexpected object request: {objectRequest}. It should be {expecteObjectClass.__name__}')
+            validateArgs(args,requestClass,innerResourceInstanceMethod)
             if responseClass :
                 objectRequest = args[1]
                 model = Serializer.convertFromObjectToObject(objectRequest,responseClass)
                 args = appendedItInArgsAndReturnArgs(model, args)
-                return resourceInstanceMethod(self,objectRequest,*args[2:],**kwargs)
             return resourceInstanceMethod(*args,**kwargs)
         overrideSignatures(innerResourceInstanceMethod, resourceInstanceMethod)
         return innerResourceInstanceMethod
     return innerMethodWrapper
-
 
 @Method
 def Helper() :
@@ -513,12 +516,12 @@ def ConverterMethod(requestClass=None, responseClass=None) :
         noException = None
         log.wraper(ConverterMethod,f'''{resourceInstanceMethod.__name__}''',noException)
         def innerResourceInstanceMethod(*args,**kwargs) :
+            validateArgs(args,requestClass,innerResourceInstanceMethod)
             if responseClass :
                 self = args[0]
                 objectRequest = args[1]
                 model = Serializer.convertFromObjectToObject(objectRequest,responseClass)
                 args = appendedItInArgsAndReturnArgs(model, args)
-                return resourceInstanceMethod(self,objectRequest,*args[2:],**kwargs)
             return resourceInstanceMethod(*args,**kwargs)
         overrideSignatures(innerResourceInstanceMethod, resourceInstanceMethod)
         return innerResourceInstanceMethod

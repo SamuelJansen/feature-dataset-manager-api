@@ -16,6 +16,7 @@ class GlobalException(Exception):
         self.timeStamp = datetime.datetime.now()
         self.message = message if message else DEFAULT_MESSAGE
         self.status = status if status else DEFAULT_STATUS
+        self.verb = request.method
         self.url = request.url
         self.logMessage = logMessage if logMessage else DEFAULT_LOG_MESSAGE
         self.logPayload = self.getRequestBody()

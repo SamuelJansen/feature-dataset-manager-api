@@ -1,4 +1,6 @@
-from python_helper import log
+from python_helper import log, Constant
+
+DOT_SPACE_CAUSE = f'{Constant.DOT_SPACE}{Constant.LOG_CAUSE}'
 
 def Method(method,*args,**kwargs) :
     def wrapedMethod(*args,**kwargs) :
@@ -18,6 +20,6 @@ def Method(method,*args,**kwargs) :
             except :
                 methodName = ''
             log.wraper(Method,f'''failed to execute{className}{methodName} method''',exception)
-            raise Exception('Failed to return api from "globals" instance')
+            raise Exception(f'{className}{methodName} method error{DOT_SPACE_CAUSE}{str(exception)}')
         return methodReturn
     return wrapedMethod

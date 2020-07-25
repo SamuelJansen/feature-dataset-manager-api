@@ -8,6 +8,6 @@ class SkillConverter:
     def convertFromDtoToModel(self, dto, model) :
         return model
 
-    @ConverterMethod(responseClass=SkillDto.SkillDto)
-    def convertFromModelToDto(self, model, dto) :
+    @ConverterMethod(responseClass=SkillDto.SkillResponseDto)
+    def convertFromModelToResponseDto(self, model, dto) :
         return dto

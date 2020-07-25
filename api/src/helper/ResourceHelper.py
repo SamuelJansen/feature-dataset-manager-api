@@ -2,17 +2,19 @@ from python_helper import Constant
 import FlaskHelper, Serializer
 from MethodWrapper import Method
 
+DOT_PY = '.py'
+
 @Method
 def getResourceName(resourceFileName) :
-    return resourceFileName.split('.py')[0]
+    return resourceFileName.split(DOT_PY)[0]
 
 @Method
 def isResourceType(resourceFileName,resourceType) :
     splitedResourceFileName = resourceFileName.split(resourceType)
-    return len(splitedResourceFileName)>1 and splitedResourceFileName[1] == '.py'
+    return len(splitedResourceFileName)>1 and splitedResourceFileName[1] == DOT_PY
 
 @Method
-def getResourceNameList(apiTree,resourceType) :
+def getResourceNameList(apiTree, resourceType) :
     resourceNameList = []
     if apiTree or type(apiTree).__name__ == Constant.DICT :
         for package,subPackageTree in apiTree.items() :
@@ -28,7 +30,7 @@ def getResourceNameList(apiTree,resourceType) :
 def getControllerNameList(controllerName) :
     # return getAttributeNameList(__import__(resourceFileName))
     controllerNameList = [controllerName]
-    controllerNameList.append(f'{controllerName[:-len(FlaskHelper.KW_CONTROLLER_RESOURCE)]}Batch{FlaskHelper.KW_CONTROLLER_RESOURCE}')
+    controllerNameList.append(f'{controllerName[:-len(FlaskHelper.KW_CONTROLLER_RESOURCE)]}{Serializer.KW_BATCH}{FlaskHelper.KW_CONTROLLER_RESOURCE}')
     return controllerNameList
 
 @Method
@@ -36,13 +38,13 @@ def getControllerList(resourceName):
     controllerNameList = getControllerNameList(resourceName)
     importedControllerList = []
     for controllerName in controllerNameList :
-        resource = Serializer.importResource(controllerName, resourceFileName = resourceName)
+        resource = Serializer.importResource(controllerName, resourceModuleName=resourceName)
         if resource :
             importedControllerList.append(resource)
     return importedControllerList
 
 @Method
-def getResourceList(apiInstance,resourceType) :
+def getResourceList(apiInstance, resourceType) :
     resourceNameList = getResourceNameList(
         apiInstance.globals.apiTree[apiInstance.globals.apiPackage],
         resourceType
@@ -58,7 +60,7 @@ def getResourceList(apiInstance,resourceType) :
     return resourceList
 
 @Method
-def initializeResources(api, refferenceModel, localStorageName = None) :
+def initializeResources(api, refferenceModel, localStorageName=None) :
     FlaskHelper.addGlobalsTo(api)
     args = [api]
     for kwResource in FlaskHelper.KW_RESOURCE_LIST :
