@@ -1,0 +1,30 @@
+from FlaskHelper import Controller, ControllerMethod
+import FeatureDto
+import HttpStatus
+
+@Controller(url = '/features')
+class FeatureController:
+
+    @ControllerMethod(url='/', requestClass=FeatureDto.FeaturePostRequestDto)
+    def post(self,dto):
+        return self.service.feature.create(dto), HttpStatus.CREATED
+
+    @ControllerMethod(url='/<key>')
+    def get(self, key=None):
+        return self.service.feature.queryByKey(key), HttpStatus.OK
+
+    @ControllerMethod(url='/<key>', requestClass=FeatureDto.FeatureRequestDto)
+    def put(self,dto,key):
+        return self.service.feature.update(dto, key), HttpStatus.ACCEPTED
+
+    @ControllerMethod(url='/<key>')
+    def delete(self,key):
+        return self.service.feature.delete(key), HttpStatus.NO_CONTENT
+
+
+@Controller(url = '/features/batch')
+class FeatureBatchController:
+
+    @ControllerMethod()
+    def get(self):
+        return self.service.feature.queryAll(), HttpStatus.OK

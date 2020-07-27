@@ -25,7 +25,7 @@ KW_RESPONSE = 'Response'
 
 KW_POST_VERB = 'Post'
 KW_PUT_VERB = 'Put'
-KW_GET_VERB = 'GET'
+KW_GET_VERB = 'Get'
 KW_DELETE_VERB = 'Delete'
 
 KW_CREATE_ACTION = 'Create'
@@ -34,6 +34,8 @@ KW_QUERY_ACTION = 'Query'
 KW_DELETE_ACTION = 'Delete'
 
 MESO_SUFIX_LIST = [
+    KW_REQUEST,
+    KW_RESPONSE,
 
     KW_POST_VERB,
     KW_PUT_VERB,
@@ -43,10 +45,7 @@ MESO_SUFIX_LIST = [
     KW_CREATE_ACTION,
     KW_UPDATE_ACTION,
     KW_QUERY_ACTION,
-    KW_DELETE_ACTION,
-
-    KW_REQUEST,
-    KW_RESPONSE
+    KW_DELETE_ACTION
 ]
 
 
@@ -153,10 +152,15 @@ def isList(thing) :
 @Method
 def getClassRole(objectClass) :
     if DTO_SUFIX == objectClass.__name__[-len(DTO_SUFIX):] :
+        sufixList = [str(DTO_CLASS_ROLE)]
+        concatenatedSufix = str(DTO_SUFIX)
+        # print(f'        objectClass.__name__ = {objectClass.__name__}')
         for mesoSufix in MESO_SUFIX_LIST :
-            if mesoSufix == objectClass.__name__[-len(mesoSufix):-len(DTO_SUFIX)] :
-                return f'{mesoSufix}{Constant.UNDERSCORE}{DTO_SUFIX}'
-        return DTO_CLASS_ROLE
+            # print(f'            mesoSufix = {mesoSufix}')
+            if mesoSufix == objectClass.__name__[-(len(mesoSufix)+len(concatenatedSufix)):-len(concatenatedSufix)] :
+                concatenatedSufix += mesoSufix
+                sufixList = [mesoSufix.upper()] + sufixList
+        return Constant.UNDERSCORE.join(sufixList)
     return MODEL_CLASS_ROLE
 
 def getListRemovedFromKey(key) :
@@ -164,8 +168,8 @@ def getListRemovedFromKey(key) :
 
 @Method
 def getResourceName(key, classRole) :
-    key = getListRemovedFromKey(key)
-    resourceName = f'{key[0].upper()}{key[1:]}'
+    filteredKey = getListRemovedFromKey(key)
+    resourceName = f'{filteredKey[0].upper()}{filteredKey[1:]}'
     if DTO_CLASS_ROLE in classRole :
         sufixResourceNameList = classRole.lower().split(Constant.UNDERSCORE)
         for sufix in sufixResourceNameList :
@@ -175,8 +179,8 @@ def getResourceName(key, classRole) :
 
 @Method
 def getResourceModuleName(key, classRole) :
-    key = getListRemovedFromKey(key)
-    resourceModuleName = f'{key[0].upper()}{key[1:]}'
+    filteredKey = getListRemovedFromKey(key)
+    resourceModuleName = f'{filteredKey[0].upper()}{filteredKey[1:]}'
     if DTO_CLASS_ROLE in classRole :
         resourceModuleName += DTO_SUFIX
     return resourceModuleName
@@ -205,6 +209,8 @@ def convertFromJsonToObject(fromJson, toObjectClass) :
 
     attributeNameList = getAttributeNameList(toObjectClass)
     classRole = getClassRole(toObjectClass)
+    # print(f'        classRole = {classRole}')
+
     # print(f'        attributeNameList = {attributeNameList}')
 
     fromJsonToDictionary = {}

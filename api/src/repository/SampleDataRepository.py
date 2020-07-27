@@ -1,8 +1,8 @@
 from FlaskHelper import Repository
-import OwnerData
+import SampleData
 
-@Repository(model = OwnerData.OwnerData)
-class OwnerDataRepository:
+@Repository(model = SampleData.SampleData)
+class SampleDataRepository:
 
     def findAll(self) :
         return self.repository.findAllAndCommit(self.model)

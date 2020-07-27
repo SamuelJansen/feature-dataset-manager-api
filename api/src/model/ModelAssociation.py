@@ -2,9 +2,9 @@ from SqlAlchemyHelper import *
 
 Model = getNewModel()
 
-SKILL = 'Skill'
-OWNER = 'Owner'
-SKILL_DATA = 'SkillData'
-OWNER_DATA = 'OwnerData'
+FEATURE = 'Feature'
+SAMPLE = 'Sample'
+FEATURE_DATA = 'FeatureData'
+SAMPLE_DATA = 'SampleData'
 
 HTTP_ERROR_LOG = 'ErrorLog'

@@ -1,8 +1,8 @@
 from FlaskHelper import Repository
-import Skill
+import Feature
 
-@Repository(model = Skill.Skill)
-class SkillRepository:
+@Repository(model = Feature.Feature)
+class FeatureRepository:
 
     def findAll(self) :
         return self.repository.findAllAndCommit(self.model)
@@ -22,3 +22,8 @@ class SkillRepository:
 
     def deleteByKey(self,key):
         self.repository.deleteByKeyAndCommit(key,self.model)
+
+    def findAllByFeatureKeyIn(self,featureKeyList) :
+        featureList = self.repository.session.query(self.model).filter(self.model.key.in_(featureKeyList)).all()
+        self.repository.session.commit()
+        return featureList

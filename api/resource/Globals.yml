@@ -1,7 +1,7 @@
 Globals:
     print-status: True
     api:
-        name: SkillManager
+        name: FeatureManager
         extension: yml
         dependency:
             update: False

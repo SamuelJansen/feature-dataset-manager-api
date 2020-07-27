@@ -9,8 +9,8 @@ DEFAULT_LOG_MESSAGE = Constant.NOTHING
 
 class GlobalException(Exception):
     def __init__(self,
-        message = None,
         status = None,
+        message = None,
         logMessage = None
     ):
         self.timeStamp = datetime.datetime.now()
@@ -35,3 +35,7 @@ class GlobalException(Exception):
             except :
                 requestBody = {}
         return requestBody
+
+def validateArgs(self, method, objectRequest, expecteObjectClass):
+    if not expecteObjectClass.__name__ == objectRequest.__class__.__name__ :
+        raise GlobalException(logMessage = f'Invalid args. {self.__class__.__name__}.{method.__name__} call got an unnexpected object request: {objectRequest}. It should be {expecteObjectClass.__name__}')

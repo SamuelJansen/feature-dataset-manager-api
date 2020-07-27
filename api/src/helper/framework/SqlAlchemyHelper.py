@@ -54,8 +54,8 @@ def attributeIt(modelName) :
 
 @Method
 def getManyToMany(sisters, brothers, refferenceModel) :
-    # skillList = relationship(SKILL, secondary=skillToOwnerAssociation, back_populates=attributeIt(f'{__tablename__}{LIST}'))
-    # ownerList = relationship(OWNER, secondary=skillToOwnerAssociation, back_populates=attributeIt(f'{__tablename__}{LIST}'))
+    # featureList = relationship(FEATURE, secondary=featureToSampleAssociation, back_populates=attributeIt(f'{__tablename__}{LIST}'))
+    # sampleList = relationship(SAMPLE, secondary=featureToSampleAssociation, back_populates=attributeIt(f'{__tablename__}{LIST}'))
     manySonToManyFather = Table(f'{sisters}{MANY_TO_MANY}{brothers}', refferenceModel.metadata,
         Column(f'{attributeIt(sisters)}{ID}', Integer, ForeignKey(f'{sisters}.{ID.lower()}')),
         Column(f'{attributeIt(brothers)}{ID}', Integer, ForeignKey(f'{brothers}.{ID.lower()}')))
@@ -66,18 +66,18 @@ def getManyToMany(sisters, brothers, refferenceModel) :
     return fatherList, manySonToManyFather, sonList
 
 @Method
-def getOneToMany(owner, pet, refferenceModel) :
-    return relationship(pet, back_populates=attributeIt(f'{owner}'))
+def getOneToMany(sample, pet, refferenceModel) :
+    return relationship(pet, back_populates=attributeIt(f'{sample}'))
 
 @Method
-def getManyToOne(pet, owner, refferenceModel) :
-    ownerId = Column(Integer(), ForeignKey(f'{owner}.{ID.lower()}'))
-    owner = relationship(owner, back_populates=attributeIt(f'{pet}{LIST}'))
-    return owner, ownerId
+def getManyToOne(pet, sample, refferenceModel) :
+    sampleId = Column(Integer(), ForeignKey(f'{sample}.{ID.lower()}'))
+    sample = relationship(sample, back_populates=attributeIt(f'{pet}{LIST}'))
+    return sample, sampleId
 
 @Method
-def getOneToOne(owner, pet, refferenceModel) :
-    return relationship(pet, back_populates=attributeIt(owner))
+def getOneToOne(sample, pet, refferenceModel) :
+    return relationship(pet, back_populates=attributeIt(sample))
 
 @Method
 def getOneToOne(woman, man, refferenceModel) :

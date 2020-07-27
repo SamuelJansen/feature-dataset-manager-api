@@ -4,7 +4,7 @@ SWITCHING_PROTOCOLS = 101 ###- Switching Protocols
 PROCESSING = 102 ###- Processing
 
 ###- 2×× Success
-Ok = 200 ###- OK
+OK = 200 ###- OK
 CREATED = 201 ###- Created
 ACCEPTED = 202 ###- Accepted
 NON_AUTHORATIVE_INFORMATION = 203 ###- Non-authoritative Information

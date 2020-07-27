@@ -6,11 +6,11 @@ globals = Globals(__file__,
     successStatus = True,
     failureStatus = True,
     settingStatus = True)
-import SkillManager, FlaskHelper
-app = SkillManager.app
-api = SkillManager.api
+import FeatureManager, FlaskHelper
+app = FeatureManager.app
+api = FeatureManager.api
 
-@FlaskHelper.initialize(defaultUrl = "/skills")
+@FlaskHelper.initialize(defaultUrl = "/features")
 def runFlaskApplication(app):
     app.run(debug=True)
 

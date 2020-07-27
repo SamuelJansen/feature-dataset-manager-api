@@ -298,7 +298,6 @@ def ControllerMethod(url=None, requestClass=None, contentType=DEFAULT_CONTENT_TY
                     args = appendedItInArgsAndReturnArgs(dto, args)
                 completeResponse = resourceInstanceMethod(self,*args[1:],**kwargs)
             except Exception as exception :
-                log.error(self.__class__, f'Failed to excecute {resourceInstanceMethod.__name__} method', exception)
 
                 # request.method:              GET
                 # request.url:                 http://127.0.0.1:5000/alert/dingding/test?x=y
@@ -315,9 +314,9 @@ def ControllerMethod(url=None, requestClass=None, contentType=DEFAULT_CONTENT_TY
                 # request.args:                ImmutableMultiDict([('x', 'y')])
                 # request.args.get('x'):       y
 
-
                 if not GlobalException.GlobalException.__name__ == exception.__class__.__name__ :
-                    exception = GlobalException.GlobalException()
+                    log.error(self.__class__, f'Failed to excecute {resourceInstanceMethod.__name__} method', exception)
+                    exception = GlobalException.GlobalException(logMessage=str(exception))
                 try :
                     httpErrorLog = ErrorLog.ErrorLog()
                     httpErrorLog.override(exception)
@@ -325,7 +324,7 @@ def ControllerMethod(url=None, requestClass=None, contentType=DEFAULT_CONTENT_TY
                     api.repository.saveAndCommit(httpErrorLog)
                 except Exception as errorLogException :
                     log.error(self.__class__, f'Failed to persist {ErrorLog.ErrorLog.__name__}', errorLogException)
-                completeResponse = [{'message':exception.message, 'url':exception.url},exception.status]
+                completeResponse = [{'message':exception.message, 'timestamp':str(exception.timeStamp)},exception.status]
                 log.error(self.__class__, f'Error processing {resourceInstanceMethod.__name__} request', exception)
             controllerResponse = completeResponse[0]
             status = completeResponse[1]
@@ -341,15 +340,17 @@ def validateArgs(args,requestClass,method) :
         self = args[0]
         if type(requestClass).__name__ == Constant.LIST :
             for index in range(len(requestClass)) :
-                expecteObjectClass = requestClass[index]
                 objectRequest = args[index + 1]
-                if not expecteObjectClass.__name__ == objectRequest.__class__.__name__ :
-                    raise GlobalException.GlobalException(logMessage = f'Invalid args. {self.__class__.__name__}.{method.__name__} call got an unnexpected object request: {objectRequest}. It should be {expecteObjectClass.__name__}')
+                expecteObjectClass = requestClass[index]
+                GlobalException.validateArgs(self,method,objectRequest,expecteObjectClass)
+                # if not expecteObjectClass.__name__ == objectRequest.__class__.__name__ :
+                #     raise GlobalException.GlobalException(logMessage = f'Invalid args. {self.__class__.__name__}.{method.__name__} call got an unnexpected object request: {objectRequest}. It should be {expecteObjectClass.__name__}')
         else :
-            expecteObjectClass = requestClass
             objectRequest = args[1]
-            if not requestClass.__name__ == objectRequest.__class__.__name__ :
-                raise GlobalException.GlobalException(logMessage = f'Invalid args. {self.__class__.__name__}.{method.__name__} call got an unnexpected object request: {objectRequest}. It should be {expecteObjectClass.__name__}')
+            expecteObjectClass = requestClass
+            GlobalException.validateArgs(self,method,objectRequest,expecteObjectClass)
+            # if not requestClass.__name__ == objectRequest.__class__.__name__ :
+            #     raise GlobalException.GlobalException(logMessage = f'Invalid args. {self.__class__.__name__}.{method.__name__} call got an unnexpected object request: {objectRequest}. It should be {expecteObjectClass.__name__}')
 
 @Method
 def Service() :
@@ -406,6 +407,7 @@ def Validator() :
         class InnerClass(OuterClass,flask_restful.Resource):
             def __init__(self,*args,**kwargs):
                 OuterClass.__init__(self,*args,**kwargs)
+                self.service = apiInstance.resource.service
                 self.validator = apiInstance.resource.validator
                 self.helper = apiInstance.resource.helper
                 self.converter = apiInstance.resource.converter
@@ -494,6 +496,18 @@ def Helper() :
         overrideSignatures(InnerClass, OuterClass)
         return InnerClass
     return Wrapper
+
+@Method
+def HelperMethod(requestClass=None, responseClass=None) :
+    def innerMethodWrapper(resourceInstanceMethod,*args,**kwargs) :
+        noException = None
+        log.wraper(HelperMethod,f'''{resourceInstanceMethod.__name__}''',noException)
+        def innerResourceInstanceMethod(*args,**kwargs) :
+            validateArgs(args,requestClass,innerResourceInstanceMethod)
+            return resourceInstanceMethod(*args,**kwargs)
+        overrideSignatures(innerResourceInstanceMethod, resourceInstanceMethod)
+        return innerResourceInstanceMethod
+    return innerMethodWrapper
 
 @Method
 def Converter() :
