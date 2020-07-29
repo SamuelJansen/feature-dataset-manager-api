@@ -4,8 +4,8 @@ import Feature, FeatureDto, DefaultValues
 @Mapper()
 class FeatureMapper:
 
-    @MapperMethod(requestClass=FeatureDto.FeaturePostRequestDto, responseClass=Feature.Feature)
-    def fromPostDtoToModel(self, dto, model) :
+    @MapperMethod(requestClass=FeatureDto.FeatureRequestDto, responseClass=Feature.Feature)
+    def fromPostRequestDtoToModel(self, dto, model) :
         model.value = DefaultValues.DEFAULT_VALUE
         model.iterationCount = DefaultValues.DEFAULT_ITERATION_COUNT
         return model

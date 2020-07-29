@@ -17,11 +17,9 @@ class SampleDto :
 class SampleRequestDto :
     def __init__(self,
         label = None,
-        value = None,
         featureDataList = None
     ):
         self.label = label
-        self.value = value
         self.featureDataList = featureDataList if featureDataList else []
 
 class SampleResponseDto :
@@ -36,16 +34,4 @@ class SampleResponseDto :
         self.label = label
         self.value = value
         self.iterationCount = iterationCount
-        self.featureDataList = featureDataList if featureDataList else []
-
-class SamplePostRequestDto :
-    def __init__(self,
-        key = None,
-        label = None,
-        value = None,
-        featureDataList = None
-    ):
-        self.key = key
-        self.label = label
-        self.value = value
         self.featureDataList = featureDataList if featureDataList else []

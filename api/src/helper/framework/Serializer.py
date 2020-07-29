@@ -1,7 +1,7 @@
 import json, importlib
 from python_helper import Constant, log
 from MethodWrapper import Method
-from SqlAlchemyHelper import DeclarativeMeta
+from SqlAlchemyHelper import DeclarativeMeta, InstrumentedList
 
 IGNORE_REOURCE_LIST = [
     'FlaskHelper',
@@ -50,7 +50,7 @@ MESO_SUFIX_LIST = [
 
 @Method
 def isList(thing) :
-    return type([]) == type(thing)
+    return type([]) == type(thing) or type(InstrumentedList()) == type(thing)
 
 @Method
 def isDictionary(thing) :

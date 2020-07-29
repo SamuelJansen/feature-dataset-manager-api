@@ -18,14 +18,6 @@ class FeatureDataDto:
         self.featureId = featureId
         self.sampleId = sampleId
 
-class FeatureDataPostRequestDto:
-    def __init__(self,
-        featureKey = None,
-        sampleKey = None
-    ):
-        self.featureKey = featureKey
-        self.sampleKey = sampleKey
-
 class FeatureDataResponseDto:
     def __init__(self,
         value = None,

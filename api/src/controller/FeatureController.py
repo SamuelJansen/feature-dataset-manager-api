@@ -5,9 +5,9 @@ import HttpStatus
 @Controller(url = '/features')
 class FeatureController:
 
-    @ControllerMethod(url='/', requestClass=FeatureDto.FeaturePostRequestDto)
-    def post(self,dto):
-        return self.service.feature.create(dto), HttpStatus.CREATED
+    @ControllerMethod(url='/<key>', requestClass=FeatureDto.FeatureRequestDto)
+    def post(self, dto, key):
+        return self.service.feature.create(dto, key), HttpStatus.CREATED
 
     @ControllerMethod(url='/<key>')
     def get(self, key=None):

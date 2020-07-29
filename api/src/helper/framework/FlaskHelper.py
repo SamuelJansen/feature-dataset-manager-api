@@ -39,7 +39,14 @@ LOCALHOST_URL = 'http://127.0.0.1:5000'
 KW_GET = 'get'
 KW_POST = 'post'
 KW_PUT = 'put'
+KW_PATCH = 'patch'
 KW_DELETE = 'delete'
+
+ABLE_TO_RECIEVE_BODY_LIST = [
+    KW_POST,
+    KW_PUT,
+    KW_PATCH
+]
 
 def printMyStuff(stuff):
     print()
@@ -308,7 +315,7 @@ def ControllerMethod(url=None, requestClass=None, contentType=DEFAULT_CONTENT_TY
         def innerResourceInstanceMethod(*args,**kwargs) :
             self = args[0]
             try :
-                if resourceInstanceMethod.__name__ == KW_POST or resourceInstanceMethod.__name__ == KW_PUT and requestClass :
+                if resourceInstanceMethod.__name__ in ABLE_TO_RECIEVE_BODY_LIST :
                     bodyJson = request.get_json()
                     if bodyJson :
                         serializerReturn = Serializer.convertFromJsonToObject(bodyJson,requestClass)

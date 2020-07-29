@@ -10,7 +10,8 @@ class FeatureDataController:
 
     @ControllerMethod(url='/<featureKey>/<sampleKey>')
     def delete(self, featureKey, sampleKey):
-        return self.service.featureData.deleteByFeatureKeyAndSampleKey(featureKey, sampleKey), HttpStatus.NO_CONTENT
+        self.service.featureData.deleteByFeatureKeyAndSampleKey(featureKey, sampleKey), HttpStatus.NO_CONTENT
+        return {}, HttpStatus.NO_CONTENT
 
 
 @Controller(url = '/feature-datas/batch')
@@ -18,5 +19,4 @@ class FeatureDataBatchController:
 
     @ControllerMethod(url='/<featureKey>')
     def get(self, featureKey):
-        print(featureKey)
         return self.service.featureData.queryAllByFeatureKey(featureKey), HttpStatus.OK

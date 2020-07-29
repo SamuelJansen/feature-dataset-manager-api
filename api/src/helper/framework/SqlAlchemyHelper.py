@@ -1,10 +1,9 @@
 import sqlalchemy
 from sqlalchemy import create_engine, exists, select
 from sqlalchemy.orm import sessionmaker, scoped_session, relationship
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm.collections import InstrumentedList
+from sqlalchemy.ext.declarative import declarative_base, DeclarativeMeta
 from sqlalchemy import Table, Column, Integer, String, Float, ForeignKey, UnicodeText, MetaData, Sequence, DateTime
-from sqlalchemy.ext.declarative import DeclarativeMeta
-from sqlalchemy.orm import backref
 
 from sqlalchemy import and_, or_
 
@@ -32,6 +31,8 @@ ForeignKey = ForeignKey
 MetaData = MetaData
 
 DeclarativeMeta = DeclarativeMeta
+
+InstrumentedList = InstrumentedList
 
 DEFAULT_LOCAL_STORAGE_NAME = 'LocalStorage'
 

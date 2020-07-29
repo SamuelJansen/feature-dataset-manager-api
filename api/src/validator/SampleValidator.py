@@ -4,18 +4,23 @@ import SampleDto, Sample, Feature, FeatureData, FeatureDataDto, GlobalException,
 @Validator()
 class SampleValidator:
 
-    @ValidatorMethod(requestClass=SampleDto.SamplePostRequestDto)
-    def postRequestDto(self,dto):
-        self.notExistsByKey(dto.key)
-        if not len(self.service.featureData.findAllBySampleKey(dto.key)) == 0 :
+    @ValidatorMethod(requestClass=SampleDto.SampleRequestDto)
+    def postRequestDto(self, dto, key):
+        self.notExistsByKey(key)
+        if not len(self.service.featureData.findAllBySampleKey(key)) == 0 :
             raise GlobalException.GlobalException(message='There are FeatureData related to this entry altready. You need to delete it first', status=HttpStatus.BAD_REQUEST)
-        self.featureDataPostRequestDtoList(dto.featureDataList)
+        self.featureDataRequestDtoList(dto.featureDataList)
 
     @ValidatorMethod(requestClass=[SampleDto.SampleRequestDto, str().__class__])
     def putRequestDto(self, dto, key):
         self.existsByKey(key)
         self.featureDataRequestDtoList(dto.featureDataList)
-        if not dto.value and not 0 == dto.value :
+
+    @ValidatorMethod(requestClass=[SampleDto.SampleRequestDto, str().__class__, int().__class__])
+    def patchRequestDto(self, dto, key, value):
+        self.existsByKey(key)
+        self.featureDataRequestDtoList(dto.featureDataList)
+        if not value or 0 == value :
             raise GlobalException.GlobalException(message='Value cannot be null', status=HttpStatus.BAD_REQUEST)
 
     @ValidatorMethod(requestClass=str().__class__)
@@ -41,19 +46,8 @@ class SampleValidator:
                     status = HttpStatus.BAD_REQUEST
                 )
 
-    @ValidatorMethod(requestClass=[Sample.Sample])
-    def model(self, model) :
-        ...
-
-    @ValidatorMethod(requestClass=[[FeatureDataDto.FeatureDataPostRequestDto]])
-    def featureDataPostRequestDtoList(self, featureDataList):
-        self.validateFeatureDataList(featureDataList)
-
     @ValidatorMethod(requestClass=[[FeatureDataDto.FeatureDataRequestDto]])
     def featureDataRequestDtoList(self, featureDataList):
-        self.validateFeatureDataList(featureDataList)
-
-    def validateFeatureDataList(self, featureDataList):
         for featureDataPostRequestDto in featureDataList :
             if not featureDataPostRequestDto.featureKey :
                 raise GlobalException.GlobalException(message='All featureDataList items must contain featureKey')

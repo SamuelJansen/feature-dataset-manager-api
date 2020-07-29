@@ -41,5 +41,5 @@ def validateArgs(self, method, objectRequest, expecteObjectClass):
     if Serializer.isList(expecteObjectClass) and Serializer.isList(objectRequest) :
         if len(objectRequest) == 0 :
             return
-    if objectRequest and not type(expecteObjectClass) == type(objectRequest.__class__) :
+    if objectRequest and not type(expecteObjectClass) == type(objectRequest.__class__) and expecteObjectClass.__name__ == objectRequest.__class__.__name__:
         raise GlobalException(logMessage = f'Invalid args. {self.__class__}.{method} call got an unnexpected object request: {objectRequest.__class__}. It should be {expecteObjectClass}')

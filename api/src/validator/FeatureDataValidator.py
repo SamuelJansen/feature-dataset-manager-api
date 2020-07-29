@@ -4,10 +4,6 @@ import FeatureDataDto, GlobalException, HttpStatus
 @Validator()
 class FeatureDataValidator:
 
-    @ValidatorMethod(requestClass=[[FeatureDataDto.FeatureDataPostRequestDto]])
-    def postRequestDtoList(self, postRequestDtoList):
-        ...
-
     @ValidatorMethod(requestClass=[str().__class__, str().__class__])
     def existsByFeatureKeyAndSampleKey(self, featureKey, sampleKey):
         self.featureKeyAndSampleKeyNotNull(featureKey, sampleKey)

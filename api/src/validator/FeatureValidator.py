@@ -5,9 +5,9 @@ import FeatureDto, Feature, GlobalException, HttpStatus
 @Validator()
 class FeatureValidator:
 
-    @ValidatorMethod(requestClass=FeatureDto.FeaturePostRequestDto)
-    def postRequestDto(self,dto):
-        self.notExistsByKey(dto.key)
+    @ValidatorMethod(requestClass=[FeatureDto.FeaturePostRequestDto, str().__class__])
+    def postRequestDto(self, dto, key):
+        self.notExistsByKey(key)
 
     @ValidatorMethod(requestClass=[FeatureDto.FeatureRequestDto, str().__class__])
     def putRequestDto(self, dto, key):
