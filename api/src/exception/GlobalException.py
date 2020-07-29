@@ -1,7 +1,8 @@
+import datetime
 from flask import request
 from python_helper import Constant
 import HttpStatus
-import datetime
+import Serializer
 
 DEFAULT_MESSAGE = 'Something bad happened. Please, try again later'
 DEFAULT_STATUS = HttpStatus.INTERNAL_SERVER_ERROR
@@ -37,5 +38,8 @@ class GlobalException(Exception):
         return requestBody
 
 def validateArgs(self, method, objectRequest, expecteObjectClass):
-    if not expecteObjectClass.__name__ == objectRequest.__class__.__name__ :
-        raise GlobalException(logMessage = f'Invalid args. {self.__class__.__name__}.{method.__name__} call got an unnexpected object request: {objectRequest}. It should be {expecteObjectClass.__name__}')
+    if Serializer.isList(expecteObjectClass) and Serializer.isList(objectRequest) :
+        if len(objectRequest) == 0 :
+            return
+    if objectRequest and not type(expecteObjectClass) == type(objectRequest.__class__) :
+        raise GlobalException(logMessage = f'Invalid args. {self.__class__}.{method} call got an unnexpected object request: {objectRequest.__class__}. It should be {expecteObjectClass}')

@@ -3,6 +3,7 @@ class FeatureDataDto:
         id = None,
         hash = None,
         value = None,
+        iterationCount = None,
         feature = None,
         sample = None,
         featureId = None,
@@ -11,6 +12,7 @@ class FeatureDataDto:
         self.id = id
         self.hash = hash
         self.value = value
+        self.iterationCount = iterationCount
         self.feature = feature
         self.sample = sample
         self.featureId = featureId
@@ -27,16 +29,17 @@ class FeatureDataPostRequestDto:
 class FeatureDataResponseDto:
     def __init__(self,
         value = None,
+        iterationCount = None,
         featureKey = None,
         sampleKey = None
     ):
         self.value = value
+        self.iterationCount = iterationCount
         self.featureKey = featureKey
         self.sampleKey = sampleKey
 
 class FeatureDataRequestDto:
     def __init__(self,
-        value = None,
         featureKey = None,
         sampleKey = None
     ):

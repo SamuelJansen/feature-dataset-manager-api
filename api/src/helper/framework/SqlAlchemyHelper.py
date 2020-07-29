@@ -1,10 +1,17 @@
 import sqlalchemy
-from sqlalchemy import create_engine, exists
+from sqlalchemy import create_engine, exists, select
 from sqlalchemy.orm import sessionmaker, scoped_session, relationship
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Table, Column, Integer, String, Float, ForeignKey, UnicodeText, MetaData, Sequence, DateTime
 from sqlalchemy.ext.declarative import DeclarativeMeta
+from sqlalchemy.orm import backref
+
+from sqlalchemy import and_, or_
+
 from MethodWrapper import Method
+
+and_ = and_
+or_ = or_
 
 UnicodeText = UnicodeText
 DateTime = DateTime
@@ -16,6 +23,7 @@ String = String
 Float = Float
 
 exists = exists
+select = select
 
 relationship = relationship
 
@@ -44,6 +52,8 @@ ID = '''Id'''
 SEQ = '''Seq'''
 LIST = '''List'''
 
+CASCADE_ONE_TO_MANY = '''all,delete'''
+
 @Method
 def getNewModel() :
     return declarative_base()
@@ -57,8 +67,8 @@ def getManyToMany(sisters, brothers, refferenceModel) :
     # featureList = relationship(FEATURE, secondary=featureToSampleAssociation, back_populates=attributeIt(f'{__tablename__}{LIST}'))
     # sampleList = relationship(SAMPLE, secondary=featureToSampleAssociation, back_populates=attributeIt(f'{__tablename__}{LIST}'))
     manySonToManyFather = Table(f'{sisters}{MANY_TO_MANY}{brothers}', refferenceModel.metadata,
-        Column(f'{attributeIt(sisters)}{ID}', Integer, ForeignKey(f'{sisters}.{ID.lower()}')),
-        Column(f'{attributeIt(brothers)}{ID}', Integer, ForeignKey(f'{brothers}.{ID.lower()}')))
+        Column(f'{attributeIt(sisters)}{ID}', Integer, ForeignKey(f'{sisters}.{attributeIt(ID)}')),
+        Column(f'{attributeIt(brothers)}{ID}', Integer, ForeignKey(f'{brothers}.{attributeIt(ID)}')))
     brotherList = relationship(brothers, secondary=manySonToManyFather, back_populates=attributeIt(f'{sisters}{LIST}'))
     sisterList = relationship(sisters, secondary=manySonToManyFather, back_populates=attributeIt(f'{brothers}{LIST}'))
     ### sisters recieves the brotherList
@@ -66,28 +76,28 @@ def getManyToMany(sisters, brothers, refferenceModel) :
     return fatherList, manySonToManyFather, sonList
 
 @Method
-def getOneToMany(sample, pet, refferenceModel) :
-    return relationship(pet, back_populates=attributeIt(f'{sample}'))
+def getOneToMany(owner, pet, refferenceModel) :
+    return relationship(pet, back_populates=attributeIt(f'{owner}'), cascade=CASCADE_ONE_TO_MANY)
 
 @Method
-def getManyToOne(pet, sample, refferenceModel) :
-    sampleId = Column(Integer(), ForeignKey(f'{sample}.{ID.lower()}'))
-    sample = relationship(sample, back_populates=attributeIt(f'{pet}{LIST}'))
-    return sample, sampleId
+def getManyToOne(pet, owner, refferenceModel) :
+    ownerId = Column(Integer(), ForeignKey(f'{owner}.{attributeIt(ID)}'))
+    owner = relationship(owner, back_populates=attributeIt(f'{pet}{LIST}'))
+    return owner, ownerId
 
-@Method
-def getOneToOne(sample, pet, refferenceModel) :
-    return relationship(pet, back_populates=attributeIt(sample))
+# @Method
+# def getOneToOne(owner, pet, refferenceModel) :
+#     return relationship(pet, back_populates=attributeIt(owner))
 
 @Method
 def getOneToOne(woman, man, refferenceModel) :
-    manId = Column(Integer(), ForeignKey(f'{man}.{ID.lower()}'))
+    manId = Column(Integer(), ForeignKey(f'{man}.{attributeIt(ID)}'))
     manList = relationship(man, back_populates=attributeIt(woman), uselist=False)
     return manId, manList
 
 @Method
 def getOneToOne__forDebug(man, woman, refferenceModel) :
-    womanId = Column(Integer(), ForeignKey(f'{woman}.{ID.lower()}'))
+    womanId = Column(Integer(), ForeignKey(f'{woman}.{attributeIt(ID)}'))
     womanList = relationship(woman, back_populates=attributeIt(man))
     return womanId, womanList
 

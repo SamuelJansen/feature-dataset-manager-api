@@ -1,14 +1,13 @@
 from FlaskHelper import Mapper, MapperMethod
-import Feature, FeatureDto
-
-DEFAULT_VALUE = 3
+import Feature, FeatureDto, DefaultValues
 
 @Mapper()
 class FeatureMapper:
 
     @MapperMethod(requestClass=FeatureDto.FeaturePostRequestDto, responseClass=Feature.Feature)
     def fromPostDtoToModel(self, dto, model) :
-        model.value = DEFAULT_VALUE
+        model.value = DefaultValues.DEFAULT_VALUE
+        model.iterationCount = DefaultValues.DEFAULT_ITERATION_COUNT
         return model
 
     @MapperMethod(requestClass=[FeatureDto.FeatureRequestDto, Feature.Feature])

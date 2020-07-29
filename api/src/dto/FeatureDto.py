@@ -4,6 +4,7 @@ class FeatureDto :
         key = None,
         label = None,
         value = None,
+        iterationCount = None,
         featureDataList = None,
         sampleDataList = None
     ):
@@ -11,6 +12,7 @@ class FeatureDto :
         self.key = key
         self.label = label
         self.value = value
+        self.iterationCount = iterationCount
         self.featureDataList = featureDataList if featureDataList else []
         self.sampleDataList = sampleDataList if sampleDataList else []
 
@@ -24,13 +26,15 @@ class FeatureResponseDto :
     def __init__(self,
         key = None,
         label = None,
-        featureDataList = None,
-        sampleDataList = None
+        iterationCount = None###- ,
+        # featureDataList = None,
+        # sampleDataList = None
     ):
         self.key = key
         self.label = label
-        self.featureDataList = featureDataList if featureDataList else []
-        self.sampleDataList = sampleDataList if sampleDataList else []
+        self.iterationCount = iterationCount
+        # self.featureDataList = featureDataList if featureDataList else []
+        # self.sampleDataList = sampleDataList if sampleDataList else []
 
 
 class FeaturePostRequestDto :

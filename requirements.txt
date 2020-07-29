@@ -1,12 +1,8 @@
 Flask
 Flask-RESTful
 Flask-JWT-Extended
-Flask-SQLAlchemy
-requests
 gunicorn
 psycopg2-binary
 globals==0.0.42
 python_helper
-python_selenium_helper
-swagger_integration_tests
 SQLAlchemy

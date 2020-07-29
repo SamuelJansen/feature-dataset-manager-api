@@ -8,6 +8,7 @@ api = flask_restful.Api(app)
 
 ResourceHelper.initializeResources(
     api,
+    app,
     ModelAssociation.Model,
     localStorageName = 'LocalFeatureManager'
 )

@@ -60,21 +60,10 @@ def getResourceList(apiInstance, resourceType) :
     return resourceList
 
 @Method
-def initializeResources(api, refferenceModel, localStorageName=None) :
+def initializeResources(api, app, refferenceModel, localStorageName=None) :
     FlaskHelper.addGlobalsTo(api)
-    args = [api]
+    args = [api, app]
     for kwResource in FlaskHelper.KW_RESOURCE_LIST :
         args.append(getResourceList(api,kwResource))
     args.append(refferenceModel)
     FlaskHelper.addFlaskApiResources(*args, localStorageName=localStorageName)
-    # FlaskHelper.addFlaskApiResources(
-    #     api,
-    #     getResourceList(api,FlaskHelper.KW_CONTROLLER_RESOURCE),
-    #     getResourceList(api,FlaskHelper.KW_SERVICE_RESOURCE),
-    #     getResourceList(api,FlaskHelper.KW_REPOSITORY_RESOURCE),
-    #     getResourceList(api,FlaskHelper.KW_VALIDATOR_RESOURCE),
-    #     getResourceList(api,FlaskHelper.KW_HELPER_RESOURCE),
-    #     getResourceList(api,FlaskHelper.KW_CONVERTER_RESOURCE),
-    #     refferenceModel,
-    #     localStorageName = localStorageName
-    # )

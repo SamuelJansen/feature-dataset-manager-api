@@ -1,5 +1,6 @@
+from python_helper import Constant
 from FlaskHelper import Validator, ValidatorMethod
-import FeatureDto, GlobalException
+import FeatureDto, Feature, GlobalException, HttpStatus
 
 @Validator()
 class FeatureValidator:
@@ -8,16 +9,27 @@ class FeatureValidator:
     def postRequestDto(self,dto):
         self.notExistsByKey(dto.key)
 
-    @ValidatorMethod(requestClass=FeatureDto.FeatureRequestDto)
-    def putRequestDto(self,dto):
-        self.existsByKey(dto.key)
+    @ValidatorMethod(requestClass=[FeatureDto.FeatureRequestDto, str().__class__])
+    def putRequestDto(self, dto, key):
+        self.existsByKey(key)
 
-    @ValidatorMethod()
+    @ValidatorMethod(requestClass=str().__class__)
     def notExistsByKey(self, key):
         if self.service.feature.existsByKey(key) :
-            raise GlobalException.GlobalException(message='Feature already exists', status=HttpStatus.BAD_REQUEST)
+            raise GlobalException.GlobalException(message=f'Feature already exists. Key : {Constant.SINGLE_QUOTE}{key}{Constant.SINGLE_QUOTE}', status=HttpStatus.BAD_REQUEST)
 
-    @ValidatorMethod()
+    @ValidatorMethod(requestClass=str().__class__)
     def existsByKey(self, key):
         if not self.service.feature.existsByKey(key) :
-            raise GlobalException.GlobalException(message='''Feature does not exists''', status=HttpStatus.NOT_FOUND)
+            raise GlobalException.GlobalException(message=f'''Feature does not exists. Key : {Constant.SINGLE_QUOTE}{key}{Constant.SINGLE_QUOTE}''', status=HttpStatus.NOT_FOUND)
+
+    @ValidatorMethod(requestClass=[[Feature.Feature], [str().__class__]])
+    def featureListByfeatureKeyList(self, featureList, featureKeyList) :
+        for key in featureKeyList :
+            notFountYet = True
+            for feature in featureList :
+                if feature.key in featureKeyList :
+                    notFountYet = False
+                    break
+            if notFountYet :
+                raise GlobalException.GlobalException(message=f'''Feature does not exists. Key : {Constant.SINGLE_QUOTE}{key}{Constant.SINGLE_QUOTE}''', status=HttpStatus.BAD_REQUEST)

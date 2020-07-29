@@ -10,7 +10,7 @@ class FeatureService:
 
     @ServiceMethod(requestClass=str().__class__)
     def queryByKey(self,key):
-        return self.converter.sample.fromModelToResponseDto(self.findByKey(key))
+        return self.converter.feature.fromModelToResponseDto(self.findByKey(key))
 
     @ServiceMethod(requestClass=[FeatureDto.FeaturePostRequestDto])
     def create(self,requestDto):
@@ -21,7 +21,7 @@ class FeatureService:
 
     @ServiceMethod(requestClass=[FeatureDto.FeatureRequestDto, str().__class__])
     def update(self,requestDto,key):
-        self.validator.feature.putRequestDto(requestDto)
+        self.validator.feature.putRequestDto(requestDto,key)
         feature = self.repository.feature.findByKey(key)
         feature = self.mapper.feature.fromRequestDtoToModel(requestDto,feature)
         feature = self.repository.feature.save(feature)
@@ -47,17 +47,19 @@ class FeatureService:
 
     @ServiceMethod(requestClass=SampleDto.SamplePostRequestDto)
     def findAllBySamplePostRequestDto(self,dto) :
-        featureKeyList = []
-        for featureDataPostRequestDto in dto.featureDataList :
-            if featureDataPostRequestDto.featureKey :
-                featureKeyList.append(featureDataPostRequestDto.featureKey)
-        return self.repository.feature.findAllByFeatureKeyIn(featureKeyList)
+        self.validator.sample.featureDataPostRequestDtoList(dto.featureDataList)
+        return self.findAllByFeatureDataDtoList(dto.featureDataList)
 
     @ServiceMethod(requestClass=SampleDto.SampleRequestDto)
     def findAllBySampleRequestDto(self,dto) :
-        self.validator.sample.featureDataList(dto.featureDataList)
+        self.validator.sample.featureDataRequestDtoList(dto.featureDataList)
+        return self.findAllByFeatureDataDtoList(dto.featureDataList)
+
+    def findAllByFeatureDataDtoList(self, featureDataDtoList):
         featureKeyList = []
-        for featureDataPostRequestDto in dto.featureDataList :
+        for featureDataPostRequestDto in featureDataDtoList :
             if featureDataPostRequestDto.featureKey :
                 featureKeyList.append(featureDataPostRequestDto.featureKey)
-        return self.repository.feature.findAllByFeatureKeyIn(featureKeyList)
+        featureList = self.repository.feature.findAllByFeatureKeyIn(featureKeyList)
+        self.validator.feature.featureListByfeatureKeyList(featureList, featureKeyList)
+        return featureList

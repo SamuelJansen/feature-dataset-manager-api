@@ -18,7 +18,8 @@ class SampleController:
 
     @ControllerMethod(url='/<key>')
     def delete(self,key):
-        return self.service.sample.delete(key), HttpStatus.NO_CONTENT
+        self.service.sample.delete(key), HttpStatus.NO_CONTENT
+        return {}, HttpStatus.NO_CONTENT
 
 
 @Controller(url = '/samples/batch')

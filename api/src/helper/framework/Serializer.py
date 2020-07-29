@@ -48,6 +48,14 @@ MESO_SUFIX_LIST = [
     KW_DELETE_ACTION
 ]
 
+@Method
+def isList(thing) :
+    return type([]) == type(thing)
+
+@Method
+def isDictionary(thing) :
+    return type({}) == type(thing)
+
 
 @Method
 def importResource(resourceName, resourceModuleName=None) :
@@ -142,27 +150,19 @@ def getAttributeNameList(objectClass) :
         if (not objectAttributeName.startswith(f'{2 * Constant.UNDERSCORE}') and not objectAttributeName.startswith(Constant.UNDERSCORE))
     ]
 
-def isDictionary(thing) :
-    return type(thing).__name__ == Constant.DICT
-
-
-def isList(thing) :
-    return type(thing).__name__ == Constant.LIST
-
 @Method
 def getClassRole(objectClass) :
     if DTO_SUFIX == objectClass.__name__[-len(DTO_SUFIX):] :
         sufixList = [str(DTO_CLASS_ROLE)]
         concatenatedSufix = str(DTO_SUFIX)
-        # print(f'        objectClass.__name__ = {objectClass.__name__}')
         for mesoSufix in MESO_SUFIX_LIST :
-            # print(f'            mesoSufix = {mesoSufix}')
             if mesoSufix == objectClass.__name__[-(len(mesoSufix)+len(concatenatedSufix)):-len(concatenatedSufix)] :
                 concatenatedSufix += mesoSufix
                 sufixList = [mesoSufix.upper()] + sufixList
         return Constant.UNDERSCORE.join(sufixList)
     return MODEL_CLASS_ROLE
 
+@Method
 def getListRemovedFromKey(key) :
     return key.replace(LIST_SUFIX, Constant.NOTHING)
 
@@ -187,13 +187,11 @@ def getResourceModuleName(key, classRole) :
 
 @Method
 def resolveValue(value, key, classRole) :
-    # print(f'        isList({value}) = {isList(value)}')
     if isList(value) :
         if LIST_SUFIX == key[-4:] :
             resourceName = getResourceName(key, classRole)
             resourceModuleName = getResourceModuleName(key, classRole)
             keyClass = importResource(resourceName, resourceModuleName=resourceModuleName)
-            # print(f'                keyClass = {keyClass.__name__}')
             convertedValue = []
             for jsonItem in value :
                 if jsonItem :
@@ -203,25 +201,19 @@ def resolveValue(value, key, classRole) :
     return value
 
 @Method
-def convertFromJsonToObject(fromJson, toObjectClass) :
-
-    ###- bug detected
-
+def serializeIt(fromJson, toObjectClass) :
     attributeNameList = getAttributeNameList(toObjectClass)
     classRole = getClassRole(toObjectClass)
     # print(f'        classRole = {classRole}')
-
     # print(f'        attributeNameList = {attributeNameList}')
-
     fromJsonToDictionary = {}
     for attributeName in attributeNameList :
         # print(f'        fromJson.get({attributeName}) = {fromJson.get(attributeName)}')
         jsonAttributeValue = fromJson.get(attributeName)
-        if jsonAttributeValue :
+        if jsonAttributeValue or 0 == jsonAttributeValue :
             fromJsonToDictionary[attributeName] = resolveValue(jsonAttributeValue, attributeName, classRole)
         # if jsonAttributeValue :
         #     setattr(fromObject, attributeName, jsonAttributeValue)
-    # print(f'        fromJsonToDictionary = {fromJsonToDictionary}')
     args = []
     kwargs = fromJsonToDictionary.copy()
     # print(f'fromJsonToDictionary = {fromJsonToDictionary}')
@@ -234,13 +226,27 @@ def convertFromJsonToObject(fromJson, toObjectClass) :
             del kwargs[key]
         # print(f'args = {args}, kwargs = {kwargs}')
     objectInstance = toObjectClass(*args,**kwargs)
-    if not objectInstance :
+    if not objectInstance and not 0 == objectInstance :
         raise Exception(f'Not possible to instanciate {toObjectClass.__name__} class in convertFromJsonToObject() method')
     return objectInstance
-    # return toObjectClass(**fromJsonToDictionary)
+
+@Method
+def convertFromJsonToObject(fromJson, toObjectClass) :
+    if isList(toObjectClass) :
+        objectArgs = []
+        for innerToObjectClass in toObjectClass :
+            if isList(innerToObjectClass) :
+                objectList = []
+                for fromJsonElement in fromJson :
+                    objectList.append(convertFromJsonToObject(fromJsonElement, innerToObjectClass[0]))
+                objectArgs.append(objectList)
+            else :
+                objectArgs.append(convertFromJsonToObject(fromJson, innerToObjectClass))
+        return objectArgs
+    else :
+        return serializeIt(fromJson, toObjectClass)
 
 @Method
 def convertFromObjectToObject(fromObject, toObjectClass) :
     fromJson = json.loads(jsonifyIt(fromObject))
-    # print(f'        fromJson = {fromJson}')
     return convertFromJsonToObject(fromJson,toObjectClass)

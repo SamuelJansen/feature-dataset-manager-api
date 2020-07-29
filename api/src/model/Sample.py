@@ -8,6 +8,7 @@ class Sample(Model):
     key = Column(String(128),unique=True)
     label = Column(String(128))
     value = Column(Float(precision=12))
+    iterationCount = Column(Integer())
     sampleDataList = getOneToMany(__tablename__, SAMPLE_DATA, Model)
     featureDataList = getOneToMany(__tablename__, FEATURE_DATA, Model)
 
@@ -16,6 +17,7 @@ class Sample(Model):
         key = None,
         label = None,
         value = None,
+        iterationCount = None,
         sampleDataList = None,
         featureDataList = None
     ):
@@ -23,6 +25,7 @@ class Sample(Model):
         self.key = key
         self.label = label
         self.value = value
+        self.iterationCount = iterationCount
         self.sampleDataList = sampleDataList if sampleDataList else []
         self.featureDataList = featureDataList if featureDataList else []
 

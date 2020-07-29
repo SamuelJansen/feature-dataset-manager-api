@@ -14,12 +14,13 @@ class FeatureController:
         return self.service.feature.queryByKey(key), HttpStatus.OK
 
     @ControllerMethod(url='/<key>', requestClass=FeatureDto.FeatureRequestDto)
-    def put(self,dto,key):
+    def put(self, dto, key):
         return self.service.feature.update(dto, key), HttpStatus.ACCEPTED
 
     @ControllerMethod(url='/<key>')
-    def delete(self,key):
-        return self.service.feature.delete(key), HttpStatus.NO_CONTENT
+    def delete(self, key):
+        self.service.feature.delete(key)
+        return {}, HttpStatus.NO_CONTENT
 
 
 @Controller(url = '/features/batch')
