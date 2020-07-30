@@ -36,18 +36,22 @@ class AiService:
             sample.iterationCount += 1
             sample.value += ((value - sample.value) / sample.iterationCount)
 
+    @ServiceMethod(requestClass=[[BestFitDto.BestFitRequestDto]])
+    def getTargetData(self, bestFitList):
+        return [DefaultValue.MAXIMUM_DATA_VALUE for x in bestFitList]
+
     @ServiceMethod(requestClass=[[int], set])
-    def getBestFit(self, target, dataSet):
+    def getBestFit(self, targetData, dataSet):
         '''
-        It calculates the nearest dataset point of a target point
-        using Euclidian Distance function'''
+        It calculates the nearest dataset point of a target data point
+        measuring its Euclidian Distance from a data set'''
         log.debug(AiService, f'Querying ...')
-        targetArray = numpy.asarray(target)
-        dataSetMatix = numpy.asarray([data[DataSetKey.VALUE_LIST] for data in dataSet.values()])
-        distanceList = numpy.sum((targetArray - dataSetMatix)**2, axis=1)
-        bestFitIndex = numpy.argmin(distanceList)
+        targetArray = numpy.asarray(targetData)
+        dataSetMatrix = numpy.asarray([data[DataSetKey.VALUE_LIST] for data in dataSet.values()])
+        euclidianDistanceList = numpy.sum((targetArray - dataSetMatrix)**2, axis=1)
+        bestFitIndex = numpy.argmin(euclidianDistanceList)
         bestFit = dataSet[list(dataSet.values())[bestFitIndex][DataSetKey.SAMPLE].key][DataSetKey.SAMPLE]
-        print(dataSetMatix)
+        print(dataSetMatrix)
         log.debug(AiService,f'Best fit index: {bestFitIndex}')
         log.debug(AiService,f'Optimum match: {bestFit}')
         return bestFit

@@ -15,9 +15,7 @@ class SampleHelper:
             }
             for bestFit in bestFitList :
                 dataSet[sample.key][DataSetKey.VALUE_LIST].append(self.getSampleDataValue(sample, bestFit))
-        target = [DefaultValue.MAXIMUM_DATA_VALUE for x in bestFitList]
-        print(f'target = {target}')
-        return target, dataSet
+        return dataSet
 
     @HelperMethod(requestClass=[Sample.Sample, BestFitDto.BestFitRequestDto])
     def getSampleDataValue(self, sample, bestFit):

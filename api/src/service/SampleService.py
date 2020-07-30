@@ -10,34 +10,10 @@ class SampleService:
         self.validator.sample.bestFitRequestDtoList(bestFitList)
         featureKeyList = self.helper.featureData.getFeatureKeyList(bestFitList)
         sampleList = self.repository.sample.findAllByFeatureKeyIn(featureKeyList)
-        target, dataSet = self.helper.sample.getSampleDataSet(sampleList, bestFitList)
-        bestFit = self.service.ai.getBestFit(target, dataSet)
+        dataSet = self.helper.sample.getSampleDataSet(sampleList, bestFitList)
+        targetData = self.service.ai.getTargetData(bestFitList)
+        bestFit = self.service.ai.getBestFit(targetData, dataSet)
         return self.converter.sample.fromModelToResponseDto(bestFit)
-
-    # @ServiceMethod(requestClass=[FeatureData.FeatureData, int])
-    # def patchDataValues(self, featureData, value, patchValues=False):
-    #     self.validator.common.isBoolean(patchValues)
-    #     if not featureData.iterationCount :
-    #         featureData.value = DefaultValue.DEFAULT_VALUE
-    #         featureData.iterationCount = DefaultValue.DEFAULT_ITERATION_COUNT
-    #     if not featureData.feature.iterationCount :
-    #         featureData.feature.value = DefaultValue.DEFAULT_VALUE
-    #         featureData.feature.iterationCount = DefaultValue.DEFAULT_ITERATION_COUNT
-    #     if patchValues :
-    #         featureData.iterationCount += 1
-    #         featureData.value += ((value - featureData.value) / featureData.iterationCount)
-    #         featureData.feature.iterationCount += 1
-    #         featureData.feature.value += ((value - featureData.feature.value) / featureData.feature.iterationCount)
-
-    # @ServiceMethod(requestClass=[Sample.Sample, int])
-    # def patchSampleValues(self, sample, value, patchValues=False):
-    #     self.validator.common.isBoolean(patchValues)
-    #     if not sample.iterationCount :
-    #         sample.value = DefaultValue.DEFAULT_VALUE
-    #         sample.iterationCount = DefaultValue.DEFAULT_ITERATION_COUNT
-    #     if patchValues :
-    #         sample.iterationCount += 1
-    #         sample.value += ((value - sample.value) / sample.iterationCount)
 
     @ServiceMethod()
     def queryAll(self):
