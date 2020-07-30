@@ -23,24 +23,14 @@ class FeatureDataRepository:
         return self.repository.saveAndCommit(model)
 
     def existsByFeatureKeyAndSampleKey(self, featureKey, sampleKey):
-        # objectExists = self.repository.session.query(self.model).filter(
-        #     and_(
-        #         self.model.feature.has(Feature.Feature.key == featureKey),
-        #         self.model.sample.has(Sample.Sample.key == sampleKey)
-        #     )
-        # ).first().exists()).scalar()
-        # objectExists = self.repository.session.query(exists(select([1]).select_from(self.model)).where(
-        #     and_(
-        #         self.model.feature.has(Feature.Feature.key == featureKey),
-        #         self.model.sample.has(Sample.Sample.key == sampleKey)
-        #     )
-        # )).scalar()
-        objectExists = self.repository.session.query(self.repository.session.query(self.model).filter(
-            and_(
-                self.model.feature.has(Feature.Feature.key == featureKey),
-                self.model.sample.has(Sample.Sample.key == sampleKey)
-            )
-        ).exists()).scalar()
+        objectExists = self.repository.session.query(
+            self.repository.session.query(self.model).filter(
+                and_(
+                    self.model.feature.has(Feature.Feature.key == featureKey),
+                    self.model.sample.has(Sample.Sample.key == sampleKey)
+                )
+            ).exists()
+        ).scalar()
         self.repository.session.commit()
         return objectExists
 

@@ -1,76 +1,74 @@
 from FlaskHelper import Service, ServiceMethod
-import Sample, SampleDto, Feature, FeatureData
-import DefaultValues
+import Sample, SampleDto, Feature, FeatureData, BestFitDto
+import DefaultValue
 
 @Service()
 class SampleService:
 
-    @ServiceMethod(requestClass=[FeatureData.FeatureData, int().__class__])
-    def patchDataValues(self, featureData, value, patchValues=False):
-        self.validator.common.isBoolean(patchValues)
-        if not featureData.iterationCount :
-            featureData.value = DefaultValues.DEFAULT_VALUE
-            featureData.iterationCount = DefaultValues.DEFAULT_ITERATION_COUNT
-        if not featureData.feature.iterationCount :
-            featureData.feature.value = DefaultValues.DEFAULT_VALUE
-            featureData.feature.iterationCount = DefaultValues.DEFAULT_ITERATION_COUNT
-        if patchValues :
-            featureData.iterationCount += 1
-            featureData.value += ((value - featureData.value) / featureData.iterationCount)
-            featureData.feature.iterationCount += 1
-            featureData.feature.value += ((value - featureData.feature.value) / featureData.feature.iterationCount)
+    @ServiceMethod(requestClass=[[BestFitDto.BestFitRequestDto], int])
+    def queryBestFit(self, bestFitList, amount):
+        self.validator.sample.bestFitRequestDtoList(bestFitList)
+        featureKeyList = self.helper.featureData.getFeatureKeyList(bestFitList)
+        sampleList = self.repository.sample.findAllByFeatureKeyIn(featureKeyList)
+        target, dataSet = self.helper.sample.getSampleDataSet(sampleList, bestFitList)
+        bestFit = self.service.ai.getBestFit(target, dataSet)
+        return self.converter.sample.fromModelToResponseDto(bestFit)
 
-    @ServiceMethod(requestClass=[Sample.Sample, int().__class__])
-    def patchSampleValues(self, sample, value, patchValues=False):
-        self.validator.common.isBoolean(patchValues)
-        if not sample.iterationCount :
-            sample.value = DefaultValues.DEFAULT_VALUE
-            sample.iterationCount = DefaultValues.DEFAULT_ITERATION_COUNT
-        if patchValues :
-            sample.iterationCount += 1
-            sample.value += ((value - sample.value) / sample.iterationCount)
+    # @ServiceMethod(requestClass=[FeatureData.FeatureData, int])
+    # def patchDataValues(self, featureData, value, patchValues=False):
+    #     self.validator.common.isBoolean(patchValues)
+    #     if not featureData.iterationCount :
+    #         featureData.value = DefaultValue.DEFAULT_VALUE
+    #         featureData.iterationCount = DefaultValue.DEFAULT_ITERATION_COUNT
+    #     if not featureData.feature.iterationCount :
+    #         featureData.feature.value = DefaultValue.DEFAULT_VALUE
+    #         featureData.feature.iterationCount = DefaultValue.DEFAULT_ITERATION_COUNT
+    #     if patchValues :
+    #         featureData.iterationCount += 1
+    #         featureData.value += ((value - featureData.value) / featureData.iterationCount)
+    #         featureData.feature.iterationCount += 1
+    #         featureData.feature.value += ((value - featureData.feature.value) / featureData.feature.iterationCount)
 
-    @ServiceMethod(requestClass=[[Feature.Feature], Sample.Sample])
-    def removeRejectedFeatureData(self, featureList, sampleToUpdate):
-        featureIdListToRemove = []
-        for featureData in sampleToUpdate.featureDataList :
-            feature = self.helper.featureData.getRespectiveFeatureByFeatureData(featureData, featureList)
-            if not feature :
-                featureIdListToRemove.append(featureData.feature.id)
-        for featureId in featureIdListToRemove :
-            featureData = self.helper.featureData.getRespectiveFeatureDataByFeatureId(featureId, sampleToUpdate.featureDataList)
-            sampleToUpdate.featureDataList.remove(featureData)
+    # @ServiceMethod(requestClass=[Sample.Sample, int])
+    # def patchSampleValues(self, sample, value, patchValues=False):
+    #     self.validator.common.isBoolean(patchValues)
+    #     if not sample.iterationCount :
+    #         sample.value = DefaultValue.DEFAULT_VALUE
+    #         sample.iterationCount = DefaultValue.DEFAULT_ITERATION_COUNT
+    #     if patchValues :
+    #         sample.iterationCount += 1
+    #         sample.value += ((value - sample.value) / sample.iterationCount)
 
     @ServiceMethod()
     def queryAll(self):
         return self.converter.sample.fromModelListToResponseDtoList(self.findAll())
 
-    @ServiceMethod(requestClass=str().__class__)
+    @ServiceMethod(requestClass=str)
     def queryByKey(self, key):
         sample = self.findByKey(key)
         return self.converter.sample.fromModelToResponseDto(sample)
 
-    @ServiceMethod(requestClass=[SampleDto.SampleRequestDto, str().__class__])
+    @ServiceMethod(requestClass=[SampleDto.SampleRequestDto, str])
     def create(self, dto, key):
         self.validator.sample.postRequestDto(dto, key)
         self.mapper.sample.overrideFeatureDataRequestDtoValues(dto.featureDataList, key)
         featureList = self.service.feature.findAllBySampleRequestDto(dto)
-        newSample = self.mapper.sample.fromPostRequestDtoToModel(dto, featureList, DefaultValues.DEFAULT_VALUE, key)
+        newSample = self.mapper.sample.fromPostRequestDtoToModel(dto, featureList, DefaultValue.DEFAULT_VALUE, key)
         sample = self.repository.sample.save(newSample)
         return self.converter.sample.fromModelToResponseDto(sample)
 
-    @ServiceMethod(requestClass=[SampleDto.SampleRequestDto, str().__class__])
+    @ServiceMethod(requestClass=[SampleDto.SampleRequestDto, str])
     def update(self, dto, key):
         self.validator.sample.putRequestDto(dto, key)
         self.mapper.sample.overrideFeatureDataRequestDtoValues(dto.featureDataList, key)
         featureList = self.service.feature.findAllBySampleRequestDto(dto)
         sampleToUpdate = self.findByKey(key)
-        self.mapper.sample.overrideValues(dto, featureList, DefaultValues.DEFAULT_VALUE, sampleToUpdate)
-        self.removeRejectedFeatureData(featureList, sampleToUpdate)
+        self.mapper.sample.overrideValues(dto, featureList, DefaultValue.DEFAULT_VALUE, sampleToUpdate)
+        self.helper.featureData.removeRejectedFeatureData(featureList, sampleToUpdate)
         sample = self.repository.sample.save(sampleToUpdate)
         return self.converter.sample.fromModelToResponseDto(sample)
 
-    @ServiceMethod(requestClass=[SampleDto.SampleRequestDto, str().__class__, int().__class__])
+    @ServiceMethod(requestClass=[SampleDto.SampleRequestDto, str, int])
     def patch(self, dto, key, value):
         self.validator.sample.patchRequestDto(dto, key, value)
         self.mapper.sample.overrideFeatureDataRequestDtoValues(dto.featureDataList, key)
@@ -80,7 +78,7 @@ class SampleService:
         sample = self.repository.sample.save(sampleToPatch)
         return self.converter.sample.fromModelToResponseDto(sample)
 
-    @ServiceMethod(requestClass=str().__class__)
+    @ServiceMethod(requestClass=str)
     def delete(self,key):
         self.validator.sample.existsByKey(key)
         self.repository.sample.deleteByKey(key)
@@ -89,11 +87,11 @@ class SampleService:
     def findAll(self):
         return self.repository.sample.findAll()
 
-    @ServiceMethod(requestClass=str().__class__)
+    @ServiceMethod(requestClass=str)
     def findByKey(self,key):
         self.validator.sample.existsByKey(key)
         return self.repository.sample.findByKey(key)
 
-    @ServiceMethod(requestClass=str().__class__)
+    @ServiceMethod(requestClass=str)
     def existsByKey(self, key):
         return self.repository.sample.existsByKey(key)

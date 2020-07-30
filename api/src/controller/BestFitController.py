@@ -1,17 +1,9 @@
 from FlaskHelper import Controller, ControllerMethod
-import HttpStatus
+import BestFitDto, HttpStatus
 
 @Controller(url = '/best-fit')
 class BestFitController:
 
-    @ControllerMethod(url='/')
-    def get(self):
-        return self.service.feature.queryBestFit(), HttpStatus.OK
-
-
-@Controller(url = '/best-fit')
-class BestFitBatchController:
-
-    @ControllerMethod(url='/<ammount>')
-    def get(self, ammount=None):
-        return self.service.feature.queryBestFitByAmmount(ammount), HttpStatus.OK
+    @ControllerMethod(url='/<amount>', requestClass=[[BestFitDto.BestFitRequestDto]])
+    def post(self, bestFitList, amount=None):
+        return self.service.sample.queryBestFit(bestFitList, int(amount)), HttpStatus.OK

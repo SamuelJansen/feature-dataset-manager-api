@@ -1,5 +1,6 @@
 from FlaskHelper import Validator, ValidatorMethod
-import SampleDto, Sample, Feature, FeatureData, FeatureDataDto, GlobalException, HttpStatus
+import SampleDto, Sample, Feature, FeatureData, FeatureDataDto, BestFitDto
+import GlobalException, HttpStatus
 
 @Validator()
 class SampleValidator:
@@ -11,24 +12,24 @@ class SampleValidator:
             raise GlobalException.GlobalException(message='There are FeatureData related to this entry altready. You need to delete it first', status=HttpStatus.BAD_REQUEST)
         self.featureDataRequestDtoList(dto.featureDataList)
 
-    @ValidatorMethod(requestClass=[SampleDto.SampleRequestDto, str().__class__])
+    @ValidatorMethod(requestClass=[SampleDto.SampleRequestDto, str])
     def putRequestDto(self, dto, key):
         self.existsByKey(key)
         self.featureDataRequestDtoList(dto.featureDataList)
 
-    @ValidatorMethod(requestClass=[SampleDto.SampleRequestDto, str().__class__, int().__class__])
+    @ValidatorMethod(requestClass=[SampleDto.SampleRequestDto, str, int])
     def patchRequestDto(self, dto, key, value):
         self.existsByKey(key)
         self.featureDataRequestDtoList(dto.featureDataList)
-        if not value or 0 == value :
+        if not value and not 0 == value :
             raise GlobalException.GlobalException(message='Value cannot be null', status=HttpStatus.BAD_REQUEST)
 
-    @ValidatorMethod(requestClass=str().__class__)
+    @ValidatorMethod(requestClass=str)
     def notExistsByKey(self, key):
         if self.service.sample.existsByKey(key) :
             raise GlobalException.GlobalException(message='Sample already exists', status=HttpStatus.BAD_REQUEST)
 
-    @ValidatorMethod(requestClass=str().__class__)
+    @ValidatorMethod(requestClass=str)
     def existsByKey(self, key):
         if not self.service.sample.existsByKey(key) :
             raise GlobalException.GlobalException(message='''Sample does not exists''', status=HttpStatus.BAD_REQUEST)
@@ -50,4 +51,10 @@ class SampleValidator:
     def featureDataRequestDtoList(self, featureDataList):
         for featureDataPostRequestDto in featureDataList :
             if not featureDataPostRequestDto.featureKey :
-                raise GlobalException.GlobalException(message='All featureDataList items must contain featureKey')
+                raise GlobalException.GlobalException(message='All featureDataList items must contain featureKey', status=HttpStatus.BAD_REQUEST)
+
+    @ValidatorMethod(requestClass=[[BestFitDto.BestFitRequestDto]])
+    def bestFitRequestDtoList(self, bestFitList):
+        for bestFit in bestFitList :
+            if not bestFit.featureKey :
+                raise GlobalException.GlobalException(message='The attribute "featureKey" cannot be null', status=HttpStatus.BAD_REQUEST)

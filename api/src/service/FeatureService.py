@@ -8,18 +8,18 @@ class FeatureService:
     def queryAll(self):
         return self.converter.feature.fromModelListToResponseDtoList(self.findAll())
 
-    @ServiceMethod(requestClass=str().__class__)
+    @ServiceMethod(requestClass=str)
     def queryByKey(self,key):
         return self.converter.feature.fromModelToResponseDto(self.findByKey(key))
 
-    @ServiceMethod(requestClass=[FeatureDto.FeatureRequestDto, str().__class__])
+    @ServiceMethod(requestClass=[FeatureDto.FeatureRequestDto, str])
     def create(self, dto, key):
         self.validator.feature.postRequestDto(dto, key)
-        newFeature = self.mapper.feature.fromPostRequestDtoToModel(dto)
+        newFeature = self.mapper.feature.fromPostRequestDtoToModel(dto, key)
         feature = self.repository.feature.save(newFeature)
         return self.converter.feature.fromModelToResponseDto(feature)
 
-    @ServiceMethod(requestClass=[FeatureDto.FeatureRequestDto, str().__class__])
+    @ServiceMethod(requestClass=[FeatureDto.FeatureRequestDto, str])
     def update(self, dto, key):
         self.validator.feature.putRequestDto(dto,key)
         feature = self.repository.feature.findByKey(key)
@@ -27,7 +27,7 @@ class FeatureService:
         feature = self.repository.feature.save(feature)
         return self.converter.feature.fromModelToResponseDto(feature)
 
-    @ServiceMethod(requestClass=str().__class__)
+    @ServiceMethod(requestClass=str)
     def delete(self,key):
         self.validator.feature.existsByKey(key)
         self.repository.feature.deleteByKey(key)
@@ -36,12 +36,12 @@ class FeatureService:
     def findAll(self):
         return self.repository.feature.findAll()
 
-    @ServiceMethod(requestClass=str().__class__)
+    @ServiceMethod(requestClass=str)
     def findByKey(self,key):
         self.validator.feature.existsByKey(key)
         return self.repository.feature.findByKey(key)
 
-    @ServiceMethod(requestClass=str().__class__)
+    @ServiceMethod(requestClass=str)
     def existsByKey(self, key):
         return self.repository.feature.existsByKey(key)
 

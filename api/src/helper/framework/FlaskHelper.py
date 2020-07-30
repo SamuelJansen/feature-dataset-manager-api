@@ -359,7 +359,7 @@ def ControllerMethod(url=None, requestClass=None, contentType=DEFAULT_CONTENT_TY
     return innerMethodWrapper
 
 @Method
-def validateArgs(args,requestClass,method) :
+def validateArgs(args, requestClass, method) :
     if requestClass :
         self = args[0]
         if Serializer.isList(requestClass) :

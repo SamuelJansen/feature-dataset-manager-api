@@ -3,6 +3,7 @@ Flask-RESTful
 Flask-JWT-Extended
 gunicorn
 psycopg2-binary
-globals==0.0.42
+globals
 python_helper
 SQLAlchemy
+numpy

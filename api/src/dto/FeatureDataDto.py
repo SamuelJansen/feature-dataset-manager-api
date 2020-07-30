@@ -1,23 +1,3 @@
-class FeatureDataDto:
-    def __init__(self,
-        id = None,
-        hash = None,
-        value = None,
-        iterationCount = None,
-        feature = None,
-        sample = None,
-        featureId = None,
-        sampleId = None
-    ):
-        self.id = id
-        self.hash = hash
-        self.value = value
-        self.iterationCount = iterationCount
-        self.feature = feature
-        self.sample = sample
-        self.featureId = featureId
-        self.sampleId = sampleId
-
 class FeatureDataResponseDto:
     def __init__(self,
         value = None,
@@ -37,3 +17,15 @@ class FeatureDataRequestDto:
     ):
         self.featureKey = featureKey
         self.sampleKey = sampleKey
+
+class BestFitDataRequestDto :
+    def __init__(self,
+        featureKey = None,
+        featureValue = None,
+        sampleKey = None,
+        sampleValue = None
+    ):
+        self.featureKey = featureKey
+        self.sampleKey = sampleKey
+        self.featureValue = featureValue
+        self.sampleValue = sampleValue

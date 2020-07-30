@@ -1,5 +1,5 @@
 from FlaskHelper import Helper, HelperMethod
-import FeatureData, Feature
+import FeatureData, Feature, Sample, BestFitDto
 
 @Helper()
 class FeatureDataHelper:
@@ -10,14 +10,27 @@ class FeatureDataHelper:
             if featureData.feature and feature.key == featureData.feature.key :
                 return featureData
 
-    @HelperMethod(requestClass=[FeatureData.FeatureData, [Feature.Feature]])
-    def getRespectiveFeatureByFeatureData(self, featureData, featureList):
-        for feature in featureList :
-            if featureData.feature and feature.id and featureData.feature.id and feature.id == featureData.feature.id :
-                return feature
-
-    @HelperMethod(requestClass=[int().__class__, [FeatureData.FeatureData]])
+    @HelperMethod(requestClass=[int, [FeatureData.FeatureData]])
     def getRespectiveFeatureDataByFeatureId(self, featureId, featureDataList) :
         for featureData in featureDataList :
             if featureData.feature and featureId and featureData.feature.id and featureId == featureData.feature.id :
                 return featureData
+
+
+    @HelperMethod(requestClass=[[Feature.Feature], Sample.Sample])
+    def removeRejectedFeatureData(self, featureList, sampleToUpdate):
+        featureIdListToRemove = []
+        for featureData in sampleToUpdate.featureDataList :
+            feature = self.helper.feature.getRespectiveFeatureByFeatureData(featureData, featureList)
+            if not feature :
+                featureIdListToRemove.append(featureData.feature.id)
+        for featureId in featureIdListToRemove :
+            featureData = self.helper.featureData.getRespectiveFeatureDataByFeatureId(featureId, sampleToUpdate.featureDataList)
+            sampleToUpdate.featureDataList.remove(featureData)
+
+    @HelperMethod(requestClass=[[BestFitDto.BestFitRequestDto]])
+    def getFeatureKeyList(self, bestFitList):
+        featureKeyList = []
+        for bestFit in bestFitList :
+            featureKeyList.append(bestFit.featureKey)
+        return featureKeyList

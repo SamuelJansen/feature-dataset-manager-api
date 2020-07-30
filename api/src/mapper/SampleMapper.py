@@ -1,11 +1,11 @@
 from FlaskHelper import Mapper, MapperMethod
 import Sample, SampleDto, FeatureData, Feature, FeatureDataDto
-import DefaultValues
+import DefaultValue
 
 @Mapper()
 class SampleMapper:
 
-    @MapperMethod(requestClass=[SampleDto.SampleRequestDto, [Feature.Feature], int().__class__], responseClass=Sample.Sample)
+    @MapperMethod(requestClass=[SampleDto.SampleRequestDto, [Feature.Feature], int], responseClass=Sample.Sample)
     def fromPostRequestDtoToModel(self, dto, featureList, value, key, model) :
         self.validator.sample.listLengthAreEqualsInSampleMapping(featureList, model.featureDataList)
         model.key = key
@@ -13,7 +13,7 @@ class SampleMapper:
         self.overrideValues(dto, featureList, value, model)
         return model
 
-    @MapperMethod(requestClass=[[FeatureDataDto.FeatureDataRequestDto], str().__class__])
+    @MapperMethod(requestClass=[[FeatureDataDto.FeatureDataRequestDto], str])
     def overrideFeatureDataRequestDtoValues(self, featureDataList, key) :
         for featureData in featureDataList :
             if not featureData.sampleKey :
@@ -29,7 +29,7 @@ class SampleMapper:
                 featureData.sample = model
             featureData.feature = feature
 
-    @MapperMethod(requestClass=[SampleDto.SampleRequestDto, [Feature.Feature], int().__class__, Sample.Sample])
+    @MapperMethod(requestClass=[SampleDto.SampleRequestDto, [Feature.Feature], int, Sample.Sample])
     def overrideValues(self, dto, featureList, value, model, patchValues=False):
         model.label = dto.label
         for feature in featureList :
@@ -38,5 +38,5 @@ class SampleMapper:
                 featureData = FeatureData.FeatureData()
                 featureData.sample = model
                 featureData.feature = feature
-            self.service.sample.patchDataValues(featureData, value, patchValues=patchValues)
-        self.service.sample.patchSampleValues(model, value, patchValues=patchValues)
+            self.service.ai.patchDataValues(featureData, value, patchValues=patchValues)
+        self.service.ai.patchSampleValues(model, value, patchValues=patchValues)
