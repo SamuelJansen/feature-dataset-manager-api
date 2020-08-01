@@ -1,6 +1,7 @@
-from FlaskHelper import Validator, ValidatorMethod
+from FlaskManager import Validator, ValidatorMethod
 import SampleDto, Sample, Feature, FeatureData, FeatureDataDto, BestFitDto
 import GlobalException, HttpStatus
+import DefaultValue
 
 @Validator()
 class SampleValidator:
@@ -55,8 +56,12 @@ class SampleValidator:
             if not featureDataPostRequestDto.featureKey :
                 raise GlobalException.GlobalException(message='All featureDataList items must contain featureKey', status=HttpStatus.BAD_REQUEST)
 
-    @ValidatorMethod(requestClass=[[BestFitDto.BestFitRequestDto]])
-    def bestFitRequestDtoList(self, bestFitList):
+    @ValidatorMethod(requestClass=[[BestFitDto.BestFitRequestDto], int])
+    def bestFitRequestDtoList(self, bestFitList, amount):
+        if amount <= DefaultValue.MIN_QUERY_AMMOUNT - 1 :
+            raise GlobalException.GlobalException(message=f'Amount must be bigger than {DefaultValue.MIN_QUERY_AMMOUNT-1}', status=HttpStatus.BAD_REQUEST)
+        if amount > DefaultValue.MAX_QUERY_AMMOUNT :
+            raise GlobalException.GlobalException(message=f'Amount limited at {DefaultValue.MAX_QUERY_AMMOUNT}', status=HttpStatus.BAD_REQUEST)
         for bestFit in bestFitList :
             if not bestFit.featureKey :
                 raise GlobalException.GlobalException(message='The attribute "featureKey" cannot be null', status=HttpStatus.BAD_REQUEST)

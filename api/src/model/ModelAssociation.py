@@ -1,4 +1,4 @@
-from SqlAlchemyHelper import *
+from SqlAlchemyProxy import *
 
 Model = getNewModel()
 

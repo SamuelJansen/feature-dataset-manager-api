@@ -1,4 +1,4 @@
-from FlaskHelper import Service, ServiceMethod
+from FlaskManager import Service, ServiceMethod
 import Feature, FeatureDto, FeatureDataDto, SampleDto
 
 @Service()

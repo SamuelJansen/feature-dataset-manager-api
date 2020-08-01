@@ -1,3 +1,4 @@
+import os
 import sqlalchemy
 from sqlalchemy import create_engine, exists, select
 from sqlalchemy.orm import sessionmaker, scoped_session, relationship
@@ -6,6 +7,8 @@ from sqlalchemy.ext.declarative import declarative_base, DeclarativeMeta
 from sqlalchemy import Table, Column, Integer, String, Float, ForeignKey, UnicodeText, MetaData, Sequence, DateTime
 
 from sqlalchemy import and_, or_
+
+from python_helper import log
 
 from MethodWrapper import Method
 
@@ -102,7 +105,7 @@ def getOneToOne__forDebug(man, woman, refferenceModel) :
     womanList = relationship(woman, back_populates=attributeIt(man))
     return womanId, womanList
 
-class SqlAlchemyHelper:
+class SqlAlchemyProxy:
 
     TOKEN_WITHOUT_NAME = '__TOKEN_WITHOUT_NAME__'
     DEFAULT_LOCAL_NAME = DEFAULT_LOCAL_STORAGE_NAME
@@ -119,6 +122,7 @@ class SqlAlchemyHelper:
     EXTENSION = 'db'
 
     def __init__(self,
+            databaseEnvironmentVariable = None,
             localName = TOKEN_WITHOUT_NAME,
             dialect = None,
             user = None,
@@ -133,6 +137,24 @@ class SqlAlchemyHelper:
 
         self.sqlalchemy = sqlalchemy
 
+        self.databaseUrl = None
+        if databaseEnvironmentVariable :
+            try :
+                self.databaseUrl = os.environ.get(databaseEnvironmentVariable)
+            except Exception as exception :
+                log.error(SqlAlchemyProxy, 'Not possible to parse database environment variable. proceeding to globals configuration', exception)
+
+        elif not self.databaseUrl :
+            self.globalsConfiguration(localName,dialect,user,password,host,port,model,globals,echo,checkSameThread)
+
+        self.engine = create_engine(self.databaseUrl, echo=echo, connect_args={"check_same_thread": checkSameThread})
+        self.session = scoped_session(sessionmaker(self.engine)) ###- sessionmaker(bind=self.engine)()
+        self.model = model
+        self.model.metadata.bind = self.engine
+
+        self.run()
+
+    def globalsConfiguration(self):
         if not dialect and globals :
             self.dialect = globals.getApiSetting(f'{KW_API}.{KW_REPOSITORY}.{KW_REPOSITORY_DIALECT}')
         else :
@@ -190,13 +212,6 @@ class SqlAlchemyHelper:
             self.dialect = self.DEFAULT_DATABASE_TYPE
 
         self.databaseUrl = f'{self.dialect}:{self.DOUBLE_BAR}{user_password_host}{self.name}'
-
-        self.engine = create_engine(self.databaseUrl, echo=echo, connect_args={"check_same_thread": checkSameThread})
-        self.session = scoped_session(sessionmaker(self.engine)) ###- sessionmaker(bind=self.engine)()
-        self.model = model
-        self.model.metadata.bind = self.engine
-
-        self.run()
 
     @Method
     def run(self):

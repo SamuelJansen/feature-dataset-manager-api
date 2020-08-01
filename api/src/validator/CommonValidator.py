@@ -1,4 +1,4 @@
-from FlaskHelper import Validator, ValidatorMethod
+from FlaskManager import Validator, ValidatorMethod
 from python_helper import Constant
 import GlobalException, HttpStatus
 

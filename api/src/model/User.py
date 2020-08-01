@@ -1,4 +1,4 @@
-from SqlAlchemyHelper import *
+from SqlAlchemyProxy import *
 from ModelAssociation import Model, USER
 import Role
 

@@ -1,5 +1,5 @@
-from FlaskHelper import Repository
-from SqlAlchemyHelper import exists, and_
+from FlaskManager import Repository
+from SqlAlchemyProxy import exists, and_
 import FeatureData, Feature, Sample
 
 @Repository(model = FeatureData.FeatureData)

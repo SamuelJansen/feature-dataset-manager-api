@@ -1,4 +1,4 @@
-from FlaskHelper import Repository
+from FlaskManager import Repository
 import Sample, FeatureData, Feature
 
 @Repository(model = Sample.Sample)

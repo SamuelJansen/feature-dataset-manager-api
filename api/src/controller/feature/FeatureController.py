@@ -1,24 +1,24 @@
-from FlaskHelper import Controller, ControllerMethod
-import Role
+from FlaskManager import Controller, ControllerMethod
+from Role import *
 import FeatureDto
 import HttpStatus
 
 @Controller(url = '/features')
 class FeatureController:
 
-    @ControllerMethod(url='/<key>', requestClass=FeatureDto.FeatureRequestDto, roleRequired=[Role.USER])
+    @ControllerMethod(url='/<string:key>', requestClass=FeatureDto.FeatureRequestDto, roleRequired=[USER, ADMIN])
     def post(self, dto, key):
         return self.service.feature.create(dto, key), HttpStatus.CREATED
 
-    @ControllerMethod(url='/<key>', roleRequired=[Role.USER])
+    @ControllerMethod(url='/<string:key>', roleRequired=[USER, ADMIN])
     def get(self, key=None):
         return self.service.feature.queryByKey(key), HttpStatus.OK
 
-    @ControllerMethod(url='/<key>', requestClass=FeatureDto.FeatureRequestDto, roleRequired=[Role.USER])
+    @ControllerMethod(url='/<string:key>', requestClass=FeatureDto.FeatureRequestDto, roleRequired=[USER, ADMIN])
     def put(self, dto, key):
         return self.service.feature.update(dto, key), HttpStatus.ACCEPTED
 
-    @ControllerMethod(url='/<key>', roleRequired=[Role.ADMIN])
+    @ControllerMethod(url='/<string:key>', roleRequired=[ADMIN])
     def delete(self, key):
         self.service.feature.delete(key)
         return {}, HttpStatus.NO_CONTENT
@@ -27,6 +27,6 @@ class FeatureController:
 @Controller(url = '/features/batch')
 class FeatureBatchController:
 
-    @ControllerMethod(roleRequired=[Role.ADMIN])
+    @ControllerMethod(roleRequired=[ADMIN])
     def get(self):
         return self.service.feature.queryAll(), HttpStatus.OK

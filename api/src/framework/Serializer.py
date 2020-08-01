@@ -1,13 +1,13 @@
 import json, importlib
 from python_helper import Constant, log
 from MethodWrapper import Method
-from SqlAlchemyHelper import DeclarativeMeta, InstrumentedList
+from SqlAlchemyProxy import DeclarativeMeta, InstrumentedList
 
 IGNORE_REOURCE_LIST = [
-    'FlaskHelper',
+    'FlaskManager',
     'MethodWrapper',
-    'ResourceHelper',
-    'SqlAlchemyHelper'
+    'ResourceManager',
+    'SqlAlchemyProxy'
 ]
 
 EXPAND_ALL_FIELDS = 'EXPAND_ALL_FIELDS'

@@ -1,5 +1,5 @@
-from FlaskHelper import Controller, ControllerMethod
-import Role
+from FlaskManager import Controller, ControllerMethod
+from Role import *
 import UserDto, HttpStatus
 
 @Controller(url = '/users')
@@ -9,15 +9,15 @@ class UserController:
     def post(self, dto, key):
         return self.service.user.create(dto, key), HttpStatus.CREATED
 
-    @ControllerMethod(url='/<key>', roleRequired=[Role.USER])
+    @ControllerMethod(url='/<key>', roleRequired=[USER, ADMIN])
     def get(self, key):
         return self.service.user.queryByKey(key), HttpStatus.OK
 
-    @ControllerMethod(url='/<key>', requestClass=UserDto.UserRequestDto, roleRequired=[Role.USER])
+    @ControllerMethod(url='/<key>', requestClass=UserDto.UserRequestDto, roleRequired=[USER, ADMIN])
     def put(self, dto, key):
         return self.service.user.update(dto, key), HttpStatus.ACCEPTED
 
-    @ControllerMethod(url='/<key>', roleRequired=[Role.ADMIN])
+    @ControllerMethod(url='/<key>', roleRequired=[ADMIN])
     def delete(self, key):
         self.service.user.delete(key), HttpStatus.NO_CONTENT
         return {}, HttpStatus.NO_CONTENT
@@ -25,6 +25,6 @@ class UserController:
 @Controller(url = '/users')
 class UserBatchController:
 
-    @ControllerMethod(url='/', roleRequired=[Role.ADMIN])
+    @ControllerMethod(url='/', roleRequired=[ADMIN])
     def get(self):
         return self.service.user.queryAll(), HttpStatus.OK

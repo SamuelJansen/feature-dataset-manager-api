@@ -6,7 +6,7 @@ from flask_restful import reqparse, abort
 from MethodWrapper import Method
 import Security, Serializer
 import GlobalException, HttpStatus
-import SqlAlchemyHelper
+import SqlAlchemyProxy
 
 KW_URL = 'url'
 KW_DEFAULT_URL = 'defaultUrl'
@@ -219,9 +219,10 @@ def addServiceListTo(apiInstance,serviceList) :
         apiInstance.bindResource(apiInstance,service())
 
 @Method
-def addRepositoryTo(apiInstance,repositoryList,model,localStorageName = None) :
-    apiInstance.repository = SqlAlchemyHelper.SqlAlchemyHelper(
-        localName = localStorageName if localStorageName else SqlAlchemyHelper.DEFAULT_LOCAL_STORAGE_NAME,
+def addRepositoryTo(apiInstance, repositoryList, model, databaseEnvironmentVariable=None, localStorageName=None) :
+    apiInstance.repository = SqlAlchemyProxy.SqlAlchemyProxy(
+        databaseEnvironmentVariable = databaseEnvironmentVariable,
+        localName = localStorageName,
         model = model,
         globals = apiInstance.globals,
         echo = False,
@@ -262,10 +263,11 @@ def addFlaskApiResources(
         helperList,
         converterList,
         model,
+        databaseEnvironmentVariable = None,
         localStorageName = None
     ) :
     addResourceAttibutes(apiInstance)
-    addRepositoryTo(apiInstance,repositoryList,model,localStorageName = localStorageName)
+    addRepositoryTo(apiInstance, repositoryList, model, databaseEnvironmentVariable=databaseEnvironmentVariable, localStorageName=localStorageName)
     addServiceListTo(apiInstance,serviceList)
     addControllerListTo(apiInstance,controllerList)
     addValidatorListTo(apiInstance,validatorList)

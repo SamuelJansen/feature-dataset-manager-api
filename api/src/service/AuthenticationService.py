@@ -1,4 +1,4 @@
-from FlaskHelper import Service, ServiceMethod
+from FlaskManager import Service, ServiceMethod
 import Security, Role, HttpStatus
 import User, UserDto
 
@@ -11,7 +11,7 @@ class AuthenticationService:
         model = self.service.user.findByKey(key)
         self.validator.user.password(dto, model)
         accessToken = Security.createAccessToken(model)
-        return {'accessToken' : accessToken}
+        return self.converter.user.fromModelToLoginResponseDto(model, accessToken)
 
     @ServiceMethod(requestClass=str)
     def logout(self, key):

@@ -1,4 +1,4 @@
-from FlaskHelper import Mapper, MapperMethod
+from FlaskManager import Mapper, MapperMethod
 import Feature, FeatureDto, DefaultValue
 
 @Mapper()

@@ -1,4 +1,4 @@
-from SqlAlchemyHelper import *
+from SqlAlchemyProxy import *
 from ModelAssociation import Model, FEATURE, FEATURE_DATA, SAMPLE_DATA
 
 class Feature(Model):

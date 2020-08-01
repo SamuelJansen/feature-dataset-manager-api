@@ -1,4 +1,4 @@
-from FlaskHelper import Converter, ConverterMethod
+from FlaskManager import Converter, ConverterMethod
 import User, UserDto
 
 @Converter()

@@ -1,4 +1,4 @@
-from FlaskHelper import Helper, HelperMethod
+from FlaskManager import Helper, HelperMethod
 import FeatureData, Feature
 
 @Helper()

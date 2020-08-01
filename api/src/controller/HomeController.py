@@ -1,4 +1,4 @@
-from FlaskHelper import Controller, ControllerMethod
+from FlaskManager import Controller, ControllerMethod
 
 @Controller(url = '/')
 class HomeController:

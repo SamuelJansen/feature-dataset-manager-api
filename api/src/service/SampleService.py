@@ -1,4 +1,4 @@
-from FlaskHelper import Service, ServiceMethod
+from FlaskManager import Service, ServiceMethod
 import Sample, SampleDto, Feature, FeatureData, BestFitDto
 import DefaultValue
 
@@ -6,14 +6,14 @@ import DefaultValue
 class SampleService:
 
     @ServiceMethod(requestClass=[[BestFitDto.BestFitRequestDto], int])
-    def queryBestFit(self, bestFitList, amount):
-        self.validator.sample.bestFitRequestDtoList(bestFitList)
+    def queryBestFitList(self, bestFitList, amount):
+        self.validator.sample.bestFitRequestDtoList(bestFitList, amount)
         featureKeyList = self.helper.featureData.getFeatureKeyList(bestFitList)
         sampleList = self.repository.sample.findAllByFeatureKeyIn(featureKeyList)
         dataSet = self.helper.sample.getSampleDataSet(sampleList, bestFitList)
         targetData = self.service.ai.getTargetData(bestFitList)
-        bestFit = self.service.ai.getBestFit(targetData, dataSet)
-        return self.converter.sample.fromModelToResponseDto(bestFit)
+        bestFitList = self.service.ai.getBestFitList(targetData, dataSet, amount)
+        return self.converter.sample.fromModelListToResponseDtoList(bestFitList)
 
     @ServiceMethod()
     def queryAll(self):

@@ -1,11 +1,11 @@
-from FlaskHelper import Controller, ControllerMethod
-import Role
+from FlaskManager import Controller, ControllerMethod
+from Role import *
 import UserDto, HttpStatus
 
 @Controller(url = '/users/logout')
 class LogoutController:
 
-    @ControllerMethod(url='/<key>', roleRequired=[Role.USER])
+    @ControllerMethod(url='/<string:key>', roleRequired=[USER, ADMIN])
     def post(self, key=None):
         self.service.authentication.logout(key)
         return {}, HttpStatus.NO_CONTENT

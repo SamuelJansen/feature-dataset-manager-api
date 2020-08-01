@@ -1,4 +1,4 @@
-from SqlAlchemyHelper import *
+from SqlAlchemyProxy import *
 from ModelAssociation import Model, ERROR_LOG
 
 MAX_HTTP_ERROR_LOG_PAYLOAD_SIZE = 16384

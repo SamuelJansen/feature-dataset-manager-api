@@ -1,4 +1,4 @@
-from FlaskHelper import Validator, ValidatorMethod
+from FlaskManager import Validator, ValidatorMethod
 import FeatureDataDto, GlobalException, HttpStatus
 
 @Validator()

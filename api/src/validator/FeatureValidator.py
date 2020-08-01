@@ -1,5 +1,5 @@
 from python_helper import Constant
-from FlaskHelper import Validator, ValidatorMethod
+from FlaskManager import Validator, ValidatorMethod
 import FeatureDto, Feature, GlobalException, HttpStatus
 
 @Validator()
