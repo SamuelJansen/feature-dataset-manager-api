@@ -16,10 +16,9 @@ class UserValidator:
         if not safe_str_cmp(model.password, dto.password) :
             raise GlobalException.GlobalException(message="Invalid username or password", status=HttpStatus.UNAUTHORIZED)
 
-    @ValidatorMethod(requestClass=[UserDto.UserRequestDto, str])
+    @ValidatorMethod(requestClass=[UserDto.LoginRequestDto, str])
     def loginRequestDto(self, dto, key):
         self.existsByKey(key)
-        self.validator.common.strNotNull(dto.username, 'username')
         self.validator.common.strNotNull(dto.password, 'password')
         self.validator.common.strNotNull(dto.email, 'email')
 

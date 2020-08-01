@@ -141,13 +141,16 @@ class SqlAlchemyProxy:
         if databaseEnvironmentVariable :
             try :
                 self.databaseUrl = os.environ.get(databaseEnvironmentVariable)
+                self.engine = create_engine(self.databaseUrl, echo=echo)
             except Exception as exception :
                 log.error(SqlAlchemyProxy, 'Not possible to parse database environment variable. proceeding to globals configuration', exception)
 
         elif not self.databaseUrl :
             self.globalsConfiguration(localName,dialect,user,password,host,port,model,globals,echo,checkSameThread)
+            if DEFAULT_DATABASE_TYPE == self.dialect :
+                connect_args['check_same_thread'] = checkSameThread
+            self.engine = create_engine(self.databaseUrl, echo=echo, connect_args=connect_args)
 
-        self.engine = create_engine(self.databaseUrl, echo=echo, connect_args={"check_same_thread": checkSameThread})
         self.session = scoped_session(sessionmaker(self.engine)) ###- sessionmaker(bind=self.engine)()
         self.model = model
         self.model.metadata.bind = self.engine

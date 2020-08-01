@@ -10,7 +10,7 @@ class AuthenticationService:
         self.validator.user.loginRequestDto(dto, key)
         model = self.service.user.findByKey(key)
         self.validator.user.password(dto, model)
-        accessToken = Security.createAccessToken(model)
+        accessToken = Security.createAccessToken(model, deltaMinutes=30)
         return self.converter.user.fromModelToLoginResponseDto(model, accessToken)
 
     @ServiceMethod(requestClass=str)

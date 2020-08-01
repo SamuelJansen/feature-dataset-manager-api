@@ -5,19 +5,19 @@ import UserDto, HttpStatus
 @Controller(url = '/users')
 class UserController:
 
-    @ControllerMethod(url='/<key>', requestClass=UserDto.UserRequestDto)
+    @ControllerMethod(url='/<string:key>', requestClass=UserDto.UserRequestDto)
     def post(self, dto, key):
         return self.service.user.create(dto, key), HttpStatus.CREATED
 
-    @ControllerMethod(url='/<key>', roleRequired=[USER, ADMIN])
+    @ControllerMethod(url='/<string:key>', roleRequired=[USER, ADMIN])
     def get(self, key):
         return self.service.user.queryByKey(key), HttpStatus.OK
 
-    @ControllerMethod(url='/<key>', requestClass=UserDto.UserRequestDto, roleRequired=[USER, ADMIN])
+    @ControllerMethod(url='/<string:key>', requestClass=UserDto.UserRequestDto, roleRequired=[USER, ADMIN])
     def put(self, dto, key):
         return self.service.user.update(dto, key), HttpStatus.ACCEPTED
 
-    @ControllerMethod(url='/<key>', roleRequired=[ADMIN])
+    @ControllerMethod(url='/<string:key>', roleRequired=[ADMIN])
     def delete(self, key):
         self.service.user.delete(key), HttpStatus.NO_CONTENT
         return {}, HttpStatus.NO_CONTENT

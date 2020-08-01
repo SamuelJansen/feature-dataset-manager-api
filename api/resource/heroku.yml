@@ -1,0 +1,18 @@
+create:
+    request: heroku create feature-dataset-manager
+    response: 'https://feature-dataset-manager.herokuapp.com/' | https://git.heroku.com/feature-dataset-manager.git
+add-ons:
+    request: heroku addons:create heroku-postgresql:hobby-dev --app feature-dataset-manager
+    response: DATABASE_URL
+config:
+    request: heroku config --app feature-dataset-manager
+    response: see it your self when logged in
+git-remote:
+    request: heroku git:remote -a feature-dataset-manager
+    response: set git remote heroku to https://git.heroku.com/jansen-flask-blog-application.git
+
+commands:
+    add: git add .
+    commit: git commit -m "commit message"
+    push: git push heroku master
+    logs: git tails

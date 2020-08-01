@@ -5,6 +5,7 @@ from flask_jwt_extended import (
     jwt_refresh_token_required, get_raw_jwt
 )
 from python_helper import Constant, log
+import datetime
 
 BLACK_LIST = set()
 
@@ -59,11 +60,14 @@ def addJwt(jwtInstance) :
     def invalidAccess() :
         return {'message': 'Access denied'}, HttpStatus.UNAUTHORIZED
 
-def createAccessToken(user) :
+def createAccessToken(user, deltaMinutes=None) :
+    ###- datetime.datetime.utcnow()
+    if deltaMinutes :
+        deltaMinutes = datetime.timedelta(minutes=deltaMinutes)
     return create_access_token(
         identity = user.id,
         fresh = False,
-        expires_delta = None,
+        expires_delta = deltaMinutes,
         user_claims = user.role,
         headers = None
     )
