@@ -1,11 +1,12 @@
 import webbrowser
-from python_helper import log, Constant
+from python_helper import Constant, log
 from flask import Response, request
 import flask_restful
 from flask_restful import reqparse, abort
 from MethodWrapper import Method
-import Serializer, SqlAlchemyHelper
-import GlobalException, HttpStatus, ErrorLog
+import Security, Serializer
+import GlobalException, HttpStatus
+import SqlAlchemyHelper
 
 KW_URL = 'url'
 KW_DEFAULT_URL = 'defaultUrl'
@@ -48,6 +49,8 @@ ABLE_TO_RECIEVE_BODY_LIST = [
     KW_PATCH
 ]
 
+DOT_SPACE_CAUSE = f'''{Constant.DOT_SPACE}{Constant.LOG_CAUSE}'''
+
 def printMyStuff(stuff):
     print()
     print(f'    type(stuff).__name__ = {type(stuff).__name__}')
@@ -60,7 +63,6 @@ def printClass(Class) :
     print(f'{2 * Constant.TAB}Class.__name__ = {Class.__name__}')
     print(f'{2 * Constant.TAB}Class.__module__ = {Class.__module__}')
     print(f'{2 * Constant.TAB}Class.__qualname__ = {Class.__qualname__}')
-
 
 class FlaskResource:
     ...
@@ -102,9 +104,9 @@ def getArgsWithSerializerReturnAppended(argument, args, isControllerMethod=False
 @Method
 def getArgsWithResponseClassInstanceAppended(args, responseClass) :
     if responseClass :
-        self = args[0]
+        resourceInstance = args[0]
         objectRequest = args[1]
-        serializerReturn = Serializer.convertFromObjectToObject(objectRequest,responseClass)
+        serializerReturn = Serializer.convertFromObjectToObject(objectRequest, responseClass)
         args = getArgsWithSerializerReturnAppended(serializerReturn, args)
     return args
 
@@ -165,6 +167,14 @@ def getApi() :
         api = getGlobals().api
     except Exception as exception :
         raise Exception(f'Failed to return api from "globals" instance. Cause: {str(exception)}')
+    return api
+
+@Method
+def getNullableApi() :
+    try :
+        api = getApi()
+    except :
+        api = None
     return api
 
 @Method
@@ -243,6 +253,7 @@ def addConverterListTo(apiInstance,converterList) :
 def addFlaskApiResources(
         apiInstance,
         appInstance,
+        jwtInstance,
         controllerList,
         serviceList,
         repositoryList,
@@ -261,6 +272,8 @@ def addFlaskApiResources(
     addMapperListTo(apiInstance,mapperList)
     addHelperListTo(apiInstance,helperList)
     addConverterListTo(apiInstance,converterList)
+    Security.addJwt(jwtInstance)
+
 
 @Method
 def setResource(apiInstance,resourceInstance,resourceName = None) :
@@ -271,6 +284,20 @@ def setResource(apiInstance,resourceInstance,resourceName = None) :
 def bindResource(apiInstance,resourceInstance) :
     validateFlaskApi(apiInstance)
     setResource(getattr(apiInstance.resource, getResourceType(resourceInstance).lower()), resourceInstance)
+
+def getGlobalException(exception, resourceInstance, resourceInstanceMethod):
+    apiInstance = getNullableApi()
+    return GlobalException.handleLogErrorException(exception, resourceInstance, resourceInstanceMethod, apiInstance)
+
+def raiseGlobalException(exception, resourceInstance, resourceInstanceMethod) :
+    raise getGlobalException(exception, resourceInstance, resourceInstanceMethod)
+
+@Method
+def getCompleteResponseByException(exception, resourceInstance, resourceInstanceMethod) :
+    exception = getGlobalException(exception, resourceInstance, resourceInstanceMethod)
+    completeResponse = [{'message':exception.message, 'timestamp':str(exception.timeStamp)},exception.status]
+    log.error(resourceInstance.__class__, f'Error processing {resourceInstance.__class__.__name__}.{resourceInstanceMethod.__name__} request', exception)
+    return completeResponse
 
 @Method
 def initialize(defaultUrl=None) :
@@ -306,23 +333,42 @@ def Controller(url=None) :
         return InnerClass
     return Wrapper
 
+def getRequestBodyAsJson() :
+    try :
+        requestBodyAsJson = request.get_json()
+    except Exception as exception :
+        raise GlobalException.GlobalException(message='Not possible to parse the request', logMessage=str(exception), status=HttpStatus.BAD_REQUEST)
+    return requestBodyAsJson
+
+@Security.jwtRequired
+def securedMethod(args, kwargs, resourceInstance, resourceInstanceMethod, requestClass, roleRequired) :
+    if not Security.getRole() in roleRequired :
+        raise GlobalException.GlobalException(message='Role not allowed', logMessage=f'''Role {Security.getRole()} trying to access denied resourse''', status=HttpStatus.FORBIDEN)
+    return notSecuredMethod(args, kwargs, resourceInstance, resourceInstanceMethod, requestClass)
+
+def notSecuredMethod(args, kwargs, resourceInstance, resourceInstanceMethod, requestClass) :
+    if resourceInstanceMethod.__name__ in ABLE_TO_RECIEVE_BODY_LIST and requestClass :
+        requestBodyAsJson = getRequestBodyAsJson() ###- request.get_json()
+        if requestBodyAsJson :
+            serializerReturn = Serializer.convertFromJsonToObject(requestBodyAsJson, requestClass)
+            args = getArgsWithSerializerReturnAppended(serializerReturn, args, isControllerMethod=True)
+    return resourceInstanceMethod(resourceInstance,*args[1:],**kwargs)
+
 @Method
-def ControllerMethod(url=None, requestClass=None, contentType=DEFAULT_CONTENT_TYPE):
+def ControllerMethod(url=None, requestClass=None, roleRequired=None, contentType=DEFAULT_CONTENT_TYPE):
     controllerMethodUrl = url
     def innerMethodWrapper(resourceInstanceMethod,*args,**kwargs) :
         noException = None
         log.wraper(ControllerMethod,f'''{resourceInstanceMethod.__name__}''',noException)
         def innerResourceInstanceMethod(*args,**kwargs) :
-            self = args[0]
+            resourceInstance = args[0]
             try :
-                if resourceInstanceMethod.__name__ in ABLE_TO_RECIEVE_BODY_LIST :
-                    bodyJson = request.get_json()
-                    if bodyJson :
-                        serializerReturn = Serializer.convertFromJsonToObject(bodyJson,requestClass)
-                        args = getArgsWithSerializerReturnAppended(serializerReturn, args, isControllerMethod=True)
-                completeResponse = resourceInstanceMethod(self,*args[1:],**kwargs)
+                if roleRequired and (type(list()) == type(roleRequired) and not [] == roleRequired) :
+                    completeResponse = securedMethod(args, kwargs, resourceInstance, resourceInstanceMethod, requestClass, roleRequired)
+                else :
+                    completeResponse = notSecuredMethod(args, kwargs, resourceInstance, resourceInstanceMethod, requestClass)
             except Exception as exception :
-
+                completeResponse = getCompleteResponseByException(exception, resourceInstance, resourceInstanceMethod)
                 # request.method:              GET
                 # request.url:                 http://127.0.0.1:5000/alert/dingding/test?x=y
                 # request.base_url:            http://127.0.0.1:5000/alert/dingding/test
@@ -334,22 +380,8 @@ def ControllerMethod(url=None, requestClass=None, contentType=DEFAULT_CONTENT_TY
                 # request.script_root:
                 # request.path:                /alert/dingding/test
                 # request.full_path:           /alert/dingding/test?x=y
-                #
                 # request.args:                ImmutableMultiDict([('x', 'y')])
                 # request.args.get('x'):       y
-
-                if not GlobalException.GlobalException.__name__ == exception.__class__.__name__ :
-                    log.error(self.__class__, f'Failed to excecute {resourceInstanceMethod.__name__} method', exception)
-                    exception = GlobalException.GlobalException(logMessage=str(exception))
-                try :
-                    httpErrorLog = ErrorLog.ErrorLog()
-                    httpErrorLog.override(exception)
-                    api = getApi()
-                    api.repository.saveAndCommit(httpErrorLog)
-                except Exception as errorLogException :
-                    log.error(self.__class__, f'Failed to persist {ErrorLog.ErrorLog.__name__}', errorLogException)
-                completeResponse = [{'message':exception.message, 'timestamp':str(exception.timeStamp)},exception.status]
-                log.error(self.__class__, f'Error processing {resourceInstanceMethod.__name__} request', exception)
             controllerResponse = completeResponse[0]
             status = completeResponse[1]
             return jsonifyResponse(controllerResponse, contentType, status)
@@ -361,21 +393,21 @@ def ControllerMethod(url=None, requestClass=None, contentType=DEFAULT_CONTENT_TY
 @Method
 def validateArgs(args, requestClass, method) :
     if requestClass :
-        self = args[0]
+        resourceInstance = args[0]
         if Serializer.isList(requestClass) :
             for index in range(len(requestClass)) :
                 if Serializer.isList(args[index + 1]) and len(args[index + 1]) > 0 :
                     expecteObjectClass = requestClass[index][0]
                     for objectInstance in args[index + 1] :
-                        GlobalException.validateArgs(self,method,objectInstance,expecteObjectClass)
+                        GlobalException.validateArgs(resourceInstance, method, objectInstance, expecteObjectClass)
                 else :
                     objectRequest = args[index + 1]
                     expecteObjectClass = requestClass[index]
-                    GlobalException.validateArgs(self,method,objectRequest,expecteObjectClass)
+                    GlobalException.validateArgs(resourceInstance, method, objectRequest, expecteObjectClass)
         else :
             objectRequest = args[1]
             expecteObjectClass = requestClass
-            GlobalException.validateArgs(self,method,objectRequest,expecteObjectClass)
+            GlobalException.validateArgs(resourceInstance, method, objectRequest, expecteObjectClass)
 
 @Method
 def Service() :
@@ -402,8 +434,13 @@ def ServiceMethod(requestClass=None):
         noException = None
         log.wraper(ServiceMethod,f'''{resourceInstanceMethod.__name__}''',noException)
         def innerResourceInstanceMethod(*args,**kwargs) :
-            validateArgs(args,requestClass,innerResourceInstanceMethod)
-            return resourceInstanceMethod(*args,**kwargs)
+            resourceInstance = args[0]
+            try :
+                validateArgs(args,requestClass,innerResourceInstanceMethod)
+                methodReturn = resourceInstanceMethod(*args,**kwargs)
+            except Exception as exception :
+                raiseGlobalException(exception, resourceInstance, resourceInstanceMethod)
+            return methodReturn
         overrideSignatures(innerResourceInstanceMethod, resourceInstanceMethod)
         return innerResourceInstanceMethod
     return innerMethodWrapper
@@ -446,8 +483,13 @@ def ValidatorMethod(requestClass=None, message=None, logMessage=None) :
         noException = None
         log.wraper(ValidatorMethod,f'''{resourceInstanceMethod.__name__}''',noException)
         def innerResourceInstanceMethod(*args,**kwargs) :
-            validateArgs(args,requestClass,innerResourceInstanceMethod)
-            return resourceInstanceMethod(*args,**kwargs)
+            resourceInstance = args[0]
+            try :
+                validateArgs(args,requestClass,innerResourceInstanceMethod)
+                methodReturn = resourceInstanceMethod(*args,**kwargs)
+            except Exception as exception :
+                raiseGlobalException(exception, resourceInstance, resourceInstanceMethod)
+            return methodReturn
         overrideSignatures(innerResourceInstanceMethod, resourceInstanceMethod)
         return innerResourceInstanceMethod
     return innerMethodWrapper
@@ -477,9 +519,14 @@ def MapperMethod(requestClass=None, responseClass=None) :
         noException = None
         log.wraper(MapperMethod,f'''{resourceInstanceMethod.__name__}''',noException)
         def innerResourceInstanceMethod(*args,**kwargs) :
-            validateArgs(args,requestClass,innerResourceInstanceMethod)
-            args = getArgsWithResponseClassInstanceAppended(args, responseClass)
-            return resourceInstanceMethod(*args,**kwargs)
+            resourceInstance = args[0]
+            try :
+                validateArgs(args,requestClass,innerResourceInstanceMethod)
+                args = getArgsWithResponseClassInstanceAppended(args, responseClass)
+                methodReturn = resourceInstanceMethod(*args,**kwargs)
+            except Exception as exception :
+                raiseGlobalException(exception, resourceInstance, resourceInstanceMethod)
+            return methodReturn
         overrideSignatures(innerResourceInstanceMethod, resourceInstanceMethod)
         return innerResourceInstanceMethod
     return innerMethodWrapper
@@ -505,9 +552,14 @@ def HelperMethod(requestClass=None, responseClass=None) :
         noException = None
         log.wraper(HelperMethod,f'''{resourceInstanceMethod.__name__}''',noException)
         def innerResourceInstanceMethod(*args,**kwargs) :
-            validateArgs(args,requestClass,innerResourceInstanceMethod)
-            args = getArgsWithResponseClassInstanceAppended(args, responseClass)
-            return resourceInstanceMethod(*args,**kwargs)
+            resourceInstance = args[0]
+            try :
+                validateArgs(args,requestClass,innerResourceInstanceMethod)
+                args = getArgsWithResponseClassInstanceAppended(args, responseClass)
+                methodReturn = resourceInstanceMethod(*args,**kwargs)
+            except Exception as exception :
+                raiseGlobalException(exception, resourceInstance, resourceInstanceMethod)
+            return methodReturn
         overrideSignatures(innerResourceInstanceMethod, resourceInstanceMethod)
         return innerResourceInstanceMethod
     return innerMethodWrapper
@@ -533,9 +585,14 @@ def ConverterMethod(requestClass=None, responseClass=None) :
         noException = None
         log.wraper(ConverterMethod,f'''{resourceInstanceMethod.__name__}''',noException)
         def innerResourceInstanceMethod(*args,**kwargs) :
-            validateArgs(args, requestClass, innerResourceInstanceMethod)
-            args = getArgsWithResponseClassInstanceAppended(args, responseClass)
-            return resourceInstanceMethod(*args,**kwargs)
+            resourceInstance = args[0]
+            try :
+                validateArgs(args, requestClass, innerResourceInstanceMethod)
+                args = getArgsWithResponseClassInstanceAppended(args, responseClass)
+                methodReturn = resourceInstanceMethod(*args,**kwargs)
+            except Exception as exception :
+                raiseGlobalException(exception, resourceInstance, resourceInstanceMethod)
+            return methodReturn
         overrideSignatures(innerResourceInstanceMethod, resourceInstanceMethod)
         return innerResourceInstanceMethod
     return innerMethodWrapper

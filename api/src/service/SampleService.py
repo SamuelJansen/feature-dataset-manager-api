@@ -39,7 +39,7 @@ class SampleService:
         self.mapper.sample.overrideFeatureDataRequestDtoValues(dto.featureDataList, key)
         featureList = self.service.feature.findAllBySampleRequestDto(dto)
         sampleToUpdate = self.findByKey(key)
-        self.mapper.sample.overrideValues(dto, featureList, DefaultValue.DEFAULT_VALUE, sampleToUpdate)
+        self.mapper.sample.overrideModelValues(dto, featureList, DefaultValue.DEFAULT_VALUE, sampleToUpdate)
         self.helper.featureData.removeRejectedFeatureData(featureList, sampleToUpdate)
         sample = self.repository.sample.save(sampleToUpdate)
         return self.converter.sample.fromModelToResponseDto(sample)
@@ -50,7 +50,7 @@ class SampleService:
         self.mapper.sample.overrideFeatureDataRequestDtoValues(dto.featureDataList, key)
         featureList = self.service.feature.findAllBySampleRequestDto(dto)
         sampleToPatch = self.findByKey(key)
-        self.mapper.sample.overrideValues(dto, featureList, value, sampleToPatch, patchValues=True)
+        self.mapper.sample.overrideModelValues(dto, featureList, value, sampleToPatch, patchValues=True)
         sample = self.repository.sample.save(sampleToPatch)
         return self.converter.sample.fromModelToResponseDto(sample)
 

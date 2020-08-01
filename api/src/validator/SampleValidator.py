@@ -26,11 +26,13 @@ class SampleValidator:
 
     @ValidatorMethod(requestClass=str)
     def notExistsByKey(self, key):
+        self.validator.common.strNotNull(key, 'key')
         if self.service.sample.existsByKey(key) :
             raise GlobalException.GlobalException(message='Sample already exists', status=HttpStatus.BAD_REQUEST)
 
     @ValidatorMethod(requestClass=str)
     def existsByKey(self, key):
+        self.validator.common.strNotNull(key, 'key')
         if not self.service.sample.existsByKey(key) :
             raise GlobalException.GlobalException(message='''Sample does not exists''', status=HttpStatus.BAD_REQUEST)
 

@@ -6,8 +6,8 @@ class FeatureData(Model):
 
     id = Column(Integer(), Sequence(f'{__tablename__}{ID}{SEQ}'), primary_key=True)
     hash = Column(String(1024), unique=True)
-    value = Column(Float(precision=12))
-    iterationCount = Column(Integer())
+    value = Column(Float(precision=12), nullable=False)
+    iterationCount = Column(Integer(), nullable=False)
     feature, featureId = getManyToOne(FEATURE_DATA, FEATURE, Model)
     sample, sampleId = getManyToOne(FEATURE_DATA, SAMPLE, Model)
 
@@ -31,4 +31,4 @@ class FeatureData(Model):
         self.sampleId = sampleId
 
     def __repr__(self):
-        return f'{FEATURE_DATA}(hash={self.hash}, value={self.value}, feature.key={self.feature.key if self.feature else None}, sample.key={self.sample.key if self.sample else None}, id={self.id})'
+        return f'{self.__tablename__}(hash={self.hash}, value={self.value}, feature.key={self.feature.key if self.feature else None}, sample.key={self.sample.key if self.sample else None}, id={self.id})'

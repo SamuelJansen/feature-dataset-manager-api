@@ -1,14 +1,9 @@
-import flask
-import flask_restful
 import ResourceHelper
 import ModelAssociation
 
-app = flask.Flask(__name__)
-api = flask_restful.Api(app)
-
-ResourceHelper.initializeResources(
-    api,
-    app,
+api, app, jwt = ResourceHelper.initializeResources(
+    __name__,
     ModelAssociation.Model,
-    localStorageName = 'LocalFeatureManager'
+    localStorageName = 'LocalFeatureManager',
+    jwtSecret = '3s7tj83ry17**q837yrk1v3r7k32vdg781dkd73u'
 )

@@ -1,5 +1,7 @@
+import flask
+import flask_restful
 from python_helper import Constant
-import FlaskHelper, Serializer
+import Security, FlaskHelper, Serializer
 from MethodWrapper import Method
 
 DOT_PY = '.py'
@@ -28,9 +30,10 @@ def getResourceNameList(apiTree, resourceType) :
 
 @Method
 def getControllerNameList(controllerName) :
-    # return getAttributeNameList(__import__(resourceFileName))
     controllerNameList = [controllerName]
     controllerNameList.append(f'{controllerName[:-len(FlaskHelper.KW_CONTROLLER_RESOURCE)]}{Serializer.KW_BATCH}{FlaskHelper.KW_CONTROLLER_RESOURCE}')
+    # controllerNameList = [name for name in dir(__import__(controllerName)) if not name.startswith(Constant.UNDERSCORE)]
+    # return Serializer.getAttributeNameList(__import__(controllerName))
     return controllerNameList
 
 @Method
@@ -60,10 +63,16 @@ def getResourceList(apiInstance, resourceType) :
     return resourceList
 
 @Method
-def initializeResources(api, app, refferenceModel, localStorageName=None) :
+def initializeResources(rootName, refferenceModel, localStorageName=None, jwtSecret=None) :
+    app = flask.Flask(rootName)
+    api = flask_restful.Api(app)
+    jwt = Security.getJwtMannager(app, jwtSecret)
+
     FlaskHelper.addGlobalsTo(api)
-    args = [api, app]
+    args = [api, app, jwt]
     for kwResource in FlaskHelper.KW_RESOURCE_LIST :
         args.append(getResourceList(api,kwResource))
     args.append(refferenceModel)
     FlaskHelper.addFlaskApiResources(*args, localStorageName=localStorageName)
+
+    return api, app, jwt

@@ -1,7 +1,7 @@
 import numpy
 from FlaskHelper import Service, ServiceMethod
 from python_helper import Constant, log
-import Sample, FeatureData
+import Sample, FeatureData, BestFitDto
 import DefaultValue, DataSetKey
 
 @Service()

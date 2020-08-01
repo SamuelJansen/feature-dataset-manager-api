@@ -7,4 +7,6 @@ SAMPLE = 'Sample'
 FEATURE_DATA = 'FeatureData'
 SAMPLE_DATA = 'SampleData'
 
-HTTP_ERROR_LOG = 'ErrorLog'
+USER = 'User'
+
+ERROR_LOG = 'ErrorLog'

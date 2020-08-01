@@ -10,7 +10,7 @@ class SampleMapper:
         self.validator.sample.listLengthAreEqualsInSampleMapping(featureList, model.featureDataList)
         model.key = key
         model.featureDataList = []
-        self.overrideValues(dto, featureList, value, model)
+        self.overrideModelValues(dto, featureList, value, model)
         return model
 
     @MapperMethod(requestClass=[[FeatureDataDto.FeatureDataRequestDto], str])
@@ -30,7 +30,7 @@ class SampleMapper:
             featureData.feature = feature
 
     @MapperMethod(requestClass=[SampleDto.SampleRequestDto, [Feature.Feature], int, Sample.Sample])
-    def overrideValues(self, dto, featureList, value, model, patchValues=False):
+    def overrideModelValues(self, dto, featureList, value, model, patchValues=False):
         model.label = dto.label
         for feature in featureList :
             featureData = self.helper.featureData.getRespectiveFeatureDataByFeature(feature, model.featureDataList)

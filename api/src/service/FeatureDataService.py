@@ -17,6 +17,7 @@ class FeatureDataService:
     @ServiceMethod(requestClass=str)
     def queryAllByFeatureKey(self, featureKey):
         featureKeyList = self.findAllByFeatureKey(featureKey)
+        print(featureKeyList)
         return self.converter.featureData.fromModelListToResponseDtoList(featureKeyList)
 
     @ServiceMethod(requestClass=[str, str])
@@ -26,13 +27,12 @@ class FeatureDataService:
 
     @ServiceMethod(requestClass=str)
     def findAllByFeatureKey(self, featureKey):
-        self.validator.featureData.featureKeyNotNull(featureKey)
-        print(featureKey)
+        self.validator.common.pathVariableNotNull(featureKey, 'featureKey')
         return self.repository.featureData.findAllByFeatureKey(featureKey)
 
     @ServiceMethod(requestClass=str)
     def findAllBySampleKey(self, sampleKey):
-        self.validator.featureData.sampleKeyNotNull(sampleKey)
+        self.validator.featureData.pathVariableNotNull(sampleKey, 'sampleKey')
         return self.repository.featureData.findAllBySampleKey(sampleKey)
 
     @ServiceMethod(requestClass=[str, str])

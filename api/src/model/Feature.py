@@ -5,10 +5,10 @@ class Feature(Model):
     __tablename__ = FEATURE
 
     id = Column(Integer(), Sequence(f'{__tablename__}{ID}{SEQ}'), primary_key=True)
-    key = Column(String(128), unique=True)
+    key = Column(String(128), unique=True, nullable=False)
     label = Column(String(128))
-    value = Column(Float(precision=12))
-    iterationCount = Column(Integer())
+    value = Column(Float(precision=12), nullable=False)
+    iterationCount = Column(Integer(), nullable=False)
     featureDataList = getOneToMany(__tablename__, FEATURE_DATA, Model)
     sampleDataList = getOneToMany(__tablename__, SAMPLE_DATA, Model)
 
@@ -30,4 +30,4 @@ class Feature(Model):
         self.sampleDataList = sampleDataList if sampleDataList else []
 
     def __repr__(self):
-        return f'{FEATURE}(id={self.id}, key={self.key}, label={self.label}, value={self.value})'
+        return f'{self.__tablename__}(id={self.id}, key={self.key}, label={self.label}, value={self.value})'
