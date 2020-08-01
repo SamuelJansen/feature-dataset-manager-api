@@ -32,7 +32,7 @@ class FeatureDataService:
 
     @ServiceMethod(requestClass=str)
     def findAllBySampleKey(self, sampleKey):
-        self.validator.featureData.pathVariableNotNull(sampleKey, 'sampleKey')
+        self.validator.common.pathVariableNotNull(sampleKey, 'sampleKey')
         return self.repository.featureData.findAllBySampleKey(sampleKey)
 
     @ServiceMethod(requestClass=[str, str])
