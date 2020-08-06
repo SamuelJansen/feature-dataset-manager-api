@@ -150,8 +150,8 @@ class SqlAlchemyProxy:
             self.globalsConfiguration(localName,dialect,user,password,host,port,model,globals,echo,checkSameThread)
             if self.DEFAULT_DATABASE_TYPE == self.dialect :
                 connect_args['check_same_thread'] = checkSameThread
+                
         self.engine = create_engine(self.databaseUrl, echo=echo, connect_args=connect_args)
-
         self.session = scoped_session(sessionmaker(self.engine)) ###- sessionmaker(bind=self.engine)()
         self.model = model
         self.model.metadata.bind = self.engine
