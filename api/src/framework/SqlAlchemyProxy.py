@@ -147,9 +147,10 @@ class SqlAlchemyProxy:
 
         elif not self.databaseUrl :
             self.globalsConfiguration(localName,dialect,user,password,host,port,model,globals,echo,checkSameThread)
-            if DEFAULT_DATABASE_TYPE == self.dialect :
+            connect_args = {}
+            if self.DEFAULT_DATABASE_TYPE == self.dialect :
                 connect_args['check_same_thread'] = checkSameThread
-            self.engine = create_engine(self.databaseUrl, echo=echo, connect_args=connect_args)
+        self.engine = create_engine(self.databaseUrl, echo=echo, connect_args=connect_args)
 
         self.session = scoped_session(sessionmaker(self.engine)) ###- sessionmaker(bind=self.engine)()
         self.model = model
@@ -157,7 +158,7 @@ class SqlAlchemyProxy:
 
         self.run()
 
-    def globalsConfiguration(self):
+    def globalsConfiguration(self,localName,dialect,user,password,host,port,model,globals,echo,checkSameThread):
         if not dialect and globals :
             self.dialect = globals.getApiSetting(f'{KW_API}.{KW_REPOSITORY}.{KW_REPOSITORY_DIALECT}')
         else :

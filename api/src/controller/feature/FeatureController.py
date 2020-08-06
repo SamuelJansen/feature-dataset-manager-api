@@ -1,7 +1,7 @@
 from FlaskManager import Controller, ControllerMethod
-from Role import *
 import FeatureDto
 import HttpStatus
+from Role import *
 
 @Controller(url = '/features')
 class FeatureController:

@@ -2,7 +2,7 @@ from FlaskManager import Controller, ControllerMethod
 from Role import *
 import UserDto, HttpStatus
 
-@Controller(url = '/users/logout')
+@Controller(url = '/authentication/logout')
 class LogoutController:
 
     @ControllerMethod(url='/<string:key>', roleRequired=[USER, ADMIN])

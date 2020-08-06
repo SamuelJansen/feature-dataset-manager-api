@@ -17,7 +17,6 @@ class FeatureDataService:
     @ServiceMethod(requestClass=str)
     def queryAllByFeatureKey(self, featureKey):
         featureKeyList = self.findAllByFeatureKey(featureKey)
-        print(featureKeyList)
         return self.converter.featureData.fromModelListToResponseDtoList(featureKeyList)
 
     @ServiceMethod(requestClass=[str, str])

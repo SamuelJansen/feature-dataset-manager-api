@@ -1,7 +1,7 @@
 from FlaskManager import Controller, ControllerMethod
 import UserDto, HttpStatus
 
-@Controller(url = '/users/login')
+@Controller(url = '/authentication/login')
 class LoginController:
 
     @ControllerMethod(url='/<string:key>', requestClass=UserDto.UserRequestDto)

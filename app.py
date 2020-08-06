@@ -9,8 +9,9 @@ globals = Globals(__file__,
 import FeatureManager, FlaskManager
 app = FeatureManager.app
 api = FeatureManager.api
+jwt = FeatureManager.jwt
 
-@FlaskManager.initialize(defaultUrl = "/features")
+@FlaskManager.initialize(defaultUrl = '/swagger-io')
 def runFlaskApplication(app):
     app.run(debug=True)
 

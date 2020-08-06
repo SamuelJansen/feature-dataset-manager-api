@@ -1,0 +1,109 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "My first api",
+    "version": "0.0.1",
+    "description": "",
+    "termsOfService": "http://swagger.io/",
+    "contact": {
+      "name": "developer team",
+      "email": "developer.team@email.com"
+    }
+  },
+  "host": "127.0.0.1:5000",
+  "basePath": "/",
+  "tags": [
+    {
+      "name": "My tag",
+      "description": "",
+      "externalDocs": {
+        "description": "",
+        "url": "http://swagger.io/"
+      }
+    }
+  ],
+  "schemes": [
+    "https",
+    "http"
+  ],
+  "paths": {
+    "/my/path": {
+      "post": {
+        "tags": [
+          "My tag"
+        ],
+        "sumary": "",
+        "description": "it's my post path",
+        "operationId": "key",
+        "consumes": [
+
+        ],
+        "produces": [
+
+        ],
+        "parameters": [
+
+        ],
+        "responses": {
+
+        },
+        "security": {
+
+        }
+      },
+      "get": {
+        "tags": [
+          "My tag"
+        ],
+        "sumary": "",
+        "description": "it's my get path",
+        "operationId": "key",
+        "consumes": [
+
+        ],
+        "produces": [
+
+        ],
+        "parameters": [
+
+        ],
+        "responses": {
+
+        },
+        "security": {
+
+        }
+      }
+    }
+  },
+  "definitions": {
+    "SomeObjectDefinition": {
+      "type": "object",
+      "example": "",
+      "required": [
+        "username",
+        "password"
+      ],
+      "properties": {
+        "username": {
+          "type": "string",
+          "example": ""
+        },
+        "password": {
+          "type": "string",
+          "example": "123asd*&(QWE"
+        }
+      }
+    },
+    "AnotherObjectDefinition": {
+      "type": "object",
+      "example": "",
+      "required": [
+
+      ],
+      "properties": {
+
+      }
+    }
+  }
+}

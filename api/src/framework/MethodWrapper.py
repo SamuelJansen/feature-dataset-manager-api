@@ -22,4 +22,13 @@ def Method(method,*args,**kwargs) :
             log.wraper(Method,f'''failed to execute{className}{methodName} method''',exception)
             raise Exception(f'{className}{methodName} method error{DOT_SPACE_CAUSE}{str(exception)}')
         return methodReturn
+    overrideSignatures(wrapedMethod, method)
     return wrapedMethod
+
+def overrideSignatures(toOverride, original) :
+    try :
+        toOverride.__name__ = original.__name__
+        toOverride.__module__ = original.__module__
+        toOverride.__qualname__ = original.__qualname__
+    except Exception as exception :
+        log.wraper(overrideSignatures,f'''failed to override signatures of {toOverride} by signatures of {original} method''',exception)
