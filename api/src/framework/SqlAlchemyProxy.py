@@ -137,6 +137,7 @@ class SqlAlchemyProxy:
 
         self.sqlalchemy = sqlalchemy
 
+        connect_args = {}
         self.databaseUrl = None
         if databaseEnvironmentVariable :
             try :
@@ -147,7 +148,6 @@ class SqlAlchemyProxy:
 
         elif not self.databaseUrl :
             self.globalsConfiguration(localName,dialect,user,password,host,port,model,globals,echo,checkSameThread)
-            connect_args = {}
             if self.DEFAULT_DATABASE_TYPE == self.dialect :
                 connect_args['check_same_thread'] = checkSameThread
         self.engine = create_engine(self.databaseUrl, echo=echo, connect_args=connect_args)
