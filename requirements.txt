@@ -1,9 +1,10 @@
+gunicorn
 Flask
 Flask-RESTful
 Flask-JWT-Extended
-gunicorn
+Flask-Swagger-Ui
 psycopg2-binary
+SQLAlchemy
 globals
 python_helper
-SQLAlchemy
 numpy
