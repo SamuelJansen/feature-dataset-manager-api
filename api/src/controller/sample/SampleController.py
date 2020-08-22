@@ -2,7 +2,7 @@ from FlaskManager import Controller, ControllerMethod
 from Role import *
 import SampleDto, HttpStatus
 
-@Controller(url = '/samples')
+@Controller(url = '/samples', tag='Sample', description='Single Sample controller')
 class SampleController:
 
     @ControllerMethod(url='/<string:key>', requestClass=SampleDto.SampleRequestDto, roleRequired=[USER, ADMIN])
@@ -27,7 +27,7 @@ class SampleController:
         return {}, HttpStatus.NO_CONTENT
 
 
-@Controller(url = '/samples/batch')
+@Controller(url = '/samples/batch', tag='Sample', description='Multiple Sample controller')
 class SampleBatchController:
 
     @ControllerMethod(roleRequired=[ADMIN])

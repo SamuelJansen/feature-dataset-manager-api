@@ -3,7 +3,7 @@ import FeatureDto
 import HttpStatus
 from Role import *
 
-@Controller(url = '/features')
+@Controller(url = '/features', tag='Feature', description='Single Feature controller')
 class FeatureController:
 
     @ControllerMethod(url='/<string:key>', requestClass=FeatureDto.FeatureRequestDto, roleRequired=[USER, ADMIN])
@@ -24,7 +24,7 @@ class FeatureController:
         return {}, HttpStatus.NO_CONTENT
 
 
-@Controller(url = '/features/batch')
+@Controller(url = '/features/batch', tag='Feature', description='Multiple Feature controller')
 class FeatureBatchController:
 
     @ControllerMethod(roleRequired=[ADMIN])

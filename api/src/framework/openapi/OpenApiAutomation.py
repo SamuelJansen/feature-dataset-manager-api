@@ -1,1 +1,0 @@
-def getNewObject(object)

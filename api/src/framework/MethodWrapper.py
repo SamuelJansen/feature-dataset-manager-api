@@ -19,7 +19,7 @@ def Method(method,*args,**kwargs) :
                     methodName = f' {methodName}'
             except :
                 methodName = ''
-            log.wraper(Method,f'''failed to execute{className}{methodName} method''',exception)
+            log.wraper(Method,f'''failed to execute{className}{methodName} method. Received args: {args}. Received kwargs: {kwargs}''',exception)
             raise Exception(f'{className}{methodName} method error{DOT_SPACE_CAUSE}{str(exception)}')
         return methodReturn
     overrideSignatures(wrapedMethod, method)

@@ -2,7 +2,7 @@ from FlaskManager import Controller, ControllerMethod
 from Role import *
 import UserDto, HttpStatus
 
-@Controller(url = '/users')
+@Controller(url = '/users', tag='User', description='Single User controller')
 class UserController:
 
     @ControllerMethod(url='/<string:key>', requestClass=UserDto.UserRequestDto)
@@ -22,7 +22,7 @@ class UserController:
         self.service.user.delete(key), HttpStatus.NO_CONTENT
         return {}, HttpStatus.NO_CONTENT
 
-@Controller(url = '/users')
+@Controller(url = '/users', tag='User', description='Multiple User controller')
 class UserBatchController:
 
     @ControllerMethod(url='/', roleRequired=[ADMIN])

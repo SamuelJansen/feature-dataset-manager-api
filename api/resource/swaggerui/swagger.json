@@ -1,109 +1,87 @@
 {
-  "swagger": "2.0",
-  "info": {
-    "title": "My first api",
-    "version": "0.0.1",
-    "description": "",
-    "termsOfService": "http://swagger.io/",
-    "contact": {
-      "name": "developer team",
-      "email": "developer.team@email.com"
-    }
-  },
-  "host": "127.0.0.1:5000",
-  "basePath": "/",
-  "tags": [
-    {
-      "name": "My tag",
-      "description": "",
-      "externalDocs": {
-        "description": "",
-        "url": "http://swagger.io/"
-      }
-    }
-  ],
-  "schemes": [
-    "https",
-    "http"
-  ],
-  "paths": {
-    "/my/path": {
-      "post": {
-        "tags": [
-          "My tag"
-        ],
-        "sumary": "",
-        "description": "it's my post path",
-        "operationId": "key",
-        "consumes": [
-
-        ],
-        "produces": [
-
-        ],
-        "parameters": [
-
-        ],
-        "responses": {
-
+    "swagger": "2.0",
+    "host": "http://localhost:5000",
+    "basePath": "",
+    "schemes": [
+        "http"
+    ],
+    "info": {
+        "title": "Feature Manager",
+        "description": "This is an api that manage samples and its features. The main goal is to retrieve the best sample match given a set of features",
+        "version": "0.0.1",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "Samuel Jansen",
+            "email": "samuel.jansenn@gmail.com"
         },
-        "security": {
-
+        "license": {
+            "name": "Apache 2.0 / MIT License",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
         }
-      },
-      "get": {
-        "tags": [
-          "My tag"
-        ],
-        "sumary": "",
-        "description": "it's my get path",
-        "operationId": "key",
-        "consumes": [
-
-        ],
-        "produces": [
-
-        ],
-        "parameters": [
-
-        ],
-        "responses": {
-
-        },
-        "security": {
-
-        }
-      }
-    }
-  },
-  "definitions": {
-    "SomeObjectDefinition": {
-      "type": "object",
-      "example": "",
-      "required": [
-        "username",
-        "password"
-      ],
-      "properties": {
-        "username": {
-          "type": "string",
-          "example": ""
-        },
-        "password": {
-          "type": "string",
-          "example": "123asd*&(QWE"
-        }
-      }
     },
-    "AnotherObjectDefinition": {
-      "type": "object",
-      "example": "",
-      "required": [
-
-      ],
-      "properties": {
-
-      }
-    }
-  }
+    "tags": [
+        {
+            "name": "Login",
+            "description": [
+                "Login controller"
+            ],
+            "externalDocs": null
+        },
+        {
+            "name": "Logout",
+            "description": [
+                "Logout controller"
+            ],
+            "externalDocs": null
+        },
+        {
+            "name": "Documentation",
+            "description": [
+                "OpenApi documentation"
+            ],
+            "externalDocs": null
+        },
+        {
+            "name": "Feature",
+            "description": [
+                "Single Feature controller"
+            ],
+            "externalDocs": null
+        },
+        {
+            "name": "FeatureData",
+            "description": [
+                "Single FeatureData controller"
+            ],
+            "externalDocs": null
+        },
+        {
+            "name": "HealthCheck",
+            "description": [
+                "HealthCheck controller"
+            ],
+            "externalDocs": null
+        },
+        {
+            "name": "BestFit",
+            "description": [
+                "You can get the best Sample fit given a feature set"
+            ],
+            "externalDocs": null
+        },
+        {
+            "name": "Sample",
+            "description": [
+                "Single Sample controller"
+            ],
+            "externalDocs": null
+        },
+        {
+            "name": "User",
+            "description": [
+                "Single User controller"
+            ],
+            "externalDocs": null
+        }
+    ]
 }

@@ -2,7 +2,7 @@ from FlaskManager import Controller, ControllerMethod
 from Role import *
 import FeatureDataDto, HttpStatus
 
-@Controller(url = '/feature-datas')
+@Controller(url = '/feature-datas', tag='FeatureData', description='Single FeatureData controller')
 class FeatureDataController:
 
     @ControllerMethod(url='/<string:featureKey>/<string:sampleKey>', roleRequired=[USER, ADMIN])
@@ -15,7 +15,7 @@ class FeatureDataController:
         return {}, HttpStatus.NO_CONTENT
 
 
-@Controller(url = '/feature-datas/batch')
+@Controller(url = '/feature-datas/batch', tag='FeatureData', description='Multiple FeatureData controller')
 class FeatureDataBatchController:
 
     @ControllerMethod(url='/<string:featureKey>', roleRequired=[ADMIN])

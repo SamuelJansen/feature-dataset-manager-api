@@ -1,5 +1,3 @@
-from python_helper import Constant
-
 class Key:
     NAME = 'name'
     LICENSE_NAME = NAME
@@ -35,12 +33,4 @@ class Key:
     RESPONSES = 'responses'
     SECURITY = 'security'
     PARAMETERS = 'parameters'
-
-class HiddenKey:
-    SWAGGER_DOC = 'SWAGGER_DOC'
-    PATH = 'PATH'
-    VERB = 'VERB'
-    VERBS = 'VERBS'
-    TAG = 'TAG'
-    DEFINITION = 'DEFINITION'
-    PROPERTY = 'PROPERTY'
+    IN = 'in'
