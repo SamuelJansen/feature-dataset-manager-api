@@ -165,8 +165,9 @@ def validateFlaskApi(instance) :
 
 @Function
 def validateResponseClass(responseClass, controllerResponse) :
+    log.debug(validateResponseClass, controllerResponse)
     if responseClass :
-        if not controllerResponse :
+        if not controllerResponse and not isinstance(controllerResponse, list):
             raiseBadResponseImplementetion(f'Response not present')
         if isinstance(responseClass, list) :
             if 0 == len(responseClass) :

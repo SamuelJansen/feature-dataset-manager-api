@@ -2,8 +2,8 @@ Globals:
     print-status: True
     api:
         name: FeatureManager
-        host: feature-dataset-manager.herokuapp.com ###- localhost:5000 ###- 
-        schemes: [https] ###- [http, https] ###-
+        host: localhost:5000 ###- feature-dataset-manager.herokuapp.com ###-
+        schemes: [http] ###- [https] ###- [http, https] ###- [http] ###-
         info:
             title: Feature Manager
             version: 0.0.1
