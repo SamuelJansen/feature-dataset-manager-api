@@ -1133,11 +1133,12 @@
             "externalDocs": null
         }
     ],
+    "schemes": [
+        "http",
+        "https"
+    ],
     "host": "localhost:5000",
     "basePath": "/september",
-    "schemes": [
-        "http"
-    ],
     "info": {
         "title": "Feature Manager",
         "description": "This is an api that manage samples and its features. The main goal is to retrieve the best sample match given a set of features",

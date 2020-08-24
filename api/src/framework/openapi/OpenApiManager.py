@@ -43,6 +43,8 @@ KW_LICENSE = 'license'
 KW_NAME = 'name'
 KW_EMAIL = 'email'
 KW_URL = 'url'
+KW_HOST = 'host'
+KW_SCHEMES = 'schemes'
 
 KW_URL_SET = '__URL_SET__'
 KW_DESCRIPTION_LIST = '__DESCRIPTION_LIST__'
@@ -89,12 +91,16 @@ def addInfo(apiInstance):
     addLisence(globals, apiInstance.documentation)
 
 def addHostAndBasePath(apiInstance, appInstance):
-    completeUrl = appInstance.test_request_context().request.host_url[:-1] ###- request.remote_addr
-    apiInstance.documentation[k.HOST] = completeUrl.split(COLON_DOUBLE_BAR)[1]
-    if LOCAL_HOST in apiInstance.documentation[k.HOST] :
-        apiInstance.documentation[k.HOST] = f'{apiInstance.documentation[k.HOST]}:5000'
+    globals = apiInstance.globals
+    apiInstance.documentation[k.SCHEMES] = globals.getApiSetting(f'{KW_API}.{KW_SCHEMES}')
+    apiInstance.documentation[k.HOST] = globals.getApiSetting(f'{KW_API}.{KW_HOST}')
     apiInstance.documentation[k.BASE_PATH] = apiInstance.baseUrl
-    apiInstance.documentation[k.SCHEMES] = [completeUrl.split(COLON_DOUBLE_BAR)[0]]
+    # completeUrl = appInstance.test_request_context().request.host_url[:-1] ###- request.remote_addr
+    # apiInstance.documentation[k.HOST] = completeUrl.split(COLON_DOUBLE_BAR)[1]
+    # if LOCAL_HOST in apiInstance.documentation[k.HOST] :
+    #     apiInstance.documentation[k.HOST] = f'{apiInstance.documentation[k.HOST]}:5000'
+    # apiInstance.documentation[k.BASE_PATH] = apiInstance.baseUrl
+    # apiInstance.documentation[k.SCHEMES] = [completeUrl.split(COLON_DOUBLE_BAR)[0]]
 
 def addEndPointDocumentation(endPointUrl, controllerMethod, controller, apiInstance):
     url = getUrl(endPointUrl, apiInstance.baseUrl)

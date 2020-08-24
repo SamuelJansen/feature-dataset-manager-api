@@ -2,6 +2,8 @@ Globals:
     print-status: True
     api:
         name: FeatureManager
+        host: feature-dataset-manager.herokuapp.com/ ###- localhost:5000 ###- 
+        schemes: [https] ###- [http, https] ###-
         info:
             title: Feature Manager
             version: 0.0.1
@@ -13,6 +15,7 @@ Globals:
             license:
                 name: Apache 2.0 / MIT License
                 url: http://www.apache.org/licenses/LICENSE-2.0.html
+
         extension: yml
         dependency:
             update: False
