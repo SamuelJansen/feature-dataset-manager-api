@@ -31,7 +31,8 @@ class SampleMapper:
 
     @MapperMethod(requestClass=[SampleDto.SampleRequestDto, [Feature.Feature], int, Sample.Sample])
     def overrideModelValues(self, dto, featureList, value, model, patchValues=False):
-        model.label = dto.label
+        if dto.label :
+            model.label = dto.label
         for feature in featureList :
             featureData = self.helper.featureData.getRespectiveFeatureDataByFeature(feature, model.featureDataList)
             if not featureData :
