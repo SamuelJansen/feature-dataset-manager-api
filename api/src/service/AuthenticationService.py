@@ -7,10 +7,11 @@ class AuthenticationService:
 
     @ServiceMethod(requestClass=[UserDto.LoginRequestDto, str])
     def login(self, dto, key):
+        VALID_TOKEN_MINUTES_DURATION = 30
         self.validator.user.loginRequestDto(dto, key)
         model = self.service.user.findByKey(key)
         self.validator.user.password(dto, model)
-        accessToken = Security.createAccessToken(model, deltaMinutes=30)
+        accessToken = Security.createAccessToken(model, deltaMinutes=VALID_TOKEN_MINUTES_DURATION)
         return self.converter.user.fromModelToLoginResponseDto(model, accessToken)
 
     @ServiceMethod(requestClass=str)
