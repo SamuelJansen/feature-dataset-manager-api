@@ -7,6 +7,11 @@ from OpenApiKey import Key as k
 from OpenApiValue import Value as v
 import OpenApiDocumentationFile
 
+KW_OPEN_API = 'swagger'
+KW_UI = 'ui'
+KW_JSON = 'json'
+OPEN_API_URL = f'/{KW_OPEN_API}'
+DOCUMENTATION_FILE = f'{KW_OPEN_API}{c.DOT}{KW_JSON}'
 COLON_DOUBLE_BAR = '://'
 LOCAL_HOST = 'localhost'
 
@@ -46,6 +51,8 @@ KW_URL = 'url'
 KW_HOST = 'host'
 KW_SCHEMES = 'schemes'
 
+KW_RESOURCE = 'resource'
+
 KW_URL_SET = '__URL_SET__'
 KW_DESCRIPTION_LIST = '__DESCRIPTION_LIST__'
 KW_CONTROLLER = '__CONTROLLER__'
@@ -56,14 +63,13 @@ KW_RESPONSE = '__KW_RESPONSE__'
 
 def addSwagger(appInstance, apiInstance):
     globals = apiInstance.globals
-    SWAGGER_URL = '/swagger'
-    API_URL = f'swagger.json'
+    documentationUrl = f'{apiInstance.baseUrl}{OPEN_API_URL}'
     swaggerUi = get_swaggerui_blueprint(
-        SWAGGER_URL,
-        API_URL
+        documentationUrl,
+        DOCUMENTATION_FILE
     )
-    swaggerUi._static_folder = f'{globals.currentPath}api{globals.OS_SEPARATOR}resource{globals.OS_SEPARATOR}swaggerui{globals.OS_SEPARATOR}'
-    appInstance.register_blueprint(swaggerUi, url_prefix=SWAGGER_URL)
+    swaggerUi._static_folder = f'{globals.currentPath}{KW_API}{globals.OS_SEPARATOR}{KW_RESOURCE}{globals.OS_SEPARATOR}{KW_OPEN_API}{KW_UI}{globals.OS_SEPARATOR}'
+    appInstance.register_blueprint(swaggerUi, url_prefix=documentationUrl)
     OpenApiDocumentationFile.overrideDocumentation(globals, apiInstance.documentation)
 
 ################################################################################
