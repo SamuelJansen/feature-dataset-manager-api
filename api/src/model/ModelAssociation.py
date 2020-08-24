@@ -8,5 +8,3 @@ FEATURE_DATA = 'FeatureData'
 SAMPLE_DATA = 'SampleData'
 
 USER = 'User'
-
-ERROR_LOG = 'ErrorLog'
