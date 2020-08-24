@@ -34,7 +34,7 @@ class FeatureController:
         return {}, HttpStatus.NO_CONTENT
 
 
-@Controller(url = '/features', tag='Feature', description='Multiple Feature controller')
+@Controller(url = '/features/batch', tag='Feature', description='Multiple Feature controller')
 class FeatureBatchController:
 
     @ControllerMethod(

@@ -39,7 +39,7 @@ class SampleController:
         return {}, HttpStatus.NO_CONTENT
 
 
-@Controller(url = '/samples', tag='Sample', description='Multiple Sample controller')
+@Controller(url = '/samples/batch', tag='Sample', description='Multiple Sample controller')
 class SampleBatchController:
 
     @ControllerMethod(

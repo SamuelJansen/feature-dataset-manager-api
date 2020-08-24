@@ -18,7 +18,7 @@ class FeatureDataController:
         return {}, HttpStatus.NO_CONTENT
 
 
-@Controller(url = '/feature-datas', tag='FeatureData', description='Multiple FeatureData controller')
+@Controller(url = '/feature-datas/batch', tag='FeatureData', description='Multiple FeatureData controller')
 class FeatureDataBatchController:
 
     @ControllerMethod(url='/<string:featureKey>',

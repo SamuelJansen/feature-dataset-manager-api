@@ -29,11 +29,11 @@ class UserController:
         self.service.user.delete(key), HttpStatus.NO_CONTENT
         return {}, HttpStatus.NO_CONTENT
 
-@Controller(url = '/users', tag='User', description='Multiple User controller')
+@Controller(url = '/users/batch', tag='User', description='Multiple User controller')
 class UserBatchController:
 
-    @ControllerMethod(url='/',
-        responseClass=[[UserDto.UserResponseDto]], 
+    @ControllerMethod(
+        responseClass=[[UserDto.UserResponseDto]],
         roleRequired=[ADMIN])
     def get(self):
         return self.service.user.queryAll(), HttpStatus.OK
