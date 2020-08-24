@@ -1,4 +1,4 @@
-from python_helper import Constant
+import HttpStatus
 
 class Key:
     NAME = 'name'
@@ -20,6 +20,7 @@ class Key:
     BASE_PATH = 'basePath'
     TAGS = 'tags'
     EXTERNAL_DOCS = 'externalDocs'
+    SCHEMA = 'schema'
     SCHEMES = 'schemes'
     DEFINITIONS = 'definitions'
     PROPERTIES = 'properties'
@@ -35,12 +36,8 @@ class Key:
     RESPONSES = 'responses'
     SECURITY = 'security'
     PARAMETERS = 'parameters'
-
-class HiddenKey:
-    SWAGGER_DOC = 'SWAGGER_DOC'
-    PATH = 'PATH'
-    VERB = 'VERB'
-    VERBS = 'VERBS'
-    TAG = 'TAG'
-    DEFINITION = 'DEFINITION'
-    PROPERTY = 'PROPERTY'
+    IN = 'in'
+    S_REF = '$ref'
+    CATEGORY = 'category'
+    ITEMS = 'items'
+    DEFAULT_STATUS_CODE = HttpStatus.OK

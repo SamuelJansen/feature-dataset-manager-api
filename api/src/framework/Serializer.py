@@ -1,6 +1,7 @@
 import json, importlib
-from python_helper import Constant, log
-from MethodWrapper import Method
+from python_helper import Constant as c
+from python_helper import log
+from MethodWrapper import Function
 from SqlAlchemyProxy import DeclarativeMeta, InstrumentedList
 
 IGNORE_REOURCE_LIST = [
@@ -48,16 +49,16 @@ MESO_SUFIX_LIST = [
     KW_DELETE_ACTION
 ]
 
-@Method
+@Function
 def isList(thing) :
     return type([]) == type(thing) or type(InstrumentedList()) == type(thing)
 
-@Method
+@Function
 def isDictionary(thing) :
     return type({}) == type(thing)
 
 
-@Method
+@Function
 def importResource(resourceName, resourceModuleName=None) :
     if not resourceName in IGNORE_REOURCE_LIST :
         resource = None
@@ -66,19 +67,23 @@ def importResource(resourceName, resourceModuleName=None) :
         try :
             module = __import__(resourceModuleName)
         except :
-            module = importlib.import_module(resourceModuleName)
-        try :
-            resource = getattr(module, resourceName)
-        except Exception as exception :
-            log.warning(importResource, f'Not possible to import {resourceName} from {resourceModuleName}. cause: {str(exception)}')
-        return resource
+            try :
+                module = importlib.import_module(resourceModuleName)
+            except :
+                module = None
+        if module :
+            try :
+                resource = getattr(module, resourceName)
+            except Exception as exception :
+                log.warning(importResource, f'Not possible to import {resourceName} from {resourceModuleName}. cause: {str(exception)}')
+            return resource
 
-@Method
+@Function
 def isSerializable(attributeValue) :
     return (isinstance(attributeValue.__class__, DeclarativeMeta) or
         (isinstance(attributeValue, list) and len(attributeValue) > 0 and isinstance(attributeValue[0].__class__, DeclarativeMeta)))
 
-@Method
+@Function
 def getAttributeSet(object, fieldsToExpand, classTree, verifiedClassList) :
     attributeSet = {}
     presentClass = object.__class__.__name__
@@ -86,7 +91,7 @@ def getAttributeSet(object, fieldsToExpand, classTree, verifiedClassList) :
         classTree[presentClass] = [object]
     elif classTree[presentClass].count(object) < 2 :
         classTree[presentClass].append(object)
-    for attributeName in [name for name in dir(object) if not name.startswith(Constant.UNDERSCORE) and not name == 'metadata']:
+    for attributeName in [name for name in dir(object) if not name.startswith(c.UNDERSCORE) and not name == 'metadata']:
         attributeValue = object.__getattribute__(attributeName)
         if classTree[presentClass].count(object) > 1 :
             attributeSet[attributeName] = None
@@ -99,7 +104,7 @@ def getAttributeSet(object, fieldsToExpand, classTree, verifiedClassList) :
         attributeSet[attributeName] = attributeValue
     return attributeSet
 
-@Method
+@Function
 def getJsonifier(revisitingItself=False, fieldsToExpand=[EXPAND_ALL_FIELDS], classTree=None, verifiedClassList=None):
     visitedObjectList = []
     class SqlAlchemyJsonifier(json.JSONEncoder):
@@ -113,21 +118,21 @@ def getJsonifier(revisitingItself=False, fieldsToExpand=[EXPAND_ALL_FIELDS], cla
                     return
                 return getAttributeSet(object, fieldsToExpand, classTree, verifiedClassList)
             try :
-                objectDefaultlyEncoded = json.JSONEncoder.default(self, object)
+                objectEncoded = json.JSONEncoder.default(self, object)
             except Exception as exception :
                 try :
-                    objectDefaultlyEncoded = object.__dict__
+                    objectEncoded = object.__dict__
                 except Exception as otherException :
                     raise Exception(f'Failed to encode object. Cause {str(exception)} and {str(otherException)}')
-            return objectDefaultlyEncoded
+            return objectEncoded
     return SqlAlchemyJsonifier
 
-@Method
+@Function
 def jsonifyIt(object, fieldsToExpand=[EXPAND_ALL_FIELDS]) :
     jsonCompleted = json.dumps(object, cls=getJsonifier(classTree={}, verifiedClassList=[]), check_circular = False)
     return jsonCompleted.replace('}, null]','}]').replace('[null]','[]')
 
-@Method
+@Function
 def instanciateItWithNoArgsConstructor(objectClass) :
     args = []
     objectInstance = None
@@ -141,16 +146,16 @@ def instanciateItWithNoArgsConstructor(objectClass) :
         raise Exception(f'Not possible to instanciate {objectClass} class in instanciateItWithNoArgsConstructor() method')
     return objectInstance
 
-@Method
+@Function
 def getAttributeNameList(objectClass) :
     object = instanciateItWithNoArgsConstructor(objectClass)
     return [
         objectAttributeName
         for objectAttributeName in dir(object)
-        if (not objectAttributeName.startswith(f'{2 * Constant.UNDERSCORE}') and not objectAttributeName.startswith(Constant.UNDERSCORE))
+        if (not objectAttributeName.startswith(f'{2 * c.UNDERSCORE}') and not objectAttributeName.startswith(c.UNDERSCORE))
     ]
 
-@Method
+@Function
 def getClassRole(objectClass) :
     if DTO_SUFIX == objectClass.__name__[-len(DTO_SUFIX):] :
         sufixList = [str(DTO_CLASS_ROLE)]
@@ -159,25 +164,31 @@ def getClassRole(objectClass) :
             if mesoSufix == objectClass.__name__[-(len(mesoSufix)+len(concatenatedSufix)):-len(concatenatedSufix)] :
                 concatenatedSufix += mesoSufix
                 sufixList = [mesoSufix.upper()] + sufixList
-        return Constant.UNDERSCORE.join(sufixList)
+        return c.UNDERSCORE.join(sufixList)
     return MODEL_CLASS_ROLE
 
-@Method
-def getListRemovedFromKey(key) :
-    return key.replace(LIST_SUFIX, Constant.NOTHING)
+def getDtoClassFromFatherClassAndChildMethodName(fatherClass, childAttributeName):
+    classRole = getClassRole(fatherClass)
+    dtoClassName = getResourceName(childAttributeName, classRole)
+    dtoModuleName  = getResourceModuleName(childAttributeName, classRole)
+    return importResource(dtoClassName, resourceModuleName=dtoModuleName)
 
-@Method
+@Function
+def getListRemovedFromKey(key) :
+    return key.replace(LIST_SUFIX, c.NOTHING)
+
+@Function
 def getResourceName(key, classRole) :
     filteredKey = getListRemovedFromKey(key)
     resourceName = f'{filteredKey[0].upper()}{filteredKey[1:]}'
     if DTO_CLASS_ROLE in classRole :
-        sufixResourceNameList = classRole.lower().split(Constant.UNDERSCORE)
+        sufixResourceNameList = classRole.lower().split(c.UNDERSCORE)
         for sufix in sufixResourceNameList :
             if sufix :
                 resourceName += f'{sufix[0].upper()}{sufix[1:]}'
     return resourceName
 
-@Method
+@Function
 def getResourceModuleName(key, classRole) :
     filteredKey = getListRemovedFromKey(key)
     resourceModuleName = f'{filteredKey[0].upper()}{filteredKey[1:]}'
@@ -185,7 +196,7 @@ def getResourceModuleName(key, classRole) :
         resourceModuleName += DTO_SUFIX
     return resourceModuleName
 
-@Method
+@Function
 def resolveValue(value, key, classRole) :
     if isList(value) :
         if LIST_SUFIX == key[-4:] :
@@ -200,7 +211,7 @@ def resolveValue(value, key, classRole) :
             return convertedValue
     return value
 
-@Method
+@Function
 def serializeIt(fromJson, toObjectClass) :
     attributeNameList = getAttributeNameList(toObjectClass)
     classRole = getClassRole(toObjectClass)
@@ -230,7 +241,7 @@ def serializeIt(fromJson, toObjectClass) :
         raise Exception(f'Not possible to instanciate {toObjectClass.__name__} class in convertFromJsonToObject() method')
     return objectInstance
 
-@Method
+@Function
 def convertFromJsonToObject(fromJson, toObjectClass) :
     if isList(toObjectClass) :
         objectArgs = []
@@ -246,7 +257,7 @@ def convertFromJsonToObject(fromJson, toObjectClass) :
     else :
         return serializeIt(fromJson, toObjectClass)
 
-@Method
+@Function
 def convertFromObjectToObject(fromObject, toObjectClass) :
     fromJson = json.loads(jsonifyIt(fromObject))
     return convertFromJsonToObject(fromJson,toObjectClass)

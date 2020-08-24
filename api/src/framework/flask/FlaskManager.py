@@ -1,11 +1,13 @@
 import webbrowser
-from python_helper import Constant, log
+from python_helper import Constant as c
+from python_helper import log, StringHelper
 from flask import Response, request
 import flask_restful
-from MethodWrapper import Method, overrideSignatures
-import Security, Serializer, OpenApiManager
+from MethodWrapper import Function, overrideSignatures
+import Serializer
 import GlobalException, HttpStatus
-import SqlAlchemyProxy
+import Security
+import OpenApiManager
 
 KW_URL = 'url'
 KW_DEFAULT_URL = 'defaultUrl'
@@ -33,22 +35,9 @@ KW_RESOURCE_LIST = [
     KW_CONVERTER_RESOURCE
 ]
 
-DEFAULT_CONTENT_TYPE = 'application/json'
 LOCALHOST_URL = 'http://127.0.0.1:5000'
 
-KW_GET = 'get'
-KW_POST = 'post'
-KW_PUT = 'put'
-KW_PATCH = 'patch'
-KW_DELETE = 'delete'
-
-ABLE_TO_RECIEVE_BODY_LIST = [
-    KW_POST,
-    KW_PUT,
-    KW_PATCH
-]
-
-DOT_SPACE_CAUSE = f'''{Constant.DOT_SPACE}{Constant.LOG_CAUSE}'''
+DOT_SPACE_CAUSE = f'''{c.DOT_SPACE}{c.LOG_CAUSE}'''
 
 def printMyStuff(stuff):
     print()
@@ -59,26 +48,23 @@ def printMyStuff(stuff):
     print(f'    stuff.__class__.__qualname__ = {stuff.__class__.__qualname__}')
 
 def printClass(Class) :
-    print(f'{2 * Constant.TAB}Class.__name__ = {Class.__name__}')
-    print(f'{2 * Constant.TAB}Class.__module__ = {Class.__module__}')
-    print(f'{2 * Constant.TAB}Class.__qualname__ = {Class.__qualname__}')
+    print(f'{2 * c.TAB}Class.__name__ = {Class.__name__}')
+    print(f'{2 * c.TAB}Class.__module__ = {Class.__module__}')
+    print(f'{2 * c.TAB}Class.__qualname__ = {Class.__qualname__}')
 
-class FlaskResource:
-    ...
-
-@Method
+@Function
 def jsonifyResponse(object, contentType, status) :
     return Response(Serializer.jsonifyIt(object),  mimetype = contentType, status = status)
 
-@Method
+@Function
 def getClassName(instance) :
     return instance.__class__.__name__
 
-@Method
+@Function
 def getModuleName(instance) :
     return instance.__class__.__module__
 
-@Method
+@Function
 def getQualitativeName(instance) :
     return instance.__class__.__qualname__
 
@@ -88,13 +74,13 @@ def appendArgs(args, argument, isControllerMethod=False) :
     args.append(argument)
     return args
 
-@Method
+@Function
 def getArgsWithSerializerReturnAppended(argument, args, isControllerMethod=False) :
     args = [arg for arg in args]
     args = appendArgs(args, argument, isControllerMethod=isControllerMethod)
     return tuple(arg for arg in args)
 
-@Method
+@Function
 def getArgsWithResponseClassInstanceAppended(args, responseClass) :
     if responseClass :
         resourceInstance = args[0]
@@ -103,20 +89,16 @@ def getArgsWithResponseClassInstanceAppended(args, responseClass) :
         args = getArgsWithSerializerReturnAppended(serializerReturn, args)
     return args
 
-@Method
-def getResourceName(resourceInstance) :
-    return resourceInstance.__class__.__name__
-
-@Method
-def getResourceFinalName(resourceInstance, resourceName = None) :
+@Function
+def getResourceFinalName(resourceInstance, resourceName=None) :
     if not resourceName :
         resourceName = resourceInstance.__class__.__name__
     for kwAsset in KW_RESOURCE_LIST :
         if kwAsset in resourceName :
-            resourceName = resourceName.replace(kwAsset, Constant.NOTHING)
+            resourceName = resourceName.replace(kwAsset, c.NOTHING)
     return f'{resourceName[0].lower()}{resourceName[1:]}'
 
-@Method
+@Function
 def getResourceType(resourceInstance, resourceName = None) :
     if not resourceName :
         resourceName = resourceInstance.__class__.__name__
@@ -124,7 +106,7 @@ def getResourceType(resourceInstance, resourceName = None) :
         if kwAsset in resourceName :
             return kwAsset
 
-@Method
+@Function
 def getAttributePointerList(object) :
     return [
         getattr(object, objectAttributeName)
@@ -132,7 +114,7 @@ def getAttributePointerList(object) :
         if (not objectAttributeName.startswith('__') and not objectAttributeName.startswith('_'))
     ]
 
-@Method
+@Function
 def setMethod(resourceInstance, newMethod, methodName = None) :
     def buildNewClassMethod(resourceInstance, newMethod) :
         def myInnerMethod(*args, **kwargs) :
@@ -146,7 +128,7 @@ def setMethod(resourceInstance, newMethod, methodName = None) :
     setattr(resourceInstance, methodName, newMethod)
     return resourceInstance
 
-@Method
+@Function
 def getGlobals() :
     try :
         from app import globals
@@ -154,7 +136,7 @@ def getGlobals() :
         raise Exception('Failed to get "globals" instance from app.py')
     return globals
 
-@Method
+@Function
 def getApi() :
     try:
         api = getGlobals().api
@@ -162,7 +144,7 @@ def getApi() :
         raise Exception(f'Failed to return api from "globals" instance. Cause: {str(exception)}')
     return api
 
-@Method
+@Function
 def getNullableApi() :
     try :
         api = getApi()
@@ -170,114 +152,48 @@ def getNullableApi() :
         api = None
     return api
 
-@Method
+@Function
+def raiseBadResponseImplementetion(cause):
+    raise Exception(f'Bad response implementation. {cause}')
+
+@Function
 def validateFlaskApi(instance) :
     apiClassName = flask_restful.Api.__name__
     moduleName = flask_restful.__name__
     if not apiClassName == getClassName(instance) and apiClassName == getQualitativeName(instance) and moduleName == getModuleName(instance) :
         raise Exception(f'Globals can only be added to a "flask_restful.Api" instance. Not to {apiInstance}')
 
-@Method
-def addGlobalsTo(apiInstance) :
-    validateFlaskApi(apiInstance)
-    apiInstance.globals = getGlobals()
-    apiInstance.globals.api = apiInstance
-    apiInstance.bindResource = bindResource
-
-@Method
-def addResourceAttibutes(apiInstance) :
-    setattr(apiInstance, KW_RESOURCE, FlaskResource())
-    for resourceName in KW_RESOURCE_LIST :
-        setattr(apiInstance.resource, resourceName.lower(), FlaskResource())
-
-@Method
-def addControllerListTo(apiInstance, globalNamespace, controllerList) :
-    for controller in controllerList :
-        urlList = [controller.url]
-        attributePointerList = getAttributePointerList(controller)
-        for attributePointer in attributePointerList :
-            if hasattr(attributePointer, KW_URL) and attributePointer.url :
-                subUrlList = attributePointer.url.split(Constant.SLASH)
-                concatenatedSubUrl = Constant.NOTHING
-                for subUrl in subUrlList :
-                    if subUrl :
-                        concatenatedSubUrl += f'{Constant.SLASH}{subUrl}'
-                        if '<' == subUrl[0] and '>' == subUrl[-1] :
-                            urlList.append(f'{controller.url}{concatenatedSubUrl}')
-        apiInstance.add_resource(controller, *urlList)
-
-@Method
-def addServiceListTo(apiInstance,serviceList) :
-    for service in serviceList :
-        apiInstance.bindResource(apiInstance,service())
-
-@Method
-def addRepositoryTo(apiInstance, repositoryList, model, databaseEnvironmentVariable=None, localStorageName=None) :
-    apiInstance.repository = SqlAlchemyProxy.SqlAlchemyProxy(
-        databaseEnvironmentVariable = databaseEnvironmentVariable,
-        localName = localStorageName,
-        model = model,
-        globals = apiInstance.globals,
-        echo = False,
-        checkSameThread = False
-    )
-    for repository in repositoryList :
-        apiInstance.bindResource(apiInstance,repository())
-
-@Method
-def addValidatorListTo(apiInstance,validatorList) :
-    for validator in validatorList :
-        apiInstance.bindResource(apiInstance,validator())
-
-def addMapperListTo(apiInstance,mapperList) :
-    for mapper in mapperList :
-        apiInstance.bindResource(apiInstance,mapper())
-
-@Method
-def addHelperListTo(apiInstance,helperList) :
-    for helper in helperList :
-        apiInstance.bindResource(apiInstance,helper())
-
-@Method
-def addConverterListTo(apiInstance,converterList) :
-    for converter in converterList :
-        apiInstance.bindResource(apiInstance,converter())
-
-@Method
-def addFlaskApiResources(
-        apiInstance,
-        appInstance,
-        globalNamespace,
-        jwtInstance,
-        controllerList,
-        serviceList,
-        repositoryList,
-        validatorList,
-        mapperList,
-        helperList,
-        converterList,
-        model,
-        databaseEnvironmentVariable = None,
-        localStorageName = None
-    ) :
-    addResourceAttibutes(apiInstance)
-    addRepositoryTo(apiInstance, repositoryList, model, databaseEnvironmentVariable=databaseEnvironmentVariable, localStorageName=localStorageName)
-    addServiceListTo(apiInstance, serviceList)
-    addControllerListTo(apiInstance, globalNamespace, controllerList)
-    addValidatorListTo(apiInstance, validatorList)
-    addMapperListTo(apiInstance, mapperList)
-    addHelperListTo(apiInstance, helperList)
-    addConverterListTo(apiInstance, converterList)
-    Security.addJwt(jwtInstance)
-    OpenApiManager.addSwagger(appInstance, apiInstance.globals)
+@Function
+def validateResponseClass(responseClass, controllerResponse) :
+    if responseClass :
+        if not controllerResponse :
+            raiseBadResponseImplementetion(f'Response not present')
+        if isinstance(responseClass, list) :
+            if 0 == len(responseClass) :
+                raiseBadResponseImplementetion(f'"responseClass" was not defined')
+            elif len(responseClass) == 1 :
+                if not isinstance(responseClass[0], list)  :
+                    if not isinstance(controllerResponse, responseClass[0]) :
+                        raiseBadResponseImplementetion(f'Response class does not match expected class. Expected "{responseClass[0].__name__}", response "{controllerResponse.__class__.__name__}"')
+                elif not isinstance(responseClass[0][0], list) :
+                    if not isinstance(controllerResponse, list)  :
+                        raiseBadResponseImplementetion(f'Response is not a list. Expected "{responseClass[0].__class__.__name__}", but found "{controllerResponse.__class__.__name__}"')
+                    elif isinstance(controllerResponse, list) and len(controllerResponse) > 0 and not isinstance(controllerResponse[0], responseClass[0][0]):
+                        # print(f'responseClass = {responseClass}')
+                        # print(f'responseClass[0] = {responseClass[0]}')
+                        # print(f'responseClass[0][0] = {responseClass[0][0]}')
+                        raiseBadResponseImplementetion(f'Response element class does not match expected element class. Expected "{responseClass[0][0].__name__}", response "{controllerResponse[0].__class__.__name__}"')
+        else :
+            if not isinstance(controllerResponse, responseClass) :
+                raiseBadResponseImplementetion(f'Response class does not match expected class. Expected "{responseClass.__name__}", response "{controllerResponse.__class__.__name__}"')
 
 
-@Method
-def setResource(apiInstance,resourceInstance,resourceName = None) :
-    resourceName = getResourceFinalName(resourceInstance,resourceName = resourceName)
+@Function
+def setResource(apiInstance, resourceInstance, resourceName=None) :
+    resourceName = getResourceFinalName(resourceInstance, resourceName=resourceName)
     setattr(apiInstance,resourceName,resourceInstance)
 
-@Method
+@Function
 def bindResource(apiInstance,resourceInstance) :
     validateFlaskApi(apiInstance)
     setResource(getattr(apiInstance.resource, getResourceType(resourceInstance).lower()), resourceInstance)
@@ -289,14 +205,14 @@ def getGlobalException(exception, resourceInstance, resourceInstanceMethod):
 def raiseGlobalException(exception, resourceInstance, resourceInstanceMethod) :
     raise getGlobalException(exception, resourceInstance, resourceInstanceMethod)
 
-@Method
+@Function
 def getCompleteResponseByException(exception, resourceInstance, resourceInstanceMethod) :
     exception = getGlobalException(exception, resourceInstance, resourceInstanceMethod)
     completeResponse = [{'message':exception.message, 'timestamp':str(exception.timeStamp)},exception.status]
     log.error(resourceInstance.__class__, f'Error processing {resourceInstance.__class__.__name__}.{resourceInstanceMethod.__name__} request', exception)
     return completeResponse
 
-@Method
+@Function
 def initialize(defaultUrl=None) :
     defaultUrl = defaultUrl
     url = LOCALHOST_URL
@@ -305,7 +221,7 @@ def initialize(defaultUrl=None) :
     def inBetweenFunction(function,*argument,**keywordArgument) :
         noException = None
         log.debug(initialize,f'''{function.__name__} method''')
-        webbrowser.open_new(url)
+        # webbrowser.open_new(url)
         def innerFunction(*args,**kwargs) :
             try :
                 return function(*args,**kwargs)
@@ -314,9 +230,14 @@ def initialize(defaultUrl=None) :
         return innerFunction
     return inBetweenFunction
 
-@Method
-def Controller(url=None, description='Controller') :
+@Function
+def Controller(
+    url=c.SLASH,
+    tag='Tag not defined',
+    description='Controller not descripted'
+) :
     controllerUrl = url
+    controllerTag = tag
     controllerDescription = description
     def Wrapper(OuterClass,*args,**kwargs):
         apiInstance = getApi()
@@ -324,6 +245,7 @@ def Controller(url=None, description='Controller') :
         log.debug(Controller,f'''wrapping {OuterClass.__name__}''')
         class InnerClass(OuterClass,flask_restful.Resource):
             url = controllerUrl
+            tag = controllerTag
             description = controllerDescription
             def __init__(self,*args,**kwargs):
                 log.debug(OuterClass,f'in {InnerClass.__name__}.__init__(*{args},**{kwargs})')
@@ -334,30 +256,45 @@ def Controller(url=None, description='Controller') :
         return InnerClass
     return Wrapper
 
-def getRequestBodyAsJson() :
+def getRequestBodyAsJson(contentType) :
     try :
-        requestBodyAsJson = request.get_json()
+        if OpenApiManager.DEFAULT_CONTENT_TYPE == contentType :
+            requestBodyAsJson = request.get_json()
+        else :
+            raise Exception(f'Content type "{contentType}" not implemented')
     except Exception as exception :
         raise GlobalException.GlobalException(message='Not possible to parse the request', logMessage=str(exception), status=HttpStatus.BAD_REQUEST)
     return requestBodyAsJson
 
 @Security.jwtRequired
-def securedMethod(args, kwargs, resourceInstance, resourceInstanceMethod, requestClass, roleRequired) :
+def securedMethod(args, kwargs, contentType, resourceInstance, resourceInstanceMethod, requestClass, roleRequired) :
     if not Security.getRole() in roleRequired :
         raise GlobalException.GlobalException(message='Role not allowed', logMessage=f'''Role {Security.getRole()} trying to access denied resourse''', status=HttpStatus.FORBIDEN)
-    return notSecuredMethod(args, kwargs, resourceInstance, resourceInstanceMethod, requestClass)
+    return notSecuredMethod(args, kwargs, contentType, resourceInstance, resourceInstanceMethod, requestClass)
 
-def notSecuredMethod(args, kwargs, resourceInstance, resourceInstanceMethod, requestClass) :
-    if resourceInstanceMethod.__name__ in ABLE_TO_RECIEVE_BODY_LIST and requestClass :
-        requestBodyAsJson = getRequestBodyAsJson() ###- request.get_json()
+def notSecuredMethod(args, kwargs, contentType, resourceInstance, resourceInstanceMethod, requestClass) :
+    if resourceInstanceMethod.__name__ in OpenApiManager.ABLE_TO_RECIEVE_BODY_LIST and requestClass :
+        requestBodyAsJson = getRequestBodyAsJson(contentType) ###- request.get_json()
         if requestBodyAsJson :
             serializerReturn = Serializer.convertFromJsonToObject(requestBodyAsJson, requestClass)
             args = getArgsWithSerializerReturnAppended(serializerReturn, args, isControllerMethod=True)
     return resourceInstanceMethod(resourceInstance,*args[1:],**kwargs)
 
-@Method
-def ControllerMethod(url=None, requestClass=None, roleRequired=None, contentType=DEFAULT_CONTENT_TYPE):
+@Function
+def ControllerMethod(
+    url = c.SLASH,
+    requestClass = None,
+    responseClass = None,
+    roleRequired = None,
+    consumes = OpenApiManager.DEFAULT_CONTENT_TYPE,
+    produces = OpenApiManager.DEFAULT_CONTENT_TYPE
+):
     controllerMethodUrl = url
+    controllerMethodRequestClass = requestClass
+    controllerMethodResponseClass = responseClass
+    controllerMethodRoleRequired = roleRequired
+    controllerMethodProduces = produces
+    controllerMethodConsumes = consumes
     def innerMethodWrapper(resourceInstanceMethod,*args,**kwargs) :
         noException = None
         log.debug(ControllerMethod,f'''wrapping {resourceInstanceMethod.__name__}''')
@@ -365,9 +302,11 @@ def ControllerMethod(url=None, requestClass=None, roleRequired=None, contentType
             resourceInstance = args[0]
             try :
                 if roleRequired and (type(list()) == type(roleRequired) and not [] == roleRequired) :
-                    completeResponse = securedMethod(args, kwargs, resourceInstance, resourceInstanceMethod, requestClass, roleRequired)
+                    completeResponse = securedMethod(args, kwargs, consumes, resourceInstance, resourceInstanceMethod, requestClass, roleRequired)
                 else :
-                    completeResponse = notSecuredMethod(args, kwargs, resourceInstance, resourceInstanceMethod, requestClass)
+                    completeResponse = notSecuredMethod(args, kwargs, consumes, resourceInstance, resourceInstanceMethod, requestClass)
+                validateResponseClass(responseClass, completeResponse[0])
+
             except Exception as exception :
                 completeResponse = getCompleteResponseByException(exception, resourceInstance, resourceInstanceMethod)
                 ###- request.method:              GET
@@ -385,13 +324,18 @@ def ControllerMethod(url=None, requestClass=None, roleRequired=None, contentType
                 ###- request.args.get('x'):       y
             controllerResponse = completeResponse[0]
             status = completeResponse[1]
-            return jsonifyResponse(controllerResponse, contentType, status)
+            return jsonifyResponse(controllerResponse, produces, status)
         overrideSignatures(innerResourceInstanceMethod, resourceInstanceMethod)
         innerResourceInstanceMethod.url = controllerMethodUrl
+        innerResourceInstanceMethod.requestClass = controllerMethodRequestClass
+        innerResourceInstanceMethod.responseClass = controllerMethodResponseClass
+        innerResourceInstanceMethod.roleRequired = controllerMethodRoleRequired
+        innerResourceInstanceMethod.produces = controllerMethodProduces
+        innerResourceInstanceMethod.consumes = controllerMethodConsumes
         return innerResourceInstanceMethod
     return innerMethodWrapper
 
-@Method
+@Function
 def validateArgs(args, requestClass, method) :
     if requestClass :
         resourceInstance = args[0]
@@ -410,7 +354,7 @@ def validateArgs(args, requestClass, method) :
             expecteObjectClass = requestClass
             GlobalException.validateArgs(resourceInstance, method, objectRequest, expecteObjectClass)
 
-@Method
+@Function
 def Service() :
     def Wrapper(OuterClass, *args, **kwargs):
         apiInstance = getApi()
@@ -420,6 +364,7 @@ def Service() :
             def __init__(self,*args,**kwargs):
                 log.debug(OuterClass,f'in {InnerClass.__name__}.__init__(*{args},**{kwargs})')
                 OuterClass.__init__(self,*args,**kwargs)
+                self.globals = apiInstance.globals
                 self.service = apiInstance.resource.service
                 self.repository = apiInstance.resource.repository
                 self.validator = apiInstance.resource.validator
@@ -430,7 +375,7 @@ def Service() :
         return InnerClass
     return Wrapper
 
-@Method
+@Function
 def ServiceMethod(requestClass=None):
     def innerMethodWrapper(resourceInstanceMethod,*args,**kwargs) :
         noException = None
@@ -447,7 +392,7 @@ def ServiceMethod(requestClass=None):
         return innerResourceInstanceMethod
     return innerMethodWrapper
 
-@Method
+@Function
 def Repository(model = None) :
     repositoryModel = model
     def Wrapper(OuterClass, *args, **kwargs):
@@ -460,11 +405,12 @@ def Repository(model = None) :
                 log.debug(OuterClass,f'in {InnerClass.__name__}.__init__(*{args},**{kwargs})')
                 OuterClass.__init__(self,*args,**kwargs)
                 self.repository = apiInstance.repository
+                self.globals = apiInstance.globals
         overrideSignatures(InnerClass, OuterClass)
         return InnerClass
     return Wrapper
 
-@Method
+@Function
 def Validator() :
     def Wrapper(OuterClass, *args, **kwargs):
         apiInstance = getApi()
@@ -482,7 +428,7 @@ def Validator() :
         return InnerClass
     return Wrapper
 
-@Method
+@Function
 def ValidatorMethod(requestClass=None, message=None, logMessage=None) :
     def innerMethodWrapper(resourceInstanceMethod,*args,**kwargs) :
         noException = None
@@ -500,7 +446,7 @@ def ValidatorMethod(requestClass=None, message=None, logMessage=None) :
     return innerMethodWrapper
 
 
-@Method
+@Function
 def Mapper() :
     def Wrapper(OuterClass, *args, **kwargs):
         apiInstance = getApi()
@@ -519,7 +465,7 @@ def Mapper() :
         return InnerClass
     return Wrapper
 
-@Method
+@Function
 def MapperMethod(requestClass=None, responseClass=None) :
     def innerMethodWrapper(resourceInstanceMethod,*args,**kwargs) :
         noException = None
@@ -537,7 +483,7 @@ def MapperMethod(requestClass=None, responseClass=None) :
         return innerResourceInstanceMethod
     return innerMethodWrapper
 
-@Method
+@Function
 def Helper() :
     def Wrapper(OuterClass, *args, **kwargs):
         apiInstance = getApi()
@@ -553,7 +499,7 @@ def Helper() :
         return InnerClass
     return Wrapper
 
-@Method
+@Function
 def HelperMethod(requestClass=None, responseClass=None) :
     def innerMethodWrapper(resourceInstanceMethod,*args,**kwargs) :
         noException = None
@@ -571,7 +517,7 @@ def HelperMethod(requestClass=None, responseClass=None) :
         return innerResourceInstanceMethod
     return innerMethodWrapper
 
-@Method
+@Function
 def Converter() :
     def Wrapper(OuterClass, *args, **kwargs):
         apiInstance = getApi()
@@ -587,7 +533,7 @@ def Converter() :
         return InnerClass
     return Wrapper
 
-@Method
+@Function
 def ConverterMethod(requestClass=None, responseClass=None) :
     def innerMethodWrapper(resourceInstanceMethod,*args,**kwargs) :
         noException = None

@@ -1,15 +1,15 @@
 from FlaskManager import Controller, ControllerMethod
 
-@Controller(url = '/health/check')
+@Controller(url='/health/check', tag='HealthCheck', description='HealthCheck controller')
 class HealthCheckController:
 
-    @ControllerMethod()
+    @ControllerMethod(url='/')
     def get(self):
         return {'status' : 'UP'}, 200
 
-@Controller(url = '/')
+@Controller(url='/', tag='HealthCheck', description='HealthCheck controller')
 class HealthCheckBatchController:
 
-    @ControllerMethod()
+    @ControllerMethod(url='/')
     def get(self):
         return {'status' : 'UP'}, 200

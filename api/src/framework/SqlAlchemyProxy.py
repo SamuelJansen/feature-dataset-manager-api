@@ -10,7 +10,7 @@ from sqlalchemy import and_, or_
 
 from python_helper import log
 
-from MethodWrapper import Method
+from MethodWrapper import Method, Function
 
 and_ = and_
 or_ = or_
@@ -58,48 +58,48 @@ LIST = '''List'''
 
 CASCADE_ONE_TO_MANY = '''all,delete'''
 
-@Method
+@Function
 def getNewModel() :
     return declarative_base()
 
-@Method
+@Function
 def attributeIt(modelName) :
     return f'{modelName[0].lower()}{modelName[1:]}'
 
-@Method
-def getManyToMany(sisters, brothers, refferenceModel) :
+@Function
+def getManyToMany(sister, brother, refferenceModel) :
     # featureList = relationship(FEATURE, secondary=featureToSampleAssociation, back_populates=attributeIt(f'{__tablename__}{LIST}'))
     # sampleList = relationship(SAMPLE, secondary=featureToSampleAssociation, back_populates=attributeIt(f'{__tablename__}{LIST}'))
-    manySonToManyFather = Table(f'{sisters}{MANY_TO_MANY}{brothers}', refferenceModel.metadata,
-        Column(f'{attributeIt(sisters)}{ID}', Integer, ForeignKey(f'{sisters}.{attributeIt(ID)}')),
-        Column(f'{attributeIt(brothers)}{ID}', Integer, ForeignKey(f'{brothers}.{attributeIt(ID)}')))
-    brotherList = relationship(brothers, secondary=manySonToManyFather, back_populates=attributeIt(f'{sisters}{LIST}'))
-    sisterList = relationship(sisters, secondary=manySonToManyFather, back_populates=attributeIt(f'{brothers}{LIST}'))
-    ### sisters recieves the brotherList
-    ### brothers recieves the sisterList
-    return fatherList, manySonToManyFather, sonList
+    manySisterToManyBrother = Table(f'{sister}{MANY_TO_MANY}{brother}', refferenceModel.metadata,
+        Column(f'{attributeIt(sister)}{ID}', Integer, ForeignKey(f'{sister}.{attributeIt(ID)}')),
+        Column(f'{attributeIt(brother)}{ID}', Integer, ForeignKey(f'{brother}.{attributeIt(ID)}')))
+    sisterList = relationship(sister, secondary=manySisterToManyBrother, back_populates=attributeIt(f'{brother}{LIST}'))
+    brotherList = relationship(brother, secondary=manySisterToManyBrother, back_populates=attributeIt(f'{sister}{LIST}'))
+    ### sister recieves the brotherList
+    ### brother recieves the sisterList
+    return sisterList, brotherList, manySisterToManyBrother
 
-@Method
+@Function
 def getOneToMany(owner, pet, refferenceModel) :
     return relationship(pet, back_populates=attributeIt(f'{owner}'), cascade=CASCADE_ONE_TO_MANY)
 
-@Method
+@Function
 def getManyToOne(pet, owner, refferenceModel) :
     ownerId = Column(Integer(), ForeignKey(f'{owner}.{attributeIt(ID)}'))
     owner = relationship(owner, back_populates=attributeIt(f'{pet}{LIST}'))
     return owner, ownerId
 
-# @Method
+# @Function
 # def getOneToOne(owner, pet, refferenceModel) :
 #     return relationship(pet, back_populates=attributeIt(owner))
 
-@Method
+@Function
 def getOneToOne(woman, man, refferenceModel) :
     manId = Column(Integer(), ForeignKey(f'{man}.{attributeIt(ID)}'))
     manList = relationship(man, back_populates=attributeIt(woman), uselist=False)
     return manId, manList
 
-@Method
+@Function
 def getOneToOne__forDebug(man, woman, refferenceModel) :
     womanId = Column(Integer(), ForeignKey(f'{woman}.{attributeIt(ID)}'))
     womanList = relationship(woman, back_populates=attributeIt(man))
