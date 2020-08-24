@@ -1,5 +1,5 @@
 from FlaskManager import Service, ServiceMethod
-import Security, Role, HttpStatus
+import Security
 import User, UserDto
 
 @Service()

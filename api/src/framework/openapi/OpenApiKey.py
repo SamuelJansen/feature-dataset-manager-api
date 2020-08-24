@@ -1,3 +1,5 @@
+import HttpStatus
+
 class Key:
     NAME = 'name'
     LICENSE_NAME = NAME
@@ -18,6 +20,7 @@ class Key:
     BASE_PATH = 'basePath'
     TAGS = 'tags'
     EXTERNAL_DOCS = 'externalDocs'
+    SCHEMA = 'schema'
     SCHEMES = 'schemes'
     DEFINITIONS = 'definitions'
     PROPERTIES = 'properties'
@@ -34,3 +37,7 @@ class Key:
     SECURITY = 'security'
     PARAMETERS = 'parameters'
     IN = 'in'
+    S_REF = '$ref'
+    CATEGORY = 'category'
+    ITEMS = 'items'
+    DEFAULT_STATUS_CODE = HttpStatus.OK

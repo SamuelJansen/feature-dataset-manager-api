@@ -1,11 +1,10 @@
 from FlaskManager import Controller, ControllerMethod
-import OpenApiManager
 import HttpStatus
 
 
 @Controller(url='/swagger-io', tag='Documentation', description='OpenApi documentation')
 class DocumentationController:
 
-    @ControllerMethod(url='/')
+    @ControllerMethod(responseClass=dict)
     def get(self):
-        return OpenApiManager.loadDocumentation(self.api.globals), HttpStatus.OK
+        return self.service.documentation.getSwaggerDocumentation(), HttpStatus.OK

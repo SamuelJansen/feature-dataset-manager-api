@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_restful import Api
 from python_helper import Constant as c
-from MethodWrapper import Method
+from MethodWrapper import Function
 import Serializer
 import FlaskManager
 import SqlAlchemyProxy
@@ -10,16 +10,16 @@ import OpenApiManager
 
 DOT_PY = '.py'
 
-@Method
+@Function
 def getResourceName(resourceFileName) :
     return resourceFileName.split(DOT_PY)[0]
 
-@Method
+@Function
 def isResourceType(resourceFileName,resourceType) :
     splitedResourceFileName = resourceFileName.split(resourceType)
     return len(splitedResourceFileName)>1 and splitedResourceFileName[1] == DOT_PY
 
-@Method
+@Function
 def getResourceNameList(apiTree, resourceType) :
     resourceNameList = []
     if apiTree or type(apiTree).__name__ == c.DICT :
@@ -32,7 +32,7 @@ def getResourceNameList(apiTree, resourceType) :
             )
     return resourceNameList
 
-@Method
+@Function
 def getControllerNameList(controllerName) :
     controllerNameList = [controllerName]
     controllerNameList.append(f'{controllerName[:-len(FlaskManager.KW_CONTROLLER_RESOURCE)]}{Serializer.KW_BATCH}{FlaskManager.KW_CONTROLLER_RESOURCE}')
@@ -40,7 +40,7 @@ def getControllerNameList(controllerName) :
     # return Serializer.getAttributeNameList(__import__(controllerName))
     return controllerNameList
 
-@Method
+@Function
 def getControllerList(resourceName):
     controllerNameList = getControllerNameList(resourceName)
     importedControllerList = []
@@ -50,7 +50,7 @@ def getControllerList(resourceName):
             importedControllerList.append(resource)
     return importedControllerList
 
-@Method
+@Function
 def getResourceList(apiInstance, resourceType) :
     resourceNameList = getResourceNameList(
         apiInstance.globals.apiTree[apiInstance.globals.apiPackage],
@@ -67,14 +67,14 @@ def getResourceList(apiInstance, resourceType) :
     return resourceList
 
 
-@Method
+@Function
 def addGlobalsTo(apiInstance) :
     FlaskManager.validateFlaskApi(apiInstance)
     apiInstance.globals = FlaskManager.getGlobals()
     apiInstance.globals.api = apiInstance
     apiInstance.bindResource = FlaskManager.bindResource
 
-@Method
+@Function
 def initialize(
         rootName,
         refferenceModel,
@@ -122,42 +122,36 @@ def initialize(
 
         return api, app, jwt
 
-@Method
+@Function
 def addControllerListTo(apiInstance, controllerList) :
     for controller in controllerList :
         OpenApiManager.addControllerDocumentation(controller, apiInstance)
-
-        urlList = [f'{apiInstance.baseUrl}{controller.url}']
-        attributePointerList = FlaskManager.getAttributePointerList(controller)
-        # print(f'attributePointerList = {attributePointerList}')
-        for attributePointer in attributePointerList :
-            # print(f'attributePointer = {attributePointer}')
-            if hasattr(attributePointer, FlaskManager.KW_URL) and attributePointer.url :
-                # print(f'dir(attributePointer) = {dir(attributePointer)}')
-                subUrlList = attributePointer.url.split(c.SLASH)
-                concatenatedSubUrl = c.NOTHING
-                for subUrl in subUrlList :
-                    if subUrl :
-                        concatenatedSubUrl += f'{c.SLASH}{subUrl}'
-                        if '<' == subUrl[0] and '>' == subUrl[-1] :
-                            newUrl = f'{apiInstance.baseUrl}{controller.url}{concatenatedSubUrl}'
-                            if not newUrl in urlList :
-                                urlList.append(newUrl)
-                # apiInstance.resource.controllerSet[controller.tag][OpenApiManager.KW_URL_SET][controller.__name__][attributePointer.__name__] = {
-                #     OpenApiManager.KW_URL : urlList[-1],
-                #     OpenApiManager.KW_CONTROLLER : controller,
-                #     OpenApiManager.KW_METHOD : attributePointer
-                # }
-
-        # print(StringHelper.stringfyThisDictionary(apiInstance.resource.controllerSet))
+        mainUrl = f'{apiInstance.baseUrl}{controller.url}'
+        urlList = [mainUrl]
+        controllerMethodList = FlaskManager.getAttributePointerList(controller)
+        for controllerMethod in controllerMethodList :
+            if hasattr(controllerMethod, FlaskManager.KW_URL) and controllerMethod.url :
+                controllerUrl = f'{mainUrl}{controllerMethod.url}'
+                if controllerUrl not in urlList :
+                    urlList.append(controllerUrl)
+                # subUrlList = controllerMethod.url.split(c.SLASH)
+                # concatenatedSubUrl = c.NOTHING
+                # for subUrl in subUrlList :
+                #     if subUrl :
+                #         concatenatedSubUrl += f'{c.SLASH}{subUrl}'
+                #         if c.LESSER == subUrl[0] and c.BIGGER == subUrl[-1] :
+                #             newUrl = f'{apiInstance.baseUrl}{controller.url}{concatenatedSubUrl}'
+                #             if not newUrl in urlList :
+                #                 urlList.append(newUrl)
+                OpenApiManager.addEndPointDocumentation(controllerUrl, controllerMethod, controller, apiInstance)
         apiInstance.add_resource(controller, *urlList)
 
-@Method
+@Function
 def addServiceListTo(apiInstance,serviceList) :
     for service in serviceList :
         apiInstance.bindResource(apiInstance,service())
 
-@Method
+@Function
 def addRepositoryTo(apiInstance, repositoryList, model, databaseEnvironmentVariable=None, localStorageName=None) :
     apiInstance.repository = SqlAlchemyProxy.SqlAlchemyProxy(
         databaseEnvironmentVariable = databaseEnvironmentVariable,
@@ -170,7 +164,7 @@ def addRepositoryTo(apiInstance, repositoryList, model, databaseEnvironmentVaria
     for repository in repositoryList :
         apiInstance.bindResource(apiInstance,repository())
 
-@Method
+@Function
 def addValidatorListTo(apiInstance,validatorList) :
     for validator in validatorList :
         apiInstance.bindResource(apiInstance,validator())
@@ -179,12 +173,12 @@ def addMapperListTo(apiInstance,mapperList) :
     for mapper in mapperList :
         apiInstance.bindResource(apiInstance,mapper())
 
-@Method
+@Function
 def addHelperListTo(apiInstance,helperList) :
     for helper in helperList :
         apiInstance.bindResource(apiInstance,helper())
 
-@Method
+@Function
 def addConverterListTo(apiInstance,converterList) :
     for converter in converterList :
         apiInstance.bindResource(apiInstance,converter())
@@ -192,13 +186,13 @@ def addConverterListTo(apiInstance,converterList) :
 class FlaskResource:
     ...
 
-@Method
+@Function
 def addResourceAttibutes(apiInstance) :
     setattr(apiInstance, FlaskManager.KW_RESOURCE, FlaskResource())
     for resourceName in FlaskManager.KW_RESOURCE_LIST :
         setattr(apiInstance.resource, resourceName.lower(), FlaskResource())
 
-@Method
+@Function
 def addFlaskApiResources(
         apiInstance,
         appInstance,

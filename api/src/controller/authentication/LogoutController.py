@@ -5,7 +5,8 @@ import UserDto, HttpStatus
 @Controller(url = '/authentication/logout', tag='Logout', description='Logout controller')
 class LogoutController:
 
-    @ControllerMethod(url='/<string:key>', roleRequired=[USER, ADMIN])
+    @ControllerMethod(url='/<string:key>',
+        roleRequired=[USER, ADMIN])
     def post(self, key=None):
         self.service.authentication.logout(key)
         return {}, HttpStatus.NO_CONTENT
