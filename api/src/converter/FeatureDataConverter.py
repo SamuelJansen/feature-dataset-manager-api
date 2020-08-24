@@ -6,7 +6,7 @@ class FeatureDataConverter:
 
     @ConverterMethod(requestClass=FeatureData.FeatureData, responseClass=FeatureDataDto.FeatureDataResponseDto)
     def fromModelToResponseDto(self, model, dto) :
-        dto.fatureKey = model.feature.key
+        dto.featureKey = model.feature.key
         dto.sampleKey = model.sample.key
         return dto
 
