@@ -8,5 +8,4 @@ class LoginController:
         requestClass=UserDto.LoginRequestDto,
         responseClass=UserDto.LoginResponseDto)
     def post(self, dto, key=None):
-        print(key)
         return self.service.authentication.login(dto, key), HttpStatus.CREATED
