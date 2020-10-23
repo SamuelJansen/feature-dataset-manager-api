@@ -15,4 +15,4 @@ commands:
     add: git add .
     commit: git commit -m "commit message"
     push: git push heroku master
-    logs: git tails
+    logs: git tails 
