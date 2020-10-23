@@ -8,4 +8,4 @@ SQLAlchemy
 globals
 python_helper==0.0.14
 numpy
-python_framework==0.0.1-43
+python_framework==0.0.1-44
