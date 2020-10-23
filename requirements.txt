@@ -1,10 +1,2 @@
-gunicorn
-Flask
-Flask-RESTful
-Flask-JWT-Extended
-Flask-Swagger-Ui
-globals==0.0.42
-python_helper==0.0.14
-psycopg2-binary
-SQLAlchemy
-python_framework==0.0.1-45
+python_framework==0.0.1-46
+numpy
