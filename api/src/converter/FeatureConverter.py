@@ -1,4 +1,4 @@
-from FlaskManager import Converter, ConverterMethod
+from python_framework import Converter, ConverterMethod
 import Feature, FeatureDto
 
 @Converter()

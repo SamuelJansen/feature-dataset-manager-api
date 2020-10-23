@@ -1,6 +1,5 @@
 from werkzeug.security import safe_str_cmp
-from FlaskManager import Validator, ValidatorMethod
-import Security, GlobalException, HttpStatus
+from python_framework import Validator, ValidatorMethod, Security, GlobalException, HttpStatus
 import UserDto, User
 
 @Validator()

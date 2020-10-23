@@ -1,5 +1,4 @@
-from FlaskManager import Service, ServiceMethod
-import Security
+from python_framework import Service, ServiceMethod, Security
 import User, UserDto
 
 @Service()

@@ -1,6 +1,4 @@
-from FlaskManager import Controller, ControllerMethod
-import HttpStatus
-
+from python_framework import Controller, ControllerMethod, HttpStatus
 
 @Controller(url='/swagger-io', tag='Documentation', description='OpenApi documentation')
 class DocumentationController:

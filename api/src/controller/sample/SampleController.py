@@ -1,6 +1,6 @@
-from FlaskManager import Controller, ControllerMethod
+from python_framework import Controller, ControllerMethod, HttpStatus
 from Role import *
-import SampleDto, HttpStatus
+import SampleDto
 
 @Controller(url = '/samples', tag='Sample', description='Single Sample controller')
 class SampleController:

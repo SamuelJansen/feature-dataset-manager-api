@@ -1,6 +1,6 @@
-from FlaskManager import Controller, ControllerMethod
+from python_framework import Controller, ControllerMethod, HttpStatus
 from Role import *
-import UserDto, HttpStatus
+import UserDto
 
 @Controller(url = '/authentication/logout', tag='Logout', description='Logout controller')
 class LogoutController:

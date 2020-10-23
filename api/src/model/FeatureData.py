@@ -1,15 +1,15 @@
-from SqlAlchemyProxy import *
+from python_framework import SqlAlchemyProxy as sap
 from ModelAssociation import Model, FEATURE_DATA, FEATURE, SAMPLE
 
 class FeatureData(Model):
     __tablename__ = FEATURE_DATA
 
-    id = Column(Integer(), Sequence(f'{__tablename__}{ID}{SEQ}'), primary_key=True)
-    hash = Column(String(1024), unique=True)
-    value = Column(Float(precision=12), nullable=False)
-    iterationCount = Column(Integer(), nullable=False)
-    feature, featureId = getManyToOne(FEATURE_DATA, FEATURE, Model)
-    sample, sampleId = getManyToOne(FEATURE_DATA, SAMPLE, Model)
+    id = sap.Column(sap.Integer(), sap.Sequence(f'{__tablename__}{sap.ID}{sap.SEQ}'), primary_key=True)
+    hash = sap.Column(sap.String(1024), unique=True)
+    value = sap.Column(sap.Float(precision=12), nullable=False)
+    iterationCount = sap.Column(sap.Integer(), nullable=False)
+    feature, featureId = sap.getManyToOne(FEATURE_DATA, FEATURE, Model)
+    sample, sampleId = sap.getManyToOne(FEATURE_DATA, SAMPLE, Model)
 
     def __init__(self,
         id = None,

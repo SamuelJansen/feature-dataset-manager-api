@@ -1,4 +1,4 @@
-from FlaskManager import Controller, ControllerMethod
+from python_framework import Controller, ControllerMethod, HttpStatus
 
 @Controller(url='/health/check', tag='HealthCheck', description='HealthCheck controller')
 class HealthCheckController:

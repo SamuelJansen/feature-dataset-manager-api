@@ -1,16 +1,16 @@
-from SqlAlchemyProxy import *
+from python_framework import SqlAlchemyProxy as sap
 from ModelAssociation import Model, USER
 import Role
 
 class User(Model):
     __tablename__ = USER
 
-    id = Column(Integer(), Sequence(f'{__tablename__}{ID}{SEQ}'), primary_key=True)
-    key = Column(String(128),unique=True, nullable=False)
-    role = Column(String(128), nullable=False)
-    username = Column(String(128),unique=True, nullable=False)
-    password = Column(String(128), nullable=False)
-    email = Column(String(128), nullable=False, default=Role.USER)
+    id = sap.Column(sap.Integer(), sap.Sequence(f'{__tablename__}{sap.ID}{sap.SEQ}'), primary_key=True)
+    key = sap.Column(sap.String(128),unique=True, nullable=False)
+    role = sap.Column(sap.String(128), nullable=False)
+    username = sap.Column(sap.String(128),unique=True, nullable=False)
+    password = sap.Column(sap.String(128), nullable=False)
+    email = sap.Column(sap.String(128), nullable=False, default=Role.USER)
 
     def __init__(self,
         id = None,

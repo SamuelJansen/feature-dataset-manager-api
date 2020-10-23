@@ -1,4 +1,4 @@
-from FlaskManager import Helper, HelperMethod
+from python_framework import Helper, HelperMethod
 import Sample, BestFitDto
 import DefaultValue, DataSetKey
 

@@ -1,6 +1,5 @@
-from FlaskManager import Controller, ControllerMethod
+from python_framework import Controller, ControllerMethod, HttpStatus
 import FeatureDto
-import HttpStatus
 from Role import *
 
 @Controller(url = '/features', tag='Feature', description='Single Feature controller')

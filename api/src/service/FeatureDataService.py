@@ -1,4 +1,4 @@
-from FlaskManager import Service, ServiceMethod
+from python_framework import Service, ServiceMethod
 import FeatureData, FeatureDataDto
 
 @Service()

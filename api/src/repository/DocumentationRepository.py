@@ -1,8 +1,7 @@
-from FlaskManager import Repository
-import OpenApiDocumentationFile
+from python_framework import Repository, OpenApiDocumentationFile
 
 @Repository()
 class DocumentationRepository:
 
     def getSwaggerDocumentation(self):
-        return OpenApiDocumentationFile.loadDocumentation(self.globals)
+        return OpenApiDocumentationFile.loadDocumentation(self.globals.api)

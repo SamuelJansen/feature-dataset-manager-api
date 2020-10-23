@@ -1,6 +1,5 @@
-from FlaskManager import Validator, ValidatorMethod
 from python_helper import Constant
-import GlobalException, HttpStatus
+from python_framework import Validator, ValidatorMethod, GlobalException, HttpStatus
 
 @Validator()
 class CommonValidator:

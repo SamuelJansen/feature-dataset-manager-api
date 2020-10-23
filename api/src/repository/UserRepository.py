@@ -1,4 +1,4 @@
-from FlaskManager import Repository
+from python_framework import Repository
 import User
 
 @Repository(model = User.User)

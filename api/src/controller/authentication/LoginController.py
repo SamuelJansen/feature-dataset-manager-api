@@ -1,5 +1,5 @@
-from FlaskManager import Controller, ControllerMethod
-import UserDto, HttpStatus
+from python_framework import Controller, ControllerMethod, HttpStatus
+import UserDto
 
 @Controller(url = '/authentication/login', tag='Login', description='Login controller')
 class LoginController:

@@ -1,5 +1,5 @@
-from FlaskManager import Repository
-from SqlAlchemyProxy import exists, and_
+from python_framework import Repository
+from python_framework import SqlAlchemyProxy as sap ###- exists 
 import FeatureData, Feature, Sample
 
 @Repository(model = FeatureData.FeatureData)
@@ -25,7 +25,7 @@ class FeatureDataRepository:
     def existsByFeatureKeyAndSampleKey(self, featureKey, sampleKey):
         objectExists = self.repository.session.query(
             self.repository.session.query(self.model).filter(
-                and_(
+                sap.and_(
                     self.model.feature.has(Feature.Feature.key == featureKey),
                     self.model.sample.has(Sample.Sample.key == sampleKey)
                 )
@@ -36,7 +36,7 @@ class FeatureDataRepository:
 
     def findByFeatureKeyAndSampleKey(self, featureKey, sampleKey) :
         featureData = self.repository.session.query(self.model).filter(
-            and_(
+            sap.and_(
                 self.model.feature.has(Feature.Feature.key == featureKey),
                 self.model.sample.has(Sample.Sample.key == sampleKey)
             )

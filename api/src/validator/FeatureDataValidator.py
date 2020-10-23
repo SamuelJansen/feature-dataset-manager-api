@@ -1,5 +1,5 @@
-from FlaskManager import Validator, ValidatorMethod
-import FeatureDataDto, GlobalException, HttpStatus
+from python_framework import Validator, ValidatorMethod, GlobalException, HttpStatus
+import FeatureDataDto
 
 @Validator()
 class FeatureDataValidator:

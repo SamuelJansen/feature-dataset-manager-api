@@ -1,6 +1,6 @@
 from python_helper import Constant
-from FlaskManager import Validator, ValidatorMethod
-import FeatureDto, Feature, GlobalException, HttpStatus
+from python_framework import Validator, ValidatorMethod, GlobalException, HttpStatus
+import FeatureDto, Feature
 
 @Validator()
 class FeatureValidator:

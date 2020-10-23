@@ -1,5 +1,5 @@
 import numpy
-from FlaskManager import Service, ServiceMethod
+from python_framework import Service, ServiceMethod
 from python_helper import Constant, log
 import Sample, FeatureData, BestFitDto
 import DefaultValue, DataSetKey

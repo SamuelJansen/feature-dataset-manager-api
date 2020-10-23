@@ -1,6 +1,6 @@
-from SqlAlchemyProxy import *
+from python_framework import SqlAlchemyProxy
 
-Model = getNewModel()
+Model = SqlAlchemyProxy.getNewModel()
 
 FEATURE = 'Feature'
 SAMPLE = 'Sample'

@@ -1,4 +1,4 @@
-from FlaskManager import Mapper, MapperMethod
+from python_framework import Mapper, MapperMethod
 import Feature, FeatureDto, DefaultValue
 
 @Mapper()
