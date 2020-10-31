@@ -6,7 +6,9 @@ globals = Globals(__file__,
     errorStatus = True,
     successStatus = True,
     failureStatus = True,
-    settingStatus = True)
+    settingStatus = True,
+    globalsEverything=True
+)
 import FeatureManager
 app = FeatureManager.app
 api = FeatureManager.api
