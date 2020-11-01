@@ -7,14 +7,14 @@ globals = Globals(__file__,
     successStatus = True,
     failureStatus = True,
     settingStatus = True,
-    globalsEverything = True)
+    printRootPathStatus = False)
 
 import FeatureManager
 app = FeatureManager.app
 api = FeatureManager.api
 jwt = FeatureManager.jwt
 
-@initialize(api, defaultUrl = '/loggin', openInBrowser=False)
+@initialize(api, defaultUrl = '/swagger', openInBrowser=True)
 def runFlaskApplication(app):
     app.run(debug=True)
 
