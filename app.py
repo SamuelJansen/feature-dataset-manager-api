@@ -7,7 +7,7 @@ globals = Globals(__file__,
     successStatus = True,
     failureStatus = True,
     settingStatus = True,
-    printRootPathStatus = False)
+    printRootPathStatus = True)
 
 import FeatureManager
 app = FeatureManager.app
