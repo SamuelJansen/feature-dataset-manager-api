@@ -1,2 +1,2 @@
-python_framework==0.0.1-73
+python_framework==0.0.1-78
 numpy

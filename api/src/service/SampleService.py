@@ -13,7 +13,7 @@ class SampleService:
         dataSet = self.helper.sample.getSampleDataSet(sampleList, bestFitList)
         targetData = self.service.ai.getTargetData(bestFitList)
         bestFitList = self.service.ai.getBestFitList(targetData, dataSet, amount)
-        return self.converter.sample.fromModelListToResponseDtoList(bestFitList)
+        return self.converter.sample.fromModelListToBestFitResponseDtoList(bestFitList)
 
     @ServiceMethod()
     def queryAll(self):

@@ -45,10 +45,12 @@ class AiService:
         '''
         It calculates the nearest dataset point of a target data point
         measuring its Euclidian Distance from a data set'''
+        if not dataSet or 0 == len(dataSet) :
+            return []
         log.debug(AiService, f'Querying {amount} samples ...')
         targetArray = numpy.asarray(targetData)
         dataSetMatrix = numpy.asarray([data[DataSetKey.VALUE_LIST] for data in dataSet.values()])
-        if len(targetData) > 1 :
+        if len(targetData) >= 1 :
             euclidianDistanceList = numpy.asarray(numpy.sum((targetArray - dataSetMatrix)**2, axis=1))
         else :
             euclidianDistanceList = numpy.asarray(numpy.sum((targetArray - dataSetMatrix)**2, axis=1))
