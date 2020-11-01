@@ -3,7 +3,7 @@ from python_framework import initialize
 globals = Globals(__file__,
     debugStatus = True,
     warningStatus = True,
-    errorStatus = True,
+    errorStatus = False,
     successStatus = True,
     failureStatus = True,
     settingStatus = True,
