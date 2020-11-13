@@ -3,7 +3,7 @@ from python_framework import initialize
 globals = Globals(__file__,
     debugStatus = True,
     warningStatus = True,
-    errorStatus = False,
+    errorStatus = True,
     successStatus = True,
     failureStatus = True,
     settingStatus = True,
@@ -19,4 +19,4 @@ def runFlaskApplication(app):
     app.run(debug=True)
 
 if __name__ == '__main__' :
-    runFlaskApplication(app) 
+    runFlaskApplication(app)
