@@ -23,4 +23,4 @@ Globals:
             list:
                 web: [globals,python_helper,Popen,Path,numpy,pywin32,sqlalchemy]
     python:
-        version: '3.8'
+        version: 3.8
