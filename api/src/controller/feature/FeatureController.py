@@ -18,8 +18,7 @@ class FeatureController:
     def get(self, key=None):
         return self.service.feature.queryByKey(key), HttpStatus.OK
 
-    @ControllerMethod(
-        url='/<string:key>',
+    @ControllerMethod(url='/<string:key>',
         requestClass=FeatureDto.FeatureRequestDto,
         responseClass=FeatureDto.FeatureResponseDto,
         roleRequired=[USER, ADMIN])

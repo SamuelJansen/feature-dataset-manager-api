@@ -9,10 +9,10 @@ config:
     response: see it your self when logged in
 git-remote:
     request: heroku git:remote -a feature-dataset-manager
-    response: set git remote heroku to https://git.heroku.com/jansen-flask-blog-application.git
+    response: set git remote heroku to https://git.heroku.com/feature-dataset-manager.git
 
 commands:
     add: git add .
     commit: git commit -m "commit message"
     push: git push heroku master
-    logs: git tails
+    logs: heroku logs -t
