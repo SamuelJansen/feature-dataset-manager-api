@@ -50,21 +50,11 @@ class AiService:
         log.debug(AiService, f'Querying {amount} samples ...')
         targetArray = numpy.asarray(targetData)
         dataSetMatrix = numpy.asarray([data[DataSetKey.VALUE_LIST] for data in dataSet.values()])
-        if len(targetData) >= 1 :
-            euclidianDistanceList = numpy.asarray(numpy.sum((targetArray - dataSetMatrix)**2, axis=1))
-        else :
-            euclidianDistanceList = numpy.asarray(numpy.sum((targetArray - dataSetMatrix)**2, axis=1))
-        # bestFitIndexList = [numpy.argmin(euclidianDistanceList)]
-
-        print(f'euclidianDistanceList = {euclidianDistanceList}')
+        euclidianDistanceList = numpy.asarray(numpy.sum((targetArray - dataSetMatrix)**2, axis=1))
+        log.debug(AiService, f'euclidianDistanceList = {euclidianDistanceList}')
         bestFitIndexList = numpy.argsort(euclidianDistanceList)
-        # bestFitIndexList = numpy.unravel_index(numpy.argmin(euclidianDistanceList, axis=None), euclidianDistanceList.shape)
-        # bestFitIndexList = numpy.flatnonzero(euclidianDistanceList == euclidianDistanceList.min())
-        # bestFitIndexList = numpy.where(euclidianDistanceList == min(euclidianDistanceList))[0]
-        # bestFitIndexList = numpy.where(euclidianDistanceList == euclidianDistanceList.min())
-        print(f'bestFitIndexList = {bestFitIndexList}')
-
-        print(dataSetMatrix)
+        log.debug(AiService, f'bestFitIndexList = {bestFitIndexList}')
+        log.debug(AiService, f'dataSetMatrix = {dataSetMatrix}')
         bestFitList = []
         for bestFitIndex in bestFitIndexList[:amount] :
             bestFit = dataSet[list(dataSet.values())[bestFitIndex][DataSetKey.SAMPLE].key][DataSetKey.SAMPLE]
