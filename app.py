@@ -1,13 +1,18 @@
-from globals import Globals
+import globals
 from python_framework import initialize
-globals = Globals(__file__,
-    debugStatus = True,
-    warningStatus = True,
-    errorStatus = True,
-    successStatus = True,
-    failureStatus = True,
-    settingStatus = True,
-    printRootPathStatus = False)
+globalsInstance = globals.newGlobalsInstance(
+    __file__
+    , settingStatus = True
+    , successStatus = True
+    , errorStatus = True
+    , debugStatus = True
+    , warningStatus = False
+    , wrapperStatus = False
+    , failureStatus = False
+    , testStatus = False
+    , logStatus = False
+    , printRootPathStatus = False
+)
 
 import FeatureManager
 app = FeatureManager.app

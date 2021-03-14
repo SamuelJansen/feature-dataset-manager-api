@@ -3,8 +3,16 @@ import ModelAssociation
 
 api, app, jwt = ResourceManager.initialize(
     __name__,
-    ModelAssociation.Model,
-    baseUrl = '',
-    jwtSecret = 'put_some_os_enviroment_key_here',
-    databaseEnvironmentVariable = 'DATABASE_URL'
+    ModelAssociation.Model
 )
+
+import os
+from flask import send_from_directory
+
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(
+        os.path.join(app.root_path, 'static'),
+        'favicon.ico',
+        mimetype='image/vnd.microsoft.icon'
+    )
