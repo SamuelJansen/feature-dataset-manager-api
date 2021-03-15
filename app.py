@@ -6,33 +6,36 @@ globalsInstance = globals.newGlobalsInstance(
     , successStatus = True
     , errorStatus = True
     , debugStatus = True
-    , failureStatus = False
-    , warningStatus = False
-    , wrapperStatus = False
-    , testStatus = False
-    , logStatus = False
+    , failureStatus = True
+
+    , warningStatus = True
+    , wrapperStatus = True
+    , logStatus = True
+    , testStatus = True
     , printRootPathStatus = False
 )
+try :
+    from python_helper import log
+    log.prettyPython(globals.newGlobalsInstance, 'settingsFileName', globalsInstance.settingsFileName, logLevel=log.DEBUG)
+    log.prettyPython(globals.newGlobalsInstance, 'settingFilePath', globalsInstance.settingFilePath, logLevel=log.DEBUG)
+    log.prettyPython(globals.newGlobalsInstance, 'settingTree', globalsInstance.settingTree, logLevel=log.DEBUG)
+    log.prettyPython(globals.newGlobalsInstance, 'defaultSettingFileName', globalsInstance.defaultSettingFileName, logLevel=log.DEBUG)
+    log.prettyPython(globals.newGlobalsInstance, 'defaultSettingFilePath', globalsInstance.defaultSettingFilePath, logLevel=log.DEBUG)
+    log.prettyPython(globals.newGlobalsInstance, 'defaultSettingTree', globalsInstance.defaultSettingTree, logLevel=log.DEBUG)
 
-from python_helper import log
-log.prettyPython(globals.newGlobalsInstance, 'settingsFileName', globalsInstance.settingsFileName, logLevel=log.DEBUG)
-log.prettyPython(globals.newGlobalsInstance, 'settingFilePath', globalsInstance.settingFilePath, logLevel=log.DEBUG)
-log.prettyPython(globals.newGlobalsInstance, 'settingTree', globalsInstance.settingTree, logLevel=log.DEBUG)
-log.prettyPython(globals.newGlobalsInstance, 'defaultSettingFileName', globalsInstance.defaultSettingFileName, logLevel=log.DEBUG)
-log.prettyPython(globals.newGlobalsInstance, 'defaultSettingFilePath', globalsInstance.defaultSettingFilePath, logLevel=log.DEBUG)
-log.prettyPython(globals.newGlobalsInstance, 'defaultSettingTree', globalsInstance.defaultSettingTree, logLevel=log.DEBUG)
+    import FeatureManager
+    app = FeatureManager.app
+    api = FeatureManager.api
+    jwt = FeatureManager.jwt
 
-import FeatureManager
-app = FeatureManager.app
-api = FeatureManager.api
-jwt = FeatureManager.jwt
+    @initialize(api, defaultUrl = '/swagger', openInBrowser=False)
+    def runFlaskApplication(app):
+        app.run(debug=True)
 
-@initialize(api, defaultUrl = '/swagger', openInBrowser=False)
-def runFlaskApplication(app):
-    app.run(debug=True)
-
-if __name__ == '__main__' :
-    runFlaskApplication(app)
+    if __name__ == '__main__' :
+        runFlaskApplication(app)
+except Exception as exception :
+    log.error(log.error, 'Not possible to run', exception)
 
 log.prettyPython(globals.newGlobalsInstance, 'settingsFileName', globalsInstance.settingsFileName, logLevel=log.DEBUG)
 log.prettyPython(globals.newGlobalsInstance, 'settingFilePath', globalsInstance.settingFilePath, logLevel=log.DEBUG)
