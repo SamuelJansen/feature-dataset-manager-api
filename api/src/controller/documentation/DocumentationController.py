@@ -17,4 +17,4 @@ class DocumentationBatchController:
 
     @ControllerMethod(responseClass=dict)
     def patch(self):
-        return self.service.documentation.getApiTree(), HttpStatus.OK
+        return self.service.documentation.getGlobalsConfig(), HttpStatus.OK
