@@ -3,10 +3,14 @@ print-status: False
 api:
     server:
         scheme: http
-        port: 5933
-        host: 192.168.25.8
+        port: 5000
+        host: localhost
     security:
         secret: ${SECURITY_KEY:local-secret-key}
+    database:
+        dialect: ${DATABASE_DIALECT:sqlite}
+        settings:
+            check_same_thread: False
 
 
 swagger:

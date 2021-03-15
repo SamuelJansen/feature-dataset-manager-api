@@ -11,12 +11,11 @@ class DocumentationController:
 @Controller(url='/swagger-io/api', tag='Documentation', description='Api Tree')
 class DocumentationBatchController:
 
-    @ControllerMethod(url='tree', responseClass=dict)
+    @ControllerMethod(url='/tree', responseClass=dict)
     def get(self):
         return self.service.documentation.getApiTree(), HttpStatus.OK
 
-
-    @ControllerMethod(url='config', responseClass=dict)
+    @ControllerMethod(url='/config', responseClass=dict)
     def patch(self):
         return self.service.documentation.getGlobalsConfig(), HttpStatus.OK
 

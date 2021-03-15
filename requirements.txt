@@ -1,2 +1,2 @@
-python_framework==0.1.8.post41
+python_framework==0.1.8.post43
 numpy==1.19.0
