@@ -16,9 +16,9 @@ api:
     security:
         secret: default
     server:
+        host: None
+        scheme: None
         base-url: /feature-dataset-manager-api
-    database:
-        driver: ${DATABASE_DRIVER:psycopg2}
 
 swagger:
     host: ${api.server.host}

@@ -4,6 +4,7 @@ __pycache__/
 *$py.class
 
 local-config.yml
+FeatureManager.db
 
 # C extensions
 *.so

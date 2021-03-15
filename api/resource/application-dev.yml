@@ -6,6 +6,7 @@ api:
         host: device-automation
     database:
         dialect: ${DATABASE_DIALECT:postgres}
+        driver: ${DATABASE_DRIVER:psycopg2}
         database: ${DATABASE_NAME:d7dbsap9b1oecd}
         username: ${DATABASE_USERNAME:tbuwcalrrnvpxo}
         password: ${DATABASE_PASSWORD:cbc6bb13f6042a06fd0795afd8ba44d7c43d5da1dc56a8cce96b4e85767f383e}
