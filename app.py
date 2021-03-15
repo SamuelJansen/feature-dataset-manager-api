@@ -1,3 +1,4 @@
+from python_helper import log
 import globals
 from python_framework import initialize
 globalsInstance = globals.newGlobalsInstance(
@@ -8,20 +9,19 @@ globalsInstance = globals.newGlobalsInstance(
     , debugStatus = True
     , failureStatus = True
 
-    , warningStatus = True
-    , wrapperStatus = True
-    , logStatus = True
-    , testStatus = True
-    , printRootPathStatus = False
+    # , warningStatus = True
+    # , wrapperStatus = True
+    # , logStatus = True
+    # , testStatus = True
+    # , printRootPathStatus = False
 )
 try :
-    from python_helper import log
-    log.prettyPython(globals.newGlobalsInstance, 'settingsFileName', globalsInstance.settingsFileName, logLevel=log.DEBUG)
-    log.prettyPython(globals.newGlobalsInstance, 'settingFilePath', globalsInstance.settingFilePath, logLevel=log.DEBUG)
-    log.prettyPython(globals.newGlobalsInstance, 'settingTree', globalsInstance.settingTree, logLevel=log.DEBUG)
-    log.prettyPython(globals.newGlobalsInstance, 'defaultSettingFileName', globalsInstance.defaultSettingFileName, logLevel=log.DEBUG)
-    log.prettyPython(globals.newGlobalsInstance, 'defaultSettingFilePath', globalsInstance.defaultSettingFilePath, logLevel=log.DEBUG)
-    log.prettyPython(globals.newGlobalsInstance, 'defaultSettingTree', globalsInstance.defaultSettingTree, logLevel=log.DEBUG)
+    # log.prettyPython(globals.newGlobalsInstance, 'settingsFileName', globalsInstance.settingsFileName, logLevel=log.DEBUG)
+    # log.prettyPython(globals.newGlobalsInstance, 'settingFilePath', globalsInstance.settingFilePath, logLevel=log.DEBUG)
+    # log.prettyPython(globals.newGlobalsInstance, 'settingTree', globalsInstance.settingTree, logLevel=log.DEBUG)
+    # log.prettyPython(globals.newGlobalsInstance, 'defaultSettingFileName', globalsInstance.defaultSettingFileName, logLevel=log.DEBUG)
+    # log.prettyPython(globals.newGlobalsInstance, 'defaultSettingFilePath', globalsInstance.defaultSettingFilePath, logLevel=log.DEBUG)
+    # log.prettyPython(globals.newGlobalsInstance, 'defaultSettingTree', globalsInstance.defaultSettingTree, logLevel=log.DEBUG)
 
     import FeatureManager
     app = FeatureManager.app
@@ -37,9 +37,9 @@ try :
 except Exception as exception :
     log.error(log.error, 'Not possible to run', exception)
 
-log.prettyPython(globals.newGlobalsInstance, 'settingsFileName', globalsInstance.settingsFileName, logLevel=log.DEBUG)
-log.prettyPython(globals.newGlobalsInstance, 'settingFilePath', globalsInstance.settingFilePath, logLevel=log.DEBUG)
-log.prettyPython(globals.newGlobalsInstance, 'settingTree', globalsInstance.settingTree, logLevel=log.DEBUG)
-log.prettyPython(globals.newGlobalsInstance, 'defaultSettingFileName', globalsInstance.defaultSettingFileName, logLevel=log.DEBUG)
-log.prettyPython(globals.newGlobalsInstance, 'defaultSettingFilePath', globalsInstance.defaultSettingFilePath, logLevel=log.DEBUG)
-log.prettyPython(globals.newGlobalsInstance, 'defaultSettingTree', globalsInstance.defaultSettingTree, logLevel=log.DEBUG)
+    # log.prettyPython(globals.newGlobalsInstance, 'settingsFileName', globalsInstance.settingsFileName, logLevel=log.DEBUG)
+    # log.prettyPython(globals.newGlobalsInstance, 'settingFilePath', globalsInstance.settingFilePath, logLevel=log.DEBUG)
+    # log.prettyPython(globals.newGlobalsInstance, 'settingTree', globalsInstance.settingTree, logLevel=log.DEBUG)
+    # log.prettyPython(globals.newGlobalsInstance, 'defaultSettingFileName', globalsInstance.defaultSettingFileName, logLevel=log.DEBUG)
+    # log.prettyPython(globals.newGlobalsInstance, 'defaultSettingFilePath', globalsInstance.defaultSettingFilePath, logLevel=log.DEBUG)
+    # log.prettyPython(globals.newGlobalsInstance, 'defaultSettingTree', globalsInstance.defaultSettingTree, logLevel=log.DEBUG)
