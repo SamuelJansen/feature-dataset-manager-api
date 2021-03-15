@@ -3,7 +3,7 @@ api:
     server:
         scheme: http
         port: 5933
-        host: device-automation
+        host: device-automation.ddns.net
     database:
         dialect: ${DATABASE_DIALECT:postgres}
         driver: ${DATABASE_DRIVER:psycopg2}
