@@ -1,4 +1,5 @@
 print-status: False
+
 api:
     server:
         scheme: http
@@ -15,3 +16,6 @@ api:
         schema: ${DATABASE_SCHEMA:dev-feature-manager-api-schema}
         settings:
             options: -csearch_path=${api.database.schema}
+
+swagger:
+    host: ${api.server.host}:${api.server.port}

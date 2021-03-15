@@ -21,7 +21,6 @@ api:
         base-url: /feature-dataset-manager-api
 
 swagger:
-    host: ${api.server.host}
     schemes: [${api.server.scheme}]
     info:
         title: ${api.name}
