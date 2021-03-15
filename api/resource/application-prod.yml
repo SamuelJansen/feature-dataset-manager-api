@@ -1,4 +1,4 @@
-print-status: False
+print-status: True
 api:
     server:
         scheme: https

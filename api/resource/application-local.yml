@@ -8,10 +8,9 @@ api:
     security:
         secret: ${SECURITY_KEY:local-secret-key}
     database:
-        dialect: ${DATABASE_DIALECT:sqlite}
+        dialect: ${DATABASE_DIALECT:}
         settings:
             check_same_thread: False
-
 
 swagger:
     host: ${api.server.host}:${api.server.port}
