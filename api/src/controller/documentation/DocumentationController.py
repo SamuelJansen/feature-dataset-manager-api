@@ -1,3 +1,4 @@
+from python_helper import EnvironmentHelper
 from python_framework import Controller, ControllerMethod, HttpStatus
 
 @Controller(url='/swagger-io', tag='Documentation', description='OpenApi documentation')
@@ -18,3 +19,9 @@ class DocumentationBatchController:
     @ControllerMethod(url='config', responseClass=dict)
     def patch(self):
         return self.service.documentation.getGlobalsConfig(), HttpStatus.OK
+
+    @ControllerMethod(responseClass=dict)
+    def post(self):
+        return {
+            'activeEnvironment': EnvironmentHelper.getAcvtiveEnvironment()
+        }, HttpStatus.OK

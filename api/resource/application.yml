@@ -29,6 +29,9 @@ api:
         host: ${DATABASE_HOST:ec2-54-159-138-67.compute-1.amazonaws.com}
         port: ${DATABASE_PORT:5432}
         schema: ${DATABASE_SCHEMA:dev-device-automation-api-schema}
+        settings:
+            local:
+                options: -csearch_path=${api.database.schema}
 
 swagger:
     host: ${api.server.host}
