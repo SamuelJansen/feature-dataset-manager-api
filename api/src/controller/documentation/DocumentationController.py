@@ -7,14 +7,14 @@ class DocumentationController:
     def get(self):
         return self.service.documentation.getSwaggerDocumentation(), HttpStatus.OK
 
-@Controller(url='/swagger-io/api-tree', tag='Documentation', description='Api Tree')
+@Controller(url='/swagger-io/api', tag='Documentation', description='Api Tree')
 class DocumentationBatchController:
 
-    @ControllerMethod(responseClass=dict)
+    @ControllerMethod(url='tree', responseClass=dict)
     def get(self):
         return self.service.documentation.getApiTree(), HttpStatus.OK
 
 
-    @ControllerMethod(responseClass=dict)
+    @ControllerMethod(url='config', responseClass=dict)
     def patch(self):
         return self.service.documentation.getGlobalsConfig(), HttpStatus.OK
