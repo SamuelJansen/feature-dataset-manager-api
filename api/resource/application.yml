@@ -20,9 +20,18 @@ api:
         host: feature-dataset-manager.herokuapp.com
         port: ''
         base-url: /api
+    database:
+        dialect: ${DATABASE_DIALECT:postgres}
+        driver: ${DATABASE_DIALECT:psycopg2}
+        database: ${DATABASE_NAME:d7dbsap9b1oecd}
+        username: ${DATABASE_USERNAME:tbuwcalrrnvpxo}
+        password: ${DATABASE_PASSWORD:cbc6bb13f6042a06fd0795afd8ba44d7c43d5da1dc56a8cce96b4e85767f383e}
+        host: ${DATABASE_HOST:ec2-54-159-138-67.compute-1.amazonaws.com}
+        port: ${DATABASE_PORT:5432}
+        schema: ${DATABASE_SCHEMA:dev-device-automation-api-schema}
 
 swagger:
-    host: ${api.server.host}${api.server.base-url}
+    host: ${api.server.host}
     schemes: [${api.server.scheme}]
     info:
         title: ${api.name}

@@ -3,8 +3,8 @@ print-status: False
 api:
     server:
         scheme: http
-        port: 5000
-        host: localhost
+        port: 5933
+        host: 192.168.25.8
     security:
         secret: ${SECURITY_KEY:local-secret-key}
 
