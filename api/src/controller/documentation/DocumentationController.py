@@ -7,7 +7,7 @@ class DocumentationController:
     def get(self):
         return self.service.documentation.getSwaggerDocumentation(), HttpStatus.OK
 
-@Controller(url='/swagger-io/api-tree', tag='Documentation', description='Api Tree')
+@Controller(url='/swagger-io/bean-api-tree', tag='Documentation', description='Api Tree')
 class DocumentationBatchController:
 
     @ControllerMethod(responseClass=dict)
