@@ -8,3 +8,6 @@ class DocumentationRepository:
 
     def getApiTree(self):
         return self.globals.apiTree
+
+    def getGlobalsConfig(self):
+        return self.globals.settingTree
