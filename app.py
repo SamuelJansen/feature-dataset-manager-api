@@ -30,7 +30,7 @@ try :
 
     @initialize(api, defaultUrl = '/swagger', openInBrowser=False)
     def runFlaskApplication(app):
-        app.run(debug=True)
+        app.run(debug=True, use_reloader=False)
 
     if __name__ == '__main__' :
         runFlaskApplication(app)

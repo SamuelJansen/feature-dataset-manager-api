@@ -3,19 +3,19 @@ print-status: False
 api:
     server:
         scheme: http
-        port: 5933
-        host: device-automation.ddns.net
+        port: 5000
+        host: localhost
     database:
-        dialect: ${DATABASE_DIALECT:postgres}
-        driver: ${DATABASE_DRIVER:psycopg2}
-        database: ${DATABASE_NAME:d5h5kfi694bmst}
-        username: ${DATABASE_USERNAME:jbqafgvnjszmoh}
-        password: ${DATABASE_PASSWORD:9a4b08000c04c22cd6f533c5ac76098102aecdb646e9bc2fb3d9a74089fcebc9}
-        host: ${DATABASE_HOST:ec2-35-173-94-156.compute-1.amazonaws.com}
+        dialect: ${DATABASE_DIALECT:sqlite}
+        driver: ${DATABASE_DRIVER:}
+        database: ${DATABASE_NAME:}
+        username: ${DATABASE_USERNAME:}
+        password: ${DATABASE_PASSWORD:}
+        host: ${DATABASE_HOST:}
         port: ${DATABASE_PORT:5432}
-        schema: ${DATABASE_SCHEMA:dev-feature-manager-api-schema}
+        schema: ${DATABASE_SCHEMA:}
         settings:
-            options: -csearch_path=${api.database.schema}
+            check_same_thread: False
 
 swagger:
-    host: ${api.server.host}
+    host: ${api.server.host}:${api.server.port}
