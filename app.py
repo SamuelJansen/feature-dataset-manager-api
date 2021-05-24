@@ -5,13 +5,13 @@ globalsInstance = globals.newGlobalsInstance(
     , settingStatus = True
     , successStatus = True
     , errorStatus = True
-    , debugStatus = True
+    , debugStatus = False
     , warningStatus = False
     , wrapperStatus = False
     , failureStatus = False
     , testStatus = False
     , logStatus = False
-    , printRootPathStatus = False
+    , printRootPathStatus = True
 )
 
 import FeatureManager
