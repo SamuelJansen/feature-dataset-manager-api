@@ -7,13 +7,13 @@ globalsInstance = globals.newGlobalsInstance(
     , successStatus = True
     , errorStatus = True
 
-    , debugStatus = False
+    , debugStatus = True
     , warningStatus = False
     , wrapperStatus = False
     , failureStatus = False
     , testStatus = False
     , logStatus = False
-    , printRootPathStatus = True
+    , printRootPathStatus = False
 )
 # try :
 # log.prettyPython(globals.newGlobalsInstance, 'settingsFileName', globalsInstance.settingsFileName, logLevel=log.SETTING)
