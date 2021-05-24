@@ -7,13 +7,13 @@ globalsInstance = globals.newGlobalsInstance(
     , successStatus = True
     , errorStatus = True
 
-    , debugStatus = True
+    , debugStatus = False
     , warningStatus = False
     , wrapperStatus = False
     , failureStatus = False
     , testStatus = False
     , logStatus = False
-    , printRootPathStatus = False
+    , printRootPathStatus = True
 )
 # try :
 # log.prettyPython(globals.newGlobalsInstance, 'settingsFileName', globalsInstance.settingsFileName, logLevel=log.SETTING)
@@ -30,7 +30,7 @@ jwt = FeatureManager.jwt
 
 @initialize(api, defaultUrl = '/swagger', openInBrowser=False)
 def runFlaskApplication(app):
-    runApi(debug=True, use_reloader=False)
+    runApi(debug=False, use_reloader=False)
 
 if __name__ == '__main__' :
     runFlaskApplication(app)
