@@ -10,3 +10,7 @@ class DocumentationService:
     @ServiceMethod()
     def getApiTree(self):
         return self.repository.documentation.getApiTree()
+
+    @ServiceMethod()
+    def getGlobalsConfig(self):
+        return self.repository.documentation.getGlobalsConfig()
