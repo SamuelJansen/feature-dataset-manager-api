@@ -3,8 +3,8 @@ print-status: False
 api:
     server:
         scheme: http
-        port: 5000
-        host: localhost
+        port: 5030
+        host: 0.0.0.0
     database:
         dialect: ${DATABASE_DIALECT:sqlite}
         driver: ${DATABASE_DRIVER:}
@@ -14,8 +14,8 @@ api:
         host: ${DATABASE_HOST:}
         port: ${DATABASE_PORT:5432}
         schema: ${DATABASE_SCHEMA:}
-        settings:
-            check_same_thread: False
+        # settings:
+        #     check_same_thread: False
 
 swagger:
-    host: ${api.server.host}:${api.server.port}
+    host: localhost:${api.server.port}
