@@ -1,2 +1,2 @@
-python_framework=='0.1.14
+python_framework==0.1.14
 numpy==1.19.0
