@@ -9,4 +9,4 @@ class FeatureDataValidator:
         self.validator.common.pathVariableNotNull(featureKey, 'featureKey')
         self.validator.common.pathVariableNotNull(sampleKey, 'sampleKey')
         if not self.service.featureData.existsByFeatureKeyAndSampleKey(featureKey, sampleKey) :
-            raise GlobalException.GlobalException(message='''FeatureData not found''', status=HttpStatus.NOT_FOUND)
+            raise GlobalException(message='''FeatureData not found''', status=HttpStatus.NOT_FOUND)

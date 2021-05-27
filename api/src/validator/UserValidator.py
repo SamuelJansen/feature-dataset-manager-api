@@ -8,12 +8,12 @@ class UserValidator:
     @ValidatorMethod(requestClass=User.User)
     def loggedUser(self,model):
         if not Security.getIdentity() == model.id :
-            raise GlobalException.GlobalException(message="Unauthorized", status=HttpStatus.UNAUTHORIZED)
+            raise GlobalException(message="Unauthorized", status=HttpStatus.UNAUTHORIZED)
 
     @ValidatorMethod(requestClass=[UserDto.UserRequestDto, User.User])
     def password(self, dto, model):
         if not safe_str_cmp(model.password, dto.password) :
-            raise GlobalException.GlobalException(message="Invalid username or password", status=HttpStatus.UNAUTHORIZED)
+            raise GlobalException(message="Invalid username or password", status=HttpStatus.UNAUTHORIZED)
 
     @ValidatorMethod(requestClass=[UserDto.LoginRequestDto, str])
     def loginRequestDto(self, dto, key):
@@ -38,10 +38,10 @@ class UserValidator:
     def existsByKey(self, key):
         self.validator.common.strNotNull(key, 'key')
         if not self.service.user.existsByKey(key) :
-            raise GlobalException.GlobalException(message=f'''User key does not exists''', status=HttpStatus.BAD_REQUEST)
+            raise GlobalException(message=f'''User key does not exists''', status=HttpStatus.BAD_REQUEST)
 
     @ValidatorMethod(requestClass=str)
     def notExistsByKey(self, key):
         self.validator.common.strNotNull(key, 'key')
         if self.service.user.existsByKey(key) :
-            raise GlobalException.GlobalException(message=f'''User key already exists''', status=HttpStatus.BAD_REQUEST)
+            raise GlobalException(message=f'''User key already exists''', status=HttpStatus.BAD_REQUEST)
