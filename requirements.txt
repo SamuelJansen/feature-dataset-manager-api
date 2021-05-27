@@ -1,2 +1,3 @@
 python_framework==0.2.1
 numpy==1.19.0
+PyJWT==1.7.1
