@@ -5,7 +5,7 @@ api:
         scheme: https
         host: feature-dataset-manager.herokuapp.com
     security:
-        secret: ${SECURITY_SECRET:yolo}
+        secret: ${SECURITY_KEY:yolo}
     database:
         dialect: ${DATABASE_DIALECT:postgres}
         driver: ${DATABASE_DRIVER:psycopg2}
