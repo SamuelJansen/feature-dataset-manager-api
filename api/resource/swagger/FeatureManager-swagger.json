@@ -167,6 +167,13 @@
             "delete": {
                 "parameters": [
                     {
+                        "name": "Authorization",
+                        "description": "Bearer <token>",
+                        "in": "header",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
                         "name": "key",
                         "type": "string",
                         "in": "path",
@@ -191,6 +198,13 @@
             },
             "get": {
                 "parameters": [
+                    {
+                        "name": "Authorization",
+                        "description": "Bearer <token>",
+                        "in": "header",
+                        "required": true,
+                        "type": "string"
+                    },
                     {
                         "name": "key",
                         "type": "string",
@@ -219,6 +233,13 @@
             },
             "post": {
                 "parameters": [
+                    {
+                        "name": "Authorization",
+                        "description": "Bearer <token>",
+                        "in": "header",
+                        "required": true,
+                        "type": "string"
+                    },
                     {
                         "name": "key",
                         "type": "string",
@@ -303,7 +324,15 @@
         },
         "/features/batch": {
             "get": {
-                "parameters": [],
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "description": "Bearer <token>",
+                        "in": "header",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
                 "tags": [
                     "Feature"
                 ],
@@ -330,6 +359,13 @@
         "/feature-datas/{featureKey}/{sampleKey}": {
             "delete": {
                 "parameters": [
+                    {
+                        "name": "Authorization",
+                        "description": "Bearer <token>",
+                        "in": "header",
+                        "required": true,
+                        "type": "string"
+                    },
                     {
                         "name": "featureKey",
                         "type": "string",
@@ -362,6 +398,13 @@
             },
             "get": {
                 "parameters": [
+                    {
+                        "name": "Authorization",
+                        "description": "Bearer <token>",
+                        "in": "header",
+                        "required": true,
+                        "type": "string"
+                    },
                     {
                         "name": "featureKey",
                         "type": "string",
@@ -400,6 +443,13 @@
             "get": {
                 "parameters": [
                     {
+                        "name": "Authorization",
+                        "description": "Bearer <token>",
+                        "in": "header",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
                         "name": "featureKey",
                         "type": "string",
                         "in": "path",
@@ -433,6 +483,13 @@
         "/best-fit/{amount}": {
             "post": {
                 "parameters": [
+                    {
+                        "name": "Authorization",
+                        "description": "Bearer <token>",
+                        "in": "header",
+                        "required": true,
+                        "type": "string"
+                    },
                     {
                         "name": "amount",
                         "type": "integer",
@@ -482,6 +539,13 @@
             "delete": {
                 "parameters": [
                     {
+                        "name": "Authorization",
+                        "description": "Bearer <token>",
+                        "in": "header",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
                         "name": "key",
                         "type": "string",
                         "in": "path",
@@ -506,6 +570,13 @@
             },
             "get": {
                 "parameters": [
+                    {
+                        "name": "Authorization",
+                        "description": "Bearer <token>",
+                        "in": "header",
+                        "required": true,
+                        "type": "string"
+                    },
                     {
                         "name": "key",
                         "type": "string",
@@ -534,6 +605,13 @@
             },
             "post": {
                 "parameters": [
+                    {
+                        "name": "Authorization",
+                        "description": "Bearer <token>",
+                        "in": "header",
+                        "required": true,
+                        "type": "string"
+                    },
                     {
                         "name": "key",
                         "type": "string",
@@ -572,6 +650,13 @@
             },
             "put": {
                 "parameters": [
+                    {
+                        "name": "Authorization",
+                        "description": "Bearer <token>",
+                        "in": "header",
+                        "required": true,
+                        "type": "string"
+                    },
                     {
                         "name": "key",
                         "type": "string",
@@ -612,6 +697,13 @@
         "/samples/{key}/{value}": {
             "patch": {
                 "parameters": [
+                    {
+                        "name": "Authorization",
+                        "description": "Bearer <token>",
+                        "in": "header",
+                        "required": true,
+                        "type": "string"
+                    },
                     {
                         "name": "key",
                         "type": "string",
@@ -658,7 +750,15 @@
         },
         "/samples/batch": {
             "get": {
-                "parameters": [],
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "description": "Bearer <token>",
+                        "in": "header",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
                 "tags": [
                     "Sample"
                 ],
@@ -686,6 +786,13 @@
             "delete": {
                 "parameters": [
                     {
+                        "name": "Authorization",
+                        "description": "Bearer <token>",
+                        "in": "header",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
                         "name": "key",
                         "type": "string",
                         "in": "path",
@@ -710,6 +817,13 @@
             },
             "get": {
                 "parameters": [
+                    {
+                        "name": "Authorization",
+                        "description": "Bearer <token>",
+                        "in": "header",
+                        "required": true,
+                        "type": "string"
+                    },
                     {
                         "name": "key",
                         "type": "string",
@@ -777,6 +891,13 @@
             "put": {
                 "parameters": [
                     {
+                        "name": "Authorization",
+                        "description": "Bearer <token>",
+                        "in": "header",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
                         "name": "key",
                         "type": "string",
                         "in": "path",
@@ -815,7 +936,15 @@
         },
         "/users/batch": {
             "get": {
-                "parameters": [],
+                "parameters": [
+                    {
+                        "name": "Authorization",
+                        "description": "Bearer <token>",
+                        "in": "header",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
                 "tags": [
                     "User"
                 ],
