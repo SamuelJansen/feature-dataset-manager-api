@@ -28,10 +28,6 @@ class FeatureValidator:
     @ValidatorMethod(requestClass=[[Feature.Feature], [str]])
     def featureListByfeatureKeyList(self, featureList, featureKeyList) :
         for key in featureKeyList :
-            notFountYet = True
             for feature in featureList :
-                if feature.key in featureKeyList :
-                    notFountYet = False
-                    break
-            if notFountYet :
-                raise GlobalException(message=f'''Feature does not exists. Key : {Constant.SINGLE_QUOTE}{key}{Constant.SINGLE_QUOTE}''', status=HttpStatus.BAD_REQUEST)
+                if not feature.key in featureKeyList :
+                    raise GlobalException(message=f'''Feature does not exists. Key : {Constant.SINGLE_QUOTE}{key}{Constant.SINGLE_QUOTE}''', status=HttpStatus.BAD_REQUEST)
