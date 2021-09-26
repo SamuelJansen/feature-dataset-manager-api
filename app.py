@@ -8,11 +8,12 @@ globalsInstance = globals.newGlobalsInstance(
     , errorStatus = True
 
     , debugStatus = True
-    , warningStatus = False
-    , wrapperStatus = False
-    , failureStatus = False
+    , warningStatus = True
+    , wrapperStatus = True
+    , failureStatus = True
     , testStatus = False
-    , logStatus = False
+    , logStatus = True
+    , infoStatus = True
     , printRootPathStatus = False
 )
 # try :

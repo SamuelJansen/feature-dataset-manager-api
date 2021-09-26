@@ -1,31 +1,32 @@
 from python_framework import Controller, ControllerMethod, HttpStatus
 from Role import *
-import UserDto
+
+from dto.UserDto import *
 
 @Controller(url = '/users', tag='User', description='Single User controller')
 class UserController:
 
     @ControllerMethod(url='/<string:key>',
-        requestClass=UserDto.UserRequestDto,
-        responseClass=UserDto.UserResponseDto)
+        requestClass=UserRequestDto,
+        responseClass=UserResponseDto)
     def post(self, dto, key):
         return self.service.user.create(dto, key), HttpStatus.CREATED
 
     @ControllerMethod(url='/<string:key>',
-        responseClass=UserDto.UserResponseDto,
-        roleRequired=[USER, ADMIN])
+        responseClass=UserResponseDto,
+        roleRequired=[USER, ADMIN, API])
     def get(self, key):
         return self.service.user.queryByKey(key), HttpStatus.OK
 
     @ControllerMethod(url='/<string:key>',
-        requestClass=UserDto.UserRequestDto,
-        responseClass=UserDto.UserResponseDto,
-        roleRequired=[USER, ADMIN])
+        requestClass=UserRequestDto,
+        responseClass=UserResponseDto,
+        roleRequired=[USER, ADMIN, API])
     def put(self, dto, key):
         return self.service.user.update(dto, key), HttpStatus.ACCEPTED
 
     @ControllerMethod(url='/<string:key>',
-        roleRequired=[ADMIN])
+        roleRequired=[ADMIN, API])
     def delete(self, key):
         self.service.user.delete(key), HttpStatus.NO_CONTENT
         return {}, HttpStatus.NO_CONTENT
@@ -34,7 +35,7 @@ class UserController:
 class UserBatchController:
 
     @ControllerMethod(
-        responseClass=[[UserDto.UserResponseDto]],
-        roleRequired=[ADMIN])
+        responseClass=[[UserResponseDto]],
+        roleRequired=[ADMIN, API])
     def get(self):
         return self.service.user.queryAll(), HttpStatus.OK

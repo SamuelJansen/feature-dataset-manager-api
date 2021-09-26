@@ -1,17 +1,18 @@
 from python_framework import Service, ServiceMethod
-import User, UserDto
+
+from dto.UserDto import UserRequestDto
 
 @Service()
 class UserService:
 
-    @ServiceMethod(requestClass=[UserDto.UserRequestDto, str])
+    @ServiceMethod(requestClass=[UserRequestDto, str])
     def create(self, dto, key):
         self.validator.user.postRequestDto(dto, key)
         model = self.mapper.user.fromPostRequestDtoToModel(dto, key)
         self.repository.user.save(model)
         return self.converter.user.fromModelToResponseDto(model)
 
-    @ServiceMethod(requestClass=[UserDto.UserRequestDto, str])
+    @ServiceMethod(requestClass=[UserRequestDto, str])
     def update(self, dto, key):
         self.validator.user.putRequestDto(dto, key)
         model = self.findByKey(key)

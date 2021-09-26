@@ -1,14 +1,17 @@
 from python_framework import Converter, ConverterMethod
-import Feature, FeatureDto
+
+from Feature import Feature
+
+from dto.FeatureDto import FeatureResponseDto
 
 @Converter()
 class FeatureConverter:
 
-    @ConverterMethod(requestClass=Feature.Feature, responseClass=FeatureDto.FeatureResponseDto)
+    @ConverterMethod(requestClass=Feature, responseClass=FeatureResponseDto)
     def fromModelToResponseDto(self, model, dto) :
         return dto
 
-    @ConverterMethod(requestClass=[[Feature.Feature]])
+    @ConverterMethod(requestClass=[[Feature]])
     def fromModelListToResponseDtoList(self,modelList):
         responseDtoList = []
         for model in modelList :

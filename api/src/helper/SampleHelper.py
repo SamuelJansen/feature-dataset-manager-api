@@ -1,11 +1,15 @@
 from python_framework import Helper, HelperMethod
-import Sample, BestFitDto
+
+from Sample import Sample
+
+from dto.BestFitDto import BestFitRequestDto
+
 import DefaultValue, DataSetKey
 
 @Helper()
 class SampleHelper:
 
-    @HelperMethod(requestClass=[[Sample.Sample], [BestFitDto.BestFitRequestDto]])
+    @HelperMethod(requestClass=[[Sample], [BestFitRequestDto]])
     def getSampleDataSet(self, sampleList, bestFitList):
         dataSet = {}
         for sample in sampleList :
@@ -17,7 +21,7 @@ class SampleHelper:
                 dataSet[sample.key][DataSetKey.VALUE_LIST].append(self.getSampleDataValue(sample, bestFit))
         return dataSet
 
-    @HelperMethod(requestClass=[Sample.Sample, BestFitDto.BestFitRequestDto])
+    @HelperMethod(requestClass=[Sample, BestFitRequestDto])
     def getSampleDataValue(self, sample, bestFit):
         for featureData in sample.featureDataList :
             if featureData.feature.key == bestFit.featureKey :

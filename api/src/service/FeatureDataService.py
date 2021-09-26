@@ -1,8 +1,17 @@
 from python_framework import Service, ServiceMethod
-import FeatureData, FeatureDataDto
+
+from FeatureData import FeatureData
 
 @Service()
 class FeatureDataService:
+
+    # @ServiceMethod(requestClass=[str, str])
+    # def createNewFeatureData(self, featureKey, sampleKey):
+    #     if not self.existsByFeatureKeyAndSampleKey(featureKey, sampleKey):
+    #         feature = self.service.feature.findByKey(featureKey)
+    #         sample = self.service.sample.findByKey(sampleKey)
+    #         model = FeatureData()
+    #     self.patchFeatureData(model)
 
     @ServiceMethod(requestClass=[str, str])
     def queryByFeatureKeyAndSampleKey(self, featureKey, sampleKey):

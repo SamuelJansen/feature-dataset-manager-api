@@ -1,5 +1,7 @@
 from python_framework import Service, ServiceMethod
-import Feature, FeatureDto, FeatureDataDto, SampleDto
+
+from dto.FeatureDto import FeatureRequestDto
+from dto.SampleDto import SampleRequestDto
 
 @Service()
 class FeatureService:
@@ -12,14 +14,15 @@ class FeatureService:
     def queryByKey(self,key):
         return self.converter.feature.fromModelToResponseDto(self.findByKey(key))
 
-    @ServiceMethod(requestClass=[FeatureDto.FeatureRequestDto, str])
+    @ServiceMethod(requestClass=[FeatureRequestDto, str])
     def create(self, dto, key):
         self.validator.feature.postRequestDto(dto, key)
         newFeature = self.mapper.feature.fromPostRequestDtoToModel(dto, key)
         feature = self.repository.feature.save(newFeature)
+        print('feature create')
         return self.converter.feature.fromModelToResponseDto(feature)
 
-    @ServiceMethod(requestClass=[FeatureDto.FeatureRequestDto, str])
+    @ServiceMethod(requestClass=[FeatureRequestDto, str])
     def update(self, dto, key):
         self.validator.feature.putRequestDto(dto,key)
         feature = self.repository.feature.findByKey(key)
@@ -45,13 +48,10 @@ class FeatureService:
     def existsByKey(self, key):
         return self.repository.feature.existsByKey(key)
 
-    @ServiceMethod(requestClass=SampleDto.SampleRequestDto)
+    @ServiceMethod(requestClass=SampleRequestDto)
     def findAllBySampleRequestDto(self,dto) :
         self.validator.sample.featureDataRequestDtoList(dto.featureDataList)
-        featureKeyList = []
-        for featureDataRequestDto in dto.featureDataList :
-            if featureDataRequestDto.featureKey :
-                featureKeyList.append(featureDataRequestDto.featureKey)
+        featureKeyList = [featureDataRequestDto.featureKey for featureDataRequestDto in dto.featureDataList if featureDataRequestDto.featureKey]
         featureList = self.repository.feature.findAllByFeatureKeyIn(featureKeyList)
         self.validator.feature.featureListByfeatureKeyList(featureList, featureKeyList)
         return featureList

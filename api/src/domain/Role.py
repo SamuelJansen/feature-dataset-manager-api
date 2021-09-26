@@ -1,2 +1,3 @@
 USER = 'USER'
 ADMIN = 'ADMIN'
+API = 'API'

@@ -1,11 +1,12 @@
 from python_framework import Controller, ControllerMethod, HttpStatus
-import UserDto
+
+from dto.UserDto import *
 
 @Controller(url = '/authentication/login', tag='Login', description='Login controller')
 class LoginController:
 
     @ControllerMethod(url='/<string:key>',
-        requestClass=UserDto.LoginRequestDto,
-        responseClass=UserDto.LoginResponseDto)
+        requestClass=LoginRequestDto,
+        responseClass=LoginResponseDto)
     def post(self, dto, key=None):
         return self.service.authentication.login(dto, key), HttpStatus.CREATED

@@ -1,15 +1,20 @@
 from python_framework import Converter, ConverterMethod
-import Sample, SampleDto, FeatureDataDto, BestFitDto
+
+from Sample import Sample
+
+from dto.SampleDto import SampleResponseDto
+from dto.FeatureDataDto import FeatureDataResponseDto
+from dto.BestFitDto import BestFitResponseDto
 
 @Converter()
 class SampleConverter:
 
-    @ConverterMethod(requestClass=Sample.Sample, responseClass=SampleDto.SampleResponseDto)
+    @ConverterMethod(requestClass=Sample, responseClass=SampleResponseDto)
     def fromModelToResponseDto(self, model, dto) :
         dto.featureDataList = []
         for featureData in model.featureDataList :
             dto.featureDataList.append(
-                FeatureDataDto.FeatureDataResponseDto(
+                FeatureDataResponseDto(
                     value = featureData.value,
                     iterationCount = featureData.iterationCount,
                     featureKey = featureData.feature.key,
@@ -18,19 +23,19 @@ class SampleConverter:
             )
         return dto
 
-    @ConverterMethod(requestClass=[[Sample.Sample]])
+    @ConverterMethod(requestClass=[[Sample]])
     def fromModelListToResponseDtoList(self,modelList):
         responseDtoList = []
         for model in modelList :
             responseDtoList.append(self.fromModelToResponseDto(model))
         return responseDtoList
 
-    @ConverterMethod(requestClass=Sample.Sample, responseClass=BestFitDto.BestFitResponseDto)
+    @ConverterMethod(requestClass=Sample, responseClass=BestFitResponseDto)
     def fromModelToBestFitResponseDto(self, model, dto) :
         dto.featureDataList = []
-        for featureData in model.featureDataList :
+        for featureData in featureDataList :
             dto.featureDataList.append(
-                FeatureDataDto.FeatureDataResponseDto(
+                FeatureDataResponseDto(
                     value = featureData.value,
                     iterationCount = featureData.iterationCount,
                     featureKey = featureData.feature.key,
@@ -39,7 +44,7 @@ class SampleConverter:
             )
         return dto
 
-    @ConverterMethod(requestClass=[[Sample.Sample]])
+    @ConverterMethod(requestClass=[[Sample]])
     def fromModelListToBestFitResponseDtoList(self,modelList):
         responseDtoList = []
         for model in modelList :

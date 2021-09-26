@@ -1,6 +1,6 @@
 from python_framework import Service, ServiceMethod, Security
-import User, UserDto
 
+from dto.UserDto import LoginRequestDto
 
 VALID_TOKEN_MINUTES_DURATION = 30
 
@@ -8,7 +8,7 @@ VALID_TOKEN_MINUTES_DURATION = 30
 @Service()
 class AuthenticationService:
 
-    @ServiceMethod(requestClass=[UserDto.LoginRequestDto, str])
+    @ServiceMethod(requestClass=[LoginRequestDto, str])
     def login(self, dto, key):
         self.validator.user.loginRequestDto(dto, key)
         model = self.service.user.findByKey(key)

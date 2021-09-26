@@ -1,8 +1,11 @@
 from python_framework import Repository
-from python_framework import SqlAlchemyProxy as sap ###- exists 
-import FeatureData, Feature, Sample
+from python_framework import SqlAlchemyProxy as sap ###- exists
 
-@Repository(model = FeatureData.FeatureData)
+from Sample import Sample
+from Feature import Feature
+from FeatureData import FeatureData
+
+@Repository(model = FeatureData)
 class FeatureDataRepository:
 
     def findAll(self) :
@@ -26,8 +29,8 @@ class FeatureDataRepository:
         objectExists = self.repository.session.query(
             self.repository.session.query(self.model).filter(
                 sap.and_(
-                    self.model.feature.has(Feature.Feature.key == featureKey),
-                    self.model.sample.has(Sample.Sample.key == sampleKey)
+                    self.model.feature.has(Feature.key == featureKey),
+                    self.model.sample.has(Sample.key == sampleKey)
                 )
             ).exists()
         ).scalar()
@@ -37,19 +40,19 @@ class FeatureDataRepository:
     def findByFeatureKeyAndSampleKey(self, featureKey, sampleKey) :
         featureData = self.repository.session.query(self.model).filter(
             sap.and_(
-                self.model.feature.has(Feature.Feature.key == featureKey),
-                self.model.sample.has(Sample.Sample.key == sampleKey)
+                self.model.feature.has(Feature.key == featureKey),
+                self.model.sample.has(Sample.key == sampleKey)
             )
         ).first()
         self.repository.session.commit()
         return featureData
 
     def findAllByFeatureKey(self, featureKey) :
-        featureDataList = self.repository.session.query(self.model).filter(self.model.feature.has(Feature.Feature.key == featureKey)).all()
+        featureDataList = self.repository.session.query(self.model).filter(self.model.feature.has(Feature.key == featureKey)).all()
         self.repository.session.commit()
         return featureDataList
 
     def findAllBySampleKey(self, sampleKey) :
-        featureDataList = self.repository.session.query(self.model).filter(self.model.sample.has(Sample.Sample.key == sampleKey)).all()
+        featureDataList = self.repository.session.query(self.model).filter(self.model.sample.has(Sample.key == sampleKey)).all()
         self.repository.session.commit()
         return featureDataList

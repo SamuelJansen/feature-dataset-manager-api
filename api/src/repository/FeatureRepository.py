@@ -1,7 +1,8 @@
 from python_framework import Repository
-import Feature
 
-@Repository(model = Feature.Feature)
+from Feature import Feature
+
+@Repository(model = Feature)
 class FeatureRepository:
 
     def findAll(self) :

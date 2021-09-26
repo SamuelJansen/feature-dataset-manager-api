@@ -1,34 +1,36 @@
 from werkzeug.security import safe_str_cmp
 from python_framework import Validator, ValidatorMethod, Security, GlobalException, HttpStatus
-import UserDto, User
+
+from User import User
+from dto.UserDto import LoginRequestDto, UserRequestDto
 
 @Validator()
 class UserValidator:
 
-    @ValidatorMethod(requestClass=User.User)
+    @ValidatorMethod(requestClass=User)
     def loggedUser(self,model):
         if not Security.getIdentity() == model.id :
             raise GlobalException(message="Unauthorized", status=HttpStatus.UNAUTHORIZED)
 
-    @ValidatorMethod(requestClass=[UserDto.UserRequestDto, User.User])
+    @ValidatorMethod(requestClass=[UserRequestDto, User])
     def password(self, dto, model):
         if not safe_str_cmp(model.password, dto.password) :
             raise GlobalException(message="Invalid username or password", status=HttpStatus.UNAUTHORIZED)
 
-    @ValidatorMethod(requestClass=[UserDto.LoginRequestDto, str])
+    @ValidatorMethod(requestClass=[LoginRequestDto, str])
     def loginRequestDto(self, dto, key):
         self.existsByKey(key)
         self.validator.common.strNotNull(dto.password, 'password')
         self.validator.common.strNotNull(dto.email, 'email')
 
-    @ValidatorMethod(requestClass=UserDto.UserRequestDto)
+    @ValidatorMethod(requestClass=UserRequestDto)
     def postRequestDto(self, dto, key):
         self.notExistsByKey(key)
         self.validator.common.strNotNull(dto.username, 'username')
         self.validator.common.strNotNull(dto.password, 'password')
         self.validator.common.strNotNull(dto.email, 'email')
 
-    @ValidatorMethod(requestClass=[UserDto.UserRequestDto, str])
+    @ValidatorMethod(requestClass=[UserRequestDto, str])
     def putRequestDto(self, dto, key):
         self.existsByKey(key)
         self.validator.common.strNotNull(dto.username, 'username')

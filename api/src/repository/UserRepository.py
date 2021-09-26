@@ -1,7 +1,8 @@
 from python_framework import Repository
-import User
 
-@Repository(model = User.User)
+from User import User
+
+@Repository(model = User)
 class UserRepository:
 
     def findAll(self) :

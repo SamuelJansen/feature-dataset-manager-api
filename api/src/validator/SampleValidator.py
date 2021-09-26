@@ -1,23 +1,30 @@
 from python_framework import Validator, ValidatorMethod, GlobalException, HttpStatus
-import SampleDto, Sample, Feature, FeatureData, FeatureDataDto, BestFitDto
+
+from Feature import Feature
+from FeatureData import FeatureData
+
+from dto.SampleDto import SampleRequestDto
+from dto.FeatureDataDto import FeatureDataRequestDto
+from dto.BestFitDto import BestFitRequestDto
+
 import DefaultValue
 
 @Validator()
 class SampleValidator:
 
-    @ValidatorMethod(requestClass=SampleDto.SampleRequestDto)
+    @ValidatorMethod(requestClass=SampleRequestDto)
     def postRequestDto(self, dto, key):
         self.notExistsByKey(key)
         if not len(self.service.featureData.findAllBySampleKey(key)) == 0 :
             raise GlobalException(message='There are FeatureData related to this entry altready. You need to delete it first', status=HttpStatus.BAD_REQUEST)
         self.featureDataRequestDtoList(dto.featureDataList)
 
-    @ValidatorMethod(requestClass=[SampleDto.SampleRequestDto, str])
+    @ValidatorMethod(requestClass=[SampleRequestDto, str])
     def putRequestDto(self, dto, key):
         self.existsByKey(key)
         self.featureDataRequestDtoList(dto.featureDataList)
 
-    @ValidatorMethod(requestClass=[SampleDto.SampleRequestDto, str, int])
+    @ValidatorMethod(requestClass=[SampleRequestDto, str, int])
     def patchRequestDto(self, dto, key, value):
         self.existsByKey(key)
         self.featureDataRequestDtoList(dto.featureDataList)
@@ -36,7 +43,7 @@ class SampleValidator:
         if not self.service.sample.existsByKey(key) :
             raise GlobalException(message='''Sample does not exists''', status=HttpStatus.BAD_REQUEST)
 
-    @ValidatorMethod(requestClass=[[Feature.Feature], [FeatureData.FeatureData]])
+    @ValidatorMethod(requestClass=[[Feature], [FeatureData]])
     def listLengthAreEqualsInSampleMapping(self, featureList, featureDataList) :
         if not len(featureList) == len(featureDataList) :
             logMessage = f'Error mapping Sample. Invalid list length: {featureList} and {featureDataList}'
@@ -49,13 +56,13 @@ class SampleValidator:
                     status = HttpStatus.BAD_REQUEST
                 )
 
-    @ValidatorMethod(requestClass=[[FeatureDataDto.FeatureDataRequestDto]])
+    @ValidatorMethod(requestClass=[[FeatureDataRequestDto]])
     def featureDataRequestDtoList(self, featureDataList):
         for featureDataPostRequestDto in featureDataList :
             if not featureDataPostRequestDto.featureKey :
                 raise GlobalException(message='All featureDataList items must contain featureKey', status=HttpStatus.BAD_REQUEST)
 
-    @ValidatorMethod(requestClass=[[BestFitDto.BestFitRequestDto], int])
+    @ValidatorMethod(requestClass=[[BestFitRequestDto], int])
     def bestFitRequestDtoList(self, bestFitList, amount):
         if amount <= DefaultValue.MIN_QUERY_AMMOUNT - 1 :
             raise GlobalException(message=f'Amount must be bigger than {DefaultValue.MIN_QUERY_AMMOUNT-1}', status=HttpStatus.BAD_REQUEST)
