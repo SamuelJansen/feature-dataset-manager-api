@@ -33,7 +33,7 @@ class SampleConverter:
     @ConverterMethod(requestClass=Sample, responseClass=BestFitResponseDto)
     def fromModelToBestFitResponseDto(self, model, dto) :
         dto.featureDataList = []
-        for featureData in featureDataList :
+        for featureData in model.featureDataList :
             dto.featureDataList.append(
                 FeatureDataResponseDto(
                     value = featureData.value,

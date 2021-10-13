@@ -7,14 +7,14 @@ api:
     security:
         secret: ${SECURITY_KEY:yolo}
     database:
-        dialect: ${DATABASE_DIALECT:postgresql}
-        driver: ${DATABASE_DRIVER:psycopg2}
-        database: ${DATABASE_NAME:d7dbsap9b1oecd}
-        username: ${DATABASE_USERNAME:tbuwcalrrnvpxo}
-        password: ${DATABASE_PASSWORD:cbc6bb13f6042a06fd0795afd8ba44d7c43d5da1dc56a8cce96b4e85767f383e}
-        host: ${DATABASE_HOST:ec2-54-159-138-67.compute-1.amazonaws.com}
-        port: ${DATABASE_PORT:5432}
-        schema: ${DATABASE_SCHEMA:prod-feature-manager-api-schema}
+        dialect: ${DATABASE_DIALECT:}
+        driver: ${DATABASE_DRIVER:}
+        database: ${DATABASE_NAME:}
+        username: ${DATABASE_USERNAME:}
+        password: ${DATABASE_PASSWORD:}
+        host: ${DATABASE_HOST:}
+        port: ${DATABASE_PORT:}
+        schema: ${DATABASE_SCHEMA:}
         settings:
             options: -csearch_path=${api.database.schema}
 

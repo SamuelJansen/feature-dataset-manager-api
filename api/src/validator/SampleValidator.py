@@ -64,8 +64,8 @@ class SampleValidator:
 
     @ValidatorMethod(requestClass=[[BestFitRequestDto], int])
     def bestFitRequestDtoList(self, bestFitList, amount):
-        if amount <= DefaultValue.MIN_QUERY_AMMOUNT - 1 :
-            raise GlobalException(message=f'Amount must be bigger than {DefaultValue.MIN_QUERY_AMMOUNT-1}', status=HttpStatus.BAD_REQUEST)
+        if amount < DefaultValue.MIN_QUERY_AMMOUNT :
+            raise GlobalException(message=f'Amount must be greater or equals to {DefaultValue.MIN_QUERY_AMMOUNT}', status=HttpStatus.BAD_REQUEST)
         if amount > DefaultValue.MAX_QUERY_AMMOUNT :
             raise GlobalException(message=f'Amount limited at {DefaultValue.MAX_QUERY_AMMOUNT}', status=HttpStatus.BAD_REQUEST)
         for bestFit in bestFitList :
