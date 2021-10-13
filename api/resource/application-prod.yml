@@ -7,7 +7,7 @@ api:
     security:
         secret: ${SECURITY_KEY:yolo}
     database:
-        dialect: ${DATABASE_DIALECT:postgres}
+        dialect: ${DATABASE_DIALECT:postgresql}
         driver: ${DATABASE_DRIVER:psycopg2}
         database: ${DATABASE_NAME:d7dbsap9b1oecd}
         username: ${DATABASE_USERNAME:tbuwcalrrnvpxo}

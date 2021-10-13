@@ -6,7 +6,7 @@ api:
         port: 5933
         host: device-automation.ddns.net
     database:
-        dialect: ${DATABASE_DIALECT:postgres}
+        dialect: ${DATABASE_DIALECT:postgresql}
         driver: ${DATABASE_DRIVER:psycopg2}
         database: ${DATABASE_NAME:d5h5kfi694bmst}
         username: ${DATABASE_USERNAME:jbqafgvnjszmoh}
