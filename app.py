@@ -5,13 +5,13 @@ globalsInstance = globals.newGlobalsInstance(
     , successStatus = True
     , errorStatus = True
 
-    , debugStatus = False
-    , warningStatus = False
-    , wrapperStatus = False
+    , debugStatus = True
+    , warningStatus = True
+    , wrapperStatus = True
     , failureStatus = True
     , testStatus = False
-    , logStatus = False
-    , infoStatus = False
+    , logStatus = True
+    , infoStatus = True
     , printRootPathStatus = False
 )
 
