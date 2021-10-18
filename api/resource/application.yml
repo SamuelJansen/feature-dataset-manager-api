@@ -4,14 +4,14 @@ print-status: False
 api:
     name: FeatureManager
     extension: yml
-    # dependency:
-    #     update: False
-    #     list:
-    #         web: [globals,python_helper,Popen,Path,numpy,pywin32,sqlalchemy]
-    # git:
-    #     force-upgrade-command: pip install --upgrade --force python_framework
-    # static-package: AppData\Local\Programs\Python\Python38-32\statics
-    # list: []
+    dependency:
+        update: False
+        list:
+            web: []
+    git:
+        force-upgrade-command: pip install --upgrade --force python_framework
+    static-package: AppData\Local\Programs\Python\Python38-32\statics
+    list: []
 
     security:
         secret: default
@@ -19,7 +19,8 @@ api:
         host: None
         scheme: None
         base-url: /feature-dataset-manager-api
-
+    scheduler:
+        enable: ${SCHEDULER_API_ENABLE:False}
 swagger:
     schemes: [${api.server.scheme}]
     info:
