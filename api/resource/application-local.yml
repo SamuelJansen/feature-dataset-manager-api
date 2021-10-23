@@ -3,7 +3,7 @@ print-status: False
 api:
     server:
         scheme: http
-        port: 5030
+        port: 5933
         host: 0.0.0.0
     security:
         secret: ${SECURITY_KEY:local-secret-key}
