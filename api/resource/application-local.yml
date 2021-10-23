@@ -24,4 +24,4 @@ api:
             options: -csearch_path=${api.database.schema}
 
 swagger:
-    host: localhost:${api.server.port}
+    host: ${SWAGGER_HOST:}:${api.server.port}
