@@ -4,7 +4,11 @@ __pycache__/
 *$py.class
 
 local-config.yml
-FeatureManager.db
+*.db
+*.png
+*.mp3
+*.wav
+*-swagger.json
 
 # C extensions
 *.so
