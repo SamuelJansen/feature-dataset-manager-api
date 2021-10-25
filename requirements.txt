@@ -1,2 +1,2 @@
-python_framework==0.2.44
+python_framework==0.2.49
 numpy==1.19.0

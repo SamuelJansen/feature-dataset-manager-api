@@ -2,8 +2,7 @@ print-status: False
 
 api:
     server:
-        scheme: https
-        host: feature-dataset-manager.herokuapp.com
+        port: 5000
     security:
         secret: ${SECURITY_KEY:yolo}
     database:
@@ -19,4 +18,5 @@ api:
             options: -csearch_path=${api.database.schema}
 
 swagger:
-    host: ${api.server.host}
+    schemes: [https]
+    host: feature-dataset-manager.herokuapp.com

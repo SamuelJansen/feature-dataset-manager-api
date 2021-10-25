@@ -1,10 +1,6 @@
 print-status: False
 
 api:
-    server:
-        scheme: http
-        port: 5933
-        host: device-automation.ddns.net
     database:
         dialect: ${DATABASE_DIALECT:postgresql}
         driver: ${DATABASE_DRIVER:psycopg2}
@@ -18,4 +14,5 @@ api:
             options: -csearch_path=${api.database.schema}
 
 swagger:
-    host: ${api.server.host}:${api.server.port}
+    schemes: [https]
+    host: data.ai-automation-tools.com

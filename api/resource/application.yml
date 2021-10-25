@@ -16,12 +16,15 @@ api:
     security:
         secret: default
     server:
-        host: None
-        scheme: None
+        host: 0.0.0.0
+        scheme: http
+        port: 5933
         base-url: /feature-dataset-manager-api
     scheduler:
         enable: ${SCHEDULER_API_ENABLE:False}
+
 swagger:
+    host: ${SWAGGER_HOST:${api.server.host}}:${api.server.port}
     schemes: [${api.server.scheme}]
     info:
         title: ${api.name}
