@@ -16,3 +16,4 @@ api:
 swagger:
     schemes: [https]
     host: data.ai-automation-tools.com
+    host: ${:data.ai-automation-tools.com}
