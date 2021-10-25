@@ -2,17 +2,17 @@ print-status: False
 
 api:
     database:
-        dialect: ${DATABASE_DIALECT:postgresql}
-        driver: ${DATABASE_DRIVER:psycopg2}
-        database: ${DATABASE_NAME:d5h5kfi694bmst}
-        username: ${DATABASE_USERNAME:jbqafgvnjszmoh}
-        password: ${DATABASE_PASSWORD:9a4b08000c04c22cd6f533c5ac76098102aecdb646e9bc2fb3d9a74089fcebc9}
-        host: ${DATABASE_HOST:ec2-35-173-94-156.compute-1.amazonaws.com}
-        port: ${DATABASE_PORT:5432}
+        dialect: ${DATABASE_DIALECT:}
+        driver: ${DATABASE_DRIVER:}
+        database: ${DATABASE_NAME:}
+        username: ${DATABASE_USERNAME:}
+        password: ${DATABASE_PASSWORD:}
+        host: ${DATABASE_HOST:}
+        port: ${DATABASE_PORT:}
         schema: ${DATABASE_SCHEMA:dev-feature-manager-api-schema}
         settings:
             options: -csearch_path=${api.database.schema}
 
 swagger:
-    schemes: ["https"]
+    schemes: [${:https}]
     host: ${:data.ai-automation-tools.com}
