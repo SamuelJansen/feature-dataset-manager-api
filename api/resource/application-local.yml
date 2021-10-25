@@ -18,3 +18,7 @@ api:
         schema: ${DATABASE_SCHEMA:}
         settings:
             options: -csearch_path=${api.database.schema}
+
+swagger:
+    schemes: [${api.server.scheme}] ###- bug
+    host: ${SWAGGER_HOST:${api.server.host}}:${api.server.port} ###- bug
