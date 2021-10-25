@@ -7,12 +7,12 @@ globalsInstance = globals.newGlobalsInstance(
     , failureStatus = True
     , infoStatus = True
 
-    , debugStatus = True
-    , warningStatus = True
-    , wrapperStatus = True
-    , logStatus = True
-    , testStatus = False
-    , printRootPathStatus = False
+    # , debugStatus = True
+    # , warningStatus = True
+    # , wrapperStatus = True
+    # , logStatus = True
+    # , testStatus = False
+    # , printRootPathStatus = False
 )
 
 from python_framework import initialize, runApi
