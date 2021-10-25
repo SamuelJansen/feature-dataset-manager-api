@@ -4,14 +4,14 @@ globalsInstance = globals.newGlobalsInstance(
     , settingStatus = True
     , successStatus = True
     , errorStatus = True
+    , failureStatus = True
+    , infoStatus = True
 
     , debugStatus = True
     , warningStatus = True
     , wrapperStatus = True
-    , failureStatus = True
-    , testStatus = False
     , logStatus = True
-    , infoStatus = True
+    , testStatus = False
     , printRootPathStatus = False
 )
 
