@@ -17,17 +17,16 @@ class FeatureService:
     @ServiceMethod(requestClass=[FeatureRequestDto, str])
     def create(self, dto, key):
         self.validator.feature.postRequestDto(dto, key)
-        newFeature = self.mapper.feature.fromPostRequestDtoToModel(dto, key)
-        feature = self.repository.feature.save(newFeature)
-        print('feature create')
+        feature = self.mapper.feature.fromPostRequestDtoToModel(dto, key)
+        self.repository.feature.save(feature)
         return self.converter.feature.fromModelToResponseDto(feature)
 
     @ServiceMethod(requestClass=[FeatureRequestDto, str])
     def update(self, dto, key):
-        self.validator.feature.putRequestDto(dto,key)
+        self.validator.feature.putRequestDto(dto, key)
         feature = self.repository.feature.findByKey(key)
-        feature = self.mapper.feature.fromRequestDtoToModel(dto,feature)
-        feature = self.repository.feature.save(feature)
+        self.mapper.feature.overrideModelFromRequestDto(dto, model)
+        self.repository.feature.save(feature)
         return self.converter.feature.fromModelToResponseDto(feature)
 
     @ServiceMethod(requestClass=str)

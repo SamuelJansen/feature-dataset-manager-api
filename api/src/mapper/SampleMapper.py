@@ -1,3 +1,4 @@
+from python_helper import ObjectHelper
 from python_framework import Mapper, MapperMethod
 
 from Sample import Sample
@@ -28,5 +29,5 @@ class SampleMapper:
 
     @MapperMethod(requestClass=[SampleRequestDto, Sample])
     def overrideModelValues(self, dto, model):
-        if dto.label :
+        if ObjectHelper.isNotNone(dto) and ObjectHelper.isNotNone(dto.label) :
             model.label = dto.label
