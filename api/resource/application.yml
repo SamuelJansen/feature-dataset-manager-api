@@ -21,7 +21,7 @@ api:
         port: 5933
         base-url: /feature-dataset-manager-api
     scheduler:
-        enable: ${SCHEDULER_API_ENABLE:False}
+        enable: ${ENABLE_SCHEDULER_API:False}
 
 swagger:
     # schemes: [${api.server.scheme}] ###- bug

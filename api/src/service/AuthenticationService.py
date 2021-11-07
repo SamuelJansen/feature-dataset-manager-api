@@ -2,6 +2,7 @@ from python_framework import Service, ServiceMethod, Security
 
 from dto.UserDto import LoginRequestDto
 
+
 VALID_TOKEN_MINUTES_DURATION = 30
 
 
@@ -13,7 +14,7 @@ class AuthenticationService:
         self.validator.user.loginRequestDto(dto, key)
         model = self.service.user.findByKey(key)
         self.validator.user.password(dto, model)
-        accessToken = Security.createAccessToken(model, deltaMinutes=VALID_TOKEN_MINUTES_DURATION)
+        accessToken = Security.createAccessToken(model.id, [model.role], deltaMinutes=VALID_TOKEN_MINUTES_DURATION)
         return self.converter.user.fromModelToLoginResponseDto(model, accessToken)
 
     @ServiceMethod(requestClass=str)
