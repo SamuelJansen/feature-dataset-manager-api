@@ -1,5 +1,5 @@
 from werkzeug.security import safe_str_cmp
-from python_framework import Validator, ValidatorMethod, Security, GlobalException, HttpStatus
+from python_framework import Validator, ValidatorMethod, SecurityManager, GlobalException, HttpStatus
 
 from User import User
 from dto.UserDto import LoginRequestDto, UserRequestDto
@@ -9,7 +9,7 @@ class UserValidator:
 
     @ValidatorMethod(requestClass=User)
     def loggedUser(self,model):
-        if not Security.getIdentity() == model.id :
+        if not SecurityManager.getIdentity() == model.id :
             raise GlobalException(message="Unauthorized", status=HttpStatus.UNAUTHORIZED)
 
     @ValidatorMethod(requestClass=[UserRequestDto, User])
