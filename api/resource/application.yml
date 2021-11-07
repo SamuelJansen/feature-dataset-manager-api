@@ -2,7 +2,7 @@ print-status: False
 # flask-specific-port: flask run --host=${api.server.host} --port=${api.server.port}
 
 api:
-    name: FeatureManager
+    name: FeatureDatasetManagerApi
     extension: yml
     dependency:
         update: False
