@@ -35,7 +35,7 @@ class AiService:
 
     @ServiceMethod(requestClass=[[int], set, int])
     def getBestFitList(self, targetData, dataSet, amount):
-        if not dataSet or 0 == len(dataSet) :
+        if not dataSet or 0 == len(dataSet):
             return []
         log.debug(AiService, f'Querying {amount} samples ...')
         targetArray = numpy.asarray(targetData)

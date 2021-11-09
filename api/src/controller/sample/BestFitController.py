@@ -9,6 +9,9 @@ class BestFitController:
     @ControllerMethod(url='/<int:amount>',
         requestClass=[[BestFitRequestDto]],
         responseClass=[[BestFitResponseDto]],
-        roleRequired=[USER, ADMIN, API])
+        apiKeyRequired=[ADMIN, API]
+        # , logRequest = True
+        # , logResponse = True
+    )
     def post(self, bestFitList, amount=None):
         return self.service.sample.queryBestFitList(bestFitList, amount), HttpStatus.OK

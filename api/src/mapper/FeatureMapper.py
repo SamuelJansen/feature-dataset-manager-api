@@ -11,7 +11,7 @@ import DefaultValue
 class FeatureMapper:
 
     @MapperMethod(requestClass=[FeatureRequestDto, str], responseClass=Feature)
-    def fromPostRequestDtoToModel(self, dto, key, model) :
+    def fromPostRequestDtoToModel(self, dto, key, model):
         model.key = key
         model.value = DefaultValue.DEFAULT_VALUE
         model.iterationCount = DefaultValue.DEFAULT_ITERATION_COUNT
@@ -23,5 +23,5 @@ class FeatureMapper:
 
     @MapperMethod(requestClass=[FeatureRequestDto, Feature])
     def overrideModelValues(self, dto, model):
-        if ObjectHelper.isNotNone(dto) and ObjectHelper.isNotNone(dto.label) :
+        if ObjectHelper.isNotNone(dto) and ObjectHelper.isNotNone(dto.label):
             model.label = dto.label

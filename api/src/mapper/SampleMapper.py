@@ -14,7 +14,7 @@ import DefaultValue
 class SampleMapper:
 
     @MapperMethod(requestClass=[SampleRequestDto, [Feature], str], responseClass=Sample)
-    def fromPostRequestDtoToModel(self, dto, featureList, key, model) :
+    def fromPostRequestDtoToModel(self, dto, featureList, key, model):
         self.validator.sample.listLengthAreEqualsInSampleMapping(featureList, model.featureDataList)
         model.key = key
         model.featureDataList = []
@@ -22,12 +22,12 @@ class SampleMapper:
         return model
 
     @MapperMethod(requestClass=[[FeatureDataRequestDto], str])
-    def overrideFeatureDataRequestDtoValues(self, featureDataList, key) :
+    def overrideFeatureDataRequestDtoValues(self, featureDataList, key):
         for featureData in featureDataList :
             if not featureData.sampleKey :
                 featureData.sampleKey = key
 
     @MapperMethod(requestClass=[SampleRequestDto, Sample])
     def overrideModelValues(self, dto, model):
-        if ObjectHelper.isNotNone(dto) and ObjectHelper.isNotNone(dto.label) :
+        if ObjectHelper.isNotNone(dto) and ObjectHelper.isNotNone(dto.label):
             model.label = dto.label

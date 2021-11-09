@@ -4,7 +4,7 @@ api:
     server:
         port: 5000
     security:
-        secret: ${SECURITY_KEY:yolo}
+        secret: ${SECURITY_SECRET:yolo}
     database:
         dialect: ${DATABASE_DIALECT:}
         driver: ${DATABASE_DRIVER:}

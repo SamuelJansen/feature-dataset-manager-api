@@ -13,8 +13,12 @@ api:
     static-package: AppData\Local\Programs\Python\Python38-32\statics
     list: []
 
+    session:
+        secret: ${SESSION_SECRET:default}
+    api-key:
+        secret: ${API_KEY_SECRET:default}
     security:
-        secret: default
+        secret: ${SECURITY_SECRET:default}
     server:
         host: 0.0.0.0
         scheme: http

@@ -5,20 +5,20 @@ from Sample import Sample
 @Repository(model = Sample)
 class SampleRepository:
 
-    def findAll(self) :
+    def findAll(self):
         return self.repository.findAllAndCommit(self.model)
 
-    def existsByKey(self,key) :
+    def existsByKey(self,key):
         return self.repository.existsByKeyAndCommit(key, self.model)
 
-    def findByKey(self,key) :
-        if self.existsByKey(key) :
+    def findByKey(self,key):
+        if self.existsByKey(key):
             return self.repository.findByKeyAndCommit(key, self.model)
 
-    def notExistsByKey(self,key) :
+    def notExistsByKey(self,key):
         return not self.existsByKey(key)
 
-    def save(self,model) :
+    def save(self,model):
         return self.repository.saveAndCommit(model)
 
     def deleteByKey(self,key):
@@ -26,7 +26,7 @@ class SampleRepository:
 
     def findAllByFeatureKeyIn(self, featureKeyList):
         sampleList = []
-        for sample in self.repository.session.query(self.model) :
+        for sample in self.repository.session.query(self.model):
             keepIt = False
             for key in featureKeyList :
                 for featureData in sample.featureDataList :
@@ -40,7 +40,7 @@ class SampleRepository:
 
     def findAllByAllFeatureKeyIn(self, featureKeyList):
         sampleList = []
-        for sample in self.repository.session.query(self.model) :
+        for sample in self.repository.session.query(self.model):
             keepIt = True
             for key in featureKeyList :
                 keepIt = False

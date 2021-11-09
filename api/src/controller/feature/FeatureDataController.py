@@ -8,12 +8,18 @@ class FeatureDataController:
 
     @ControllerMethod(url='/<string:featureKey>/<string:sampleKey>',
         responseClass=FeatureDataResponseDto,
-        roleRequired=[USER, ADMIN, API])
+        apiKeyRequired=[ADMIN, API]
+        # , logRequest = True
+        # , logResponse = True
+    )
     def get(self, featureKey, sampleKey):
         return self.service.featureData.queryByFeatureKeyAndSampleKey(featureKey, sampleKey), HttpStatus.OK
 
     @ControllerMethod(url='/<string:featureKey>/<string:sampleKey>',
-        roleRequired=[USER, ADMIN, API])
+        apiKeyRequired=[ADMIN]
+        # , logRequest = True
+        # , logResponse = True
+    )
     def delete(self, featureKey, sampleKey):
         self.service.featureData.deleteByFeatureKeyAndSampleKey(featureKey, sampleKey), HttpStatus.NO_CONTENT
         return {}, HttpStatus.NO_CONTENT
@@ -24,6 +30,9 @@ class FeatureDataBatchController:
 
     @ControllerMethod(url='/<string:featureKey>',
         responseClass=[[FeatureDataResponseDto]],
-        roleRequired=[ADMIN, API])
+        apiKeyRequired=[ADMIN]
+        # , logRequest = True
+        # , logResponse = True
+    )
     def get(self, featureKey):
         return self.service.featureData.queryAllByFeatureKey(featureKey), HttpStatus.OK

@@ -69,19 +69,19 @@ class SampleService:
     def patchFeatureDataList(self, featureList, model):
         for feature in featureList :
             featureData = self.helper.featureData.getRespectiveFeatureDataByFeature(feature, model.featureDataList)
-            if ObjectHelper.isNone(featureData) :
+            if ObjectHelper.isNone(featureData):
                 featureData = FeatureData()
             featureData.sample = model
             featureData.feature = feature
-            if ObjectHelper.isNone(featureData.iterationCount) :
+            if ObjectHelper.isNone(featureData.iterationCount):
                 featureData.value = DefaultValue.DEFAULT_VALUE
                 featureData.iterationCount = DefaultValue.DEFAULT_ITERATION_COUNT
-            if ObjectHelper.isNone(featureData.feature.iterationCount) :
+            if ObjectHelper.isNone(featureData.feature.iterationCount):
                 featureData.feature.value = DefaultValue.DEFAULT_VALUE
                 featureData.feature.iterationCount = DefaultValue.DEFAULT_ITERATION_COUNT
             if featureData not in model.featureDataList:
                 model.featureDataList.append(featureData)
-        if ObjectHelper.isNone(model.iterationCount) :
+        if ObjectHelper.isNone(model.iterationCount):
             model.value = DefaultValue.DEFAULT_VALUE
             model.iterationCount = DefaultValue.DEFAULT_ITERATION_COUNT
 

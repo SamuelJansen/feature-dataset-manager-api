@@ -8,7 +8,7 @@ from dto.FeatureDataDto import FeatureDataResponseDto
 class FeatureDataConverter:
 
     @ConverterMethod(requestClass=FeatureData, responseClass=FeatureDataResponseDto)
-    def fromModelToResponseDto(self, model, dto) :
+    def fromModelToResponseDto(self, model, dto):
         dto.featureKey = feature.key
         dto.sampleKey = sample.key
         return dto

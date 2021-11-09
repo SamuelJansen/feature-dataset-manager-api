@@ -48,7 +48,7 @@ class FeatureService:
         return self.repository.feature.existsByKey(key)
 
     @ServiceMethod(requestClass=SampleRequestDto)
-    def findAllBySampleRequestDto(self,dto) :
+    def findAllBySampleRequestDto(self,dto):
         self.validator.sample.featureDataRequestDtoList(dto.featureDataList)
         featureKeyList = [featureDataRequestDto.featureKey for featureDataRequestDto in dto.featureDataList if featureDataRequestDto.featureKey]
         featureList = self.repository.feature.findAllByFeatureKeyIn(featureKeyList)

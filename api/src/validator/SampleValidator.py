@@ -34,22 +34,22 @@ class SampleValidator:
     @ValidatorMethod(requestClass=str)
     def notExistsByKey(self, key):
         self.validator.common.strNotNull(key, 'key')
-        if self.service.sample.existsByKey(key) :
+        if self.service.sample.existsByKey(key):
             raise GlobalException(message='Sample already exists', status=HttpStatus.BAD_REQUEST)
 
     @ValidatorMethod(requestClass=str)
     def existsByKey(self, key):
         self.validator.common.strNotNull(key, 'key')
-        if not self.service.sample.existsByKey(key) :
+        if not self.service.sample.existsByKey(key):
             raise GlobalException(message='''Sample does not exists''', status=HttpStatus.BAD_REQUEST)
 
     @ValidatorMethod(requestClass=[[Feature], [FeatureData]])
-    def listLengthAreEqualsInSampleMapping(self, featureList, featureDataList) :
-        if not len(featureList) == len(featureDataList) :
+    def listLengthAreEqualsInSampleMapping(self, featureList, featureDataList):
+        if not len(featureList) == len(featureDataList):
             logMessage = f'Error mapping Sample. Invalid list length: {featureList} and {featureDataList}'
-            if len(featureList) > len(featureDataList) :
+            if len(featureList) > len(featureDataList):
                 raise GlobalException(logMessage=logMessage)
-            elif len(featureList) < len(featureDataList) :
+            elif len(featureList) < len(featureDataList):
                 raise GlobalException(
                     message = f'Some features were not found. Make shure to post them before you add it to a sample',
                     logMessage = logMessage,

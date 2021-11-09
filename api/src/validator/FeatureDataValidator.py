@@ -10,7 +10,7 @@ class FeatureDataValidator:
     def existsByFeatureKeyAndSampleKey(self, featureKey, sampleKey):
         self.validator.common.pathVariableNotNull(featureKey, 'featureKey')
         self.validator.common.pathVariableNotNull(sampleKey, 'sampleKey')
-        if not self.service.featureData.existsByFeatureKeyAndSampleKey(featureKey, sampleKey) :
+        if not self.service.featureData.existsByFeatureKeyAndSampleKey(featureKey, sampleKey):
             raise GlobalException(message='''FeatureData not found''', status=HttpStatus.NOT_FOUND)
 
     @ValidatorMethod(requestClass=[FeatureData])

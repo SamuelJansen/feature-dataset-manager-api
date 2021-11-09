@@ -8,21 +8,21 @@ from FeatureData import FeatureData
 @Repository(model = FeatureData)
 class FeatureDataRepository:
 
-    def findAll(self) :
+    def findAll(self):
         return self.repository.findAllAndCommit(self.model)
 
-    def existsByKey(self, key) :
+    def existsByKey(self, key):
         return self.repository.existsByKeyAndCommit(key, self.model)
 
-    def findByKey(self, key) :
-        if self.existsByKey(key) :
+    def findByKey(self, key):
+        if self.existsByKey(key):
             return self.repository.findByKeyAndCommit(key, self.model)
         return []
 
-    def notExistsByKey(self, key) :
+    def notExistsByKey(self, key):
         return not self.existsByKey(key)
 
-    def save(self,model) :
+    def save(self,model):
         return self.repository.saveAndCommit(model)
 
     def existsByFeatureKeyAndSampleKey(self, featureKey, sampleKey):
@@ -37,7 +37,7 @@ class FeatureDataRepository:
         self.repository.session.commit()
         return objectExists
 
-    def findByFeatureKeyAndSampleKey(self, featureKey, sampleKey) :
+    def findByFeatureKeyAndSampleKey(self, featureKey, sampleKey):
         featureData = self.repository.session.query(self.model).filter(
             sap.and_(
                 self.model.feature.has(Feature.key == featureKey),
@@ -47,12 +47,12 @@ class FeatureDataRepository:
         self.repository.session.commit()
         return featureData
 
-    def findAllByFeatureKey(self, featureKey) :
+    def findAllByFeatureKey(self, featureKey):
         featureDataList = self.repository.session.query(self.model).filter(self.model.feature.has(Feature.key == featureKey)).all()
         self.repository.session.commit()
         return featureDataList
 
-    def findAllBySampleKey(self, sampleKey) :
+    def findAllBySampleKey(self, sampleKey):
         featureDataList = self.repository.session.query(self.model).filter(self.model.sample.has(Sample.key == sampleKey)).all()
         self.repository.session.commit()
         return featureDataList

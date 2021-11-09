@@ -16,7 +16,7 @@ class FeatureDataHelper:
                 return featureData
 
     @HelperMethod(requestClass=[int, [FeatureData]])
-    def getRespectiveFeatureDataByFeatureId(self, featureId, featureDataList) :
+    def getRespectiveFeatureDataByFeatureId(self, featureId, featureDataList):
         for featureData in featureDataList :
             if featureData.feature and featureId and featureData.feature.id and featureId == featureData.feature.id :
                 return featureData

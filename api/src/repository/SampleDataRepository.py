@@ -5,5 +5,5 @@ from SampleData import SampleData
 @Repository(model = SampleData)
 class SampleDataRepository:
 
-    def findAll(self) :
+    def findAll(self):
         return self.repository.findAllAndCommit(self.model)
