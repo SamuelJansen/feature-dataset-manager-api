@@ -8,8 +8,10 @@ class FeatureResponseDto :
     def __init__(self,
         key = None,
         label = None,
+        value = None,
         iterationCount = None
     ):
         self.key = key
         self.label = label
+        self.value = value
         self.iterationCount = iterationCount

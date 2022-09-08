@@ -1,8 +1,6 @@
 print-status: False
 
 api:
-    security:
-        secret: ${SECURITY_SECRET}
     database:
         dialect: ${DATABASE_DIALECT:sqlite}
         settings:

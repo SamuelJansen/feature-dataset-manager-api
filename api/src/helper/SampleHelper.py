@@ -24,6 +24,6 @@ class SampleHelper:
     @HelperMethod(requestClass=[Sample, BestFitRequestDto])
     def getSampleDataValue(self, sample, bestFit):
         for featureData in sample.featureDataList :
-            if featureData.feature.key == bestFit.featureKey :
+            if featureData.feature.key == bestFit.featureKey:
                 return featureData.value
         return DefaultValue.DEFAULT_MISSING_DATA_VALUE

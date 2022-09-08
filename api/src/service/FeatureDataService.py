@@ -1,5 +1,6 @@
-from python_framework import Service, ServiceMethod
+from python_framework import Service, ServiceMethod, Serializer
 
+from dto import FeatureDataDto
 from FeatureData import FeatureData
 
 @Service()
@@ -12,6 +13,11 @@ class FeatureDataService:
     #         sample = self.service.sample.findByKey(sampleKey)
     #         model = FeatureData()
     #     self.patchFeatureData(model)
+
+    @ServiceMethod(requestClass=[FeatureDataDto.FeatureDataQueryRequestParamDto])
+    def queryAll(self, dto):
+        featureDataList = self.repository.featureData.findAllByQuery(Serializer.getObjectAsDictionary(dto))
+        return self.converter.featureData.fromModelListToResponseDtoList(featureDataList)
 
     @ServiceMethod(requestClass=[str, str])
     def queryByFeatureKeyAndSampleKey(self, featureKey, sampleKey):
@@ -42,6 +48,16 @@ class FeatureDataService:
     def findAllBySampleKey(self, sampleKey):
         self.validator.common.pathVariableNotNull(sampleKey, 'sampleKey')
         return self.repository.featureData.findAllBySampleKey(sampleKey)
+
+    @ServiceMethod(requestClass=str)
+    def existsByFeatureKey(self, featureKey):
+        self.validator.common.pathVariableNotNull(featureKey, 'featureKey')
+        return self.repository.featureData.existsByFeatureKey(featureKey)
+
+    @ServiceMethod(requestClass=str)
+    def existsBySampleKey(self, sampleKey):
+        self.validator.common.pathVariableNotNull(sampleKey, 'sampleKey')
+        return self.repository.featureData.existsBySampleKey(sampleKey)
 
     @ServiceMethod(requestClass=[str, str])
     def existsByFeatureKeyAndSampleKey(self, featureKey, sampleKey):

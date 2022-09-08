@@ -29,3 +29,11 @@ class BestFitDataRequestDto :
         self.sampleKey = sampleKey
         self.featureValue = featureValue
         self.sampleValue = sampleValue
+
+class FeatureDataQueryRequestParamDto:
+    def __init__(self,
+        featureKey = None,
+        sampleKey = None
+    ):
+        self.featureKey = featureKey
+        self.sampleKey = sampleKey

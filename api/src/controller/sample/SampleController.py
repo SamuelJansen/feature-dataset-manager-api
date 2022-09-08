@@ -19,13 +19,13 @@ class SampleController:
     @ControllerMethod(url='/<string:key>',
         responseClass=SampleResponseDto,
         apiKeyRequired=[ADMIN, API]
-        # , logRequest = True
-        # , logResponse = True
+        , logRequest = True
+        , logResponse = True
     )
     def get(self, key):
         return self.service.sample.queryByKey(key), HttpStatus.OK
 
-    @ControllerMethod(url='/<string:key>/<int:value>',
+    @ControllerMethod(url='/<string:key>/<float:value>',
         requestClass=SampleRequestDto,
         responseClass=SampleResponseDto,
         apiKeyRequired=[ADMIN, API]
@@ -51,10 +51,10 @@ class SampleController:
         , logResponse = True
     )
     def delete(self, key):
-        return self.service.sample.delete(key), HttpStatus.NO_CONTENT, HttpStatus.NO_CONTENT
+        return self.service.sample.delete(key), HttpStatus.NO_CONTENT
 
 
-@Controller(url = '/samples/batch', tag='Sample', description='Multiple Sample controller')
+@Controller(url = '/samples/all', tag='Sample', description='Multiple Sample controller')
 class SampleBatchController:
 
     @ControllerMethod(

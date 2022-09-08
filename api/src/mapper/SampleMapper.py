@@ -24,7 +24,7 @@ class SampleMapper:
     @MapperMethod(requestClass=[[FeatureDataRequestDto], str])
     def overrideFeatureDataRequestDtoValues(self, featureDataList, key):
         for featureData in featureDataList :
-            if not featureData.sampleKey :
+            if not featureData.sampleKey:
                 featureData.sampleKey = key
 
     @MapperMethod(requestClass=[SampleRequestDto, Sample])

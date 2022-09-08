@@ -41,11 +41,10 @@ class FeatureController:
         , logResponse = True
     )
     def delete(self, key):
-        self.service.feature.delete(key)
-        return {}, HttpStatus.NO_CONTENT
+        return self.service.feature.delete(key), HttpStatus.NO_CONTENT
 
 
-@Controller(url = '/features/batch', tag='Feature', description='Multiple Feature controller')
+@Controller(url = '/features/all', tag='Feature', description='Multiple Feature controller')
 class FeatureBatchController:
 
     @ControllerMethod(

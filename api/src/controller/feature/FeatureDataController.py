@@ -21,11 +21,10 @@ class FeatureDataController:
         # , logResponse = True
     )
     def delete(self, featureKey, sampleKey):
-        self.service.featureData.deleteByFeatureKeyAndSampleKey(featureKey, sampleKey), HttpStatus.NO_CONTENT
-        return {}, HttpStatus.NO_CONTENT
+        return self.service.featureData.deleteByFeatureKeyAndSampleKey(featureKey, sampleKey), HttpStatus.NO_CONTENT
 
 
-@Controller(url = '/feature-datas/batch', tag='FeatureData', description='Multiple FeatureData controller')
+@Controller(url = '/feature-datas/all', tag='FeatureData', description='Multiple FeatureData controller')
 class FeatureDataBatchController:
 
     @ControllerMethod(url='/<string:featureKey>',

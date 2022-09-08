@@ -2,17 +2,21 @@ print-status: False
 
 api:
     database:
-        dialect: ${DATABASE_DIALECT:}
-        driver: ${DATABASE_DRIVER:}
-        database: ${DATABASE_NAME:}
-        username: ${DATABASE_USERNAME:}
-        password: ${DATABASE_PASSWORD:}
-        host: ${DATABASE_HOST:}
-        port: ${DATABASE_PORT:}
-        schema: ${DATABASE_SCHEMA:dev-feature-manager-api-schema}
+        dialect: ${DATABASE_DIALECT:sqlite}
         settings:
-            options: -csearch_path=${api.database.schema}
+            check_same_thread: False
+    # database:
+    #     dialect: ${DATABASE_DIALECT:}
+    #     driver: ${DATABASE_DRIVER:}
+    #     database: ${DATABASE_NAME:}
+    #     username: ${DATABASE_USERNAME:}
+    #     password: ${DATABASE_PASSWORD:}
+    #     host: ${DATABASE_HOST:}
+    #     port: ${DATABASE_PORT:}
+    #     schema: ${DATABASE_SCHEMA:}
+    #     settings:
+    #         options: -csearch_path=${api.database.schema}
 
 swagger:
-    schemes: [https]
-    host: data.ai-automation-tools.com
+    schemes:  [https] ###- bug
+    host: ${SWAGGER_HOST:localhost} ###- bug

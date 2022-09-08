@@ -1,3 +1,5 @@
+from python_helper import Constant as c
+from python_helper import ObjectHelper
 from python_framework import Validator, ValidatorMethod, GlobalException, HttpStatus
 
 from Feature import Feature
@@ -15,8 +17,8 @@ class SampleValidator:
     @ValidatorMethod(requestClass=SampleRequestDto)
     def postRequestDto(self, dto, key):
         self.notExistsByKey(key)
-        if not len(self.service.featureData.findAllBySampleKey(key)) == 0 :
-            raise GlobalException(message='There are FeatureData related to this entry altready. You need to delete it first', status=HttpStatus.BAD_REQUEST)
+        if self.service.featureData.existsBySampleKey(key) :
+            raise GlobalException(message=f'There are FeatureData related to this entry altready. You need to delete it first. Key: {c.SINGLE_QUOTE}{key}{c.SINGLE_QUOTE}', status=HttpStatus.BAD_REQUEST)
         self.featureDataRequestDtoList(dto.featureDataList)
 
     @ValidatorMethod(requestClass=[SampleRequestDto, str])
@@ -28,20 +30,27 @@ class SampleValidator:
     def patchRequestDto(self, dto, key, value):
         self.existsByKey(key)
         self.featureDataRequestDtoList(dto.featureDataList)
-        if not value and not 0 == value :
-            raise GlobalException(message='Value cannot be null', status=HttpStatus.BAD_REQUEST)
+        self.validateValueWithinRange(value)
+
+    @ValidatorMethod(requestClass=[int])
+    def validateValueWithinRange(self, value):
+        if ObjectHelper.isNone(value):
+            raise GlobalException(message='Evaluation cannot be null', status=HttpStatus.BAD_REQUEST)
+        if 0 > value or 5 < value:
+            raise GlobalException(message=f'Evaluation {value} should be within 0 and 5', status=HttpStatus.BAD_REQUEST)
+
 
     @ValidatorMethod(requestClass=str)
     def notExistsByKey(self, key):
         self.validator.common.strNotNull(key, 'key')
         if self.service.sample.existsByKey(key):
-            raise GlobalException(message='Sample already exists', status=HttpStatus.BAD_REQUEST)
+            raise GlobalException(message=f'Sample already exists. Key: {c.SINGLE_QUOTE}{key}{c.SINGLE_QUOTE}', status=HttpStatus.BAD_REQUEST)
 
     @ValidatorMethod(requestClass=str)
     def existsByKey(self, key):
         self.validator.common.strNotNull(key, 'key')
         if not self.service.sample.existsByKey(key):
-            raise GlobalException(message='''Sample does not exists''', status=HttpStatus.BAD_REQUEST)
+            raise GlobalException(message=f'Sample does not exists. Key: {c.SINGLE_QUOTE}{key}{c.SINGLE_QUOTE}', status=HttpStatus.BAD_REQUEST)
 
     @ValidatorMethod(requestClass=[[Feature], [FeatureData]])
     def listLengthAreEqualsInSampleMapping(self, featureList, featureDataList):
@@ -59,8 +68,8 @@ class SampleValidator:
     @ValidatorMethod(requestClass=[[FeatureDataRequestDto]])
     def featureDataRequestDtoList(self, featureDataList):
         for featureDataPostRequestDto in featureDataList :
-            if not featureDataPostRequestDto.featureKey :
-                raise GlobalException(message='All featureDataList items must contain featureKey', status=HttpStatus.BAD_REQUEST)
+            if not featureDataPostRequestDto.featureKey:
+                raise GlobalException(message=f'All featureDataList items must contain featureKey. FeatureKey: {featureDataPostRequestDto.featureKey}', status=HttpStatus.BAD_REQUEST)
 
     @ValidatorMethod(requestClass=[[BestFitRequestDto], int])
     def bestFitRequestDtoList(self, bestFitList, amount):
@@ -69,5 +78,5 @@ class SampleValidator:
         if amount > DefaultValue.MAX_QUERY_AMMOUNT :
             raise GlobalException(message=f'Amount limited at {DefaultValue.MAX_QUERY_AMMOUNT}', status=HttpStatus.BAD_REQUEST)
         for bestFit in bestFitList :
-            if not bestFit.featureKey :
+            if not bestFit.featureKey:
                 raise GlobalException(message='The attribute "featureKey" cannot be null', status=HttpStatus.BAD_REQUEST)
